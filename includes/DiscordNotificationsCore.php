@@ -9,7 +9,7 @@ class DiscordNotificationsCore {
 	/**
 	 * Replaces some special characters on urls. This has to be done as Discord webhook api does not accept urlencoded text.
 	 */
-	private static function parseurl( $url ) {
+	private static function parseUrl( $url ) {
 		foreach ( [
 			" " => "%20",
 			"(" => "%28",
@@ -34,13 +34,13 @@ class DiscordNotificationsCore {
 		if ( $wgDiscordIncludeUserUrls ) {
 			return sprintf(
 				"%s (%s | %s | %s | %s)",
-				"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingUserPage . $user_url ) . "|$user>",
-				"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingBlockUser . $user_url ) . "|" . self::msg( 'discordnotifications-block' ) . ">",
-				"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingUserRights . $user_url ) . "|" . self::msg( 'discordnotifications-groups' ) . ">",
-				"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingUserTalkPage . $user_url ) . "|" . self::msg( 'discordnotifications-talk' ) . ">",
-				"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingUserContributions . $user_url ) . "|" . self::msg( 'discordnotifications-contribs' ) . ">" );
+				"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingUserPage . $user_url ) . "|$user>",
+				"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingBlockUser . $user_url ) . "|" . self::msg( 'discordnotifications-block' ) . ">",
+				"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingUserRights . $user_url ) . "|" . self::msg( 'discordnotifications-groups' ) . ">",
+				"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingUserTalkPage . $user_url ) . "|" . self::msg( 'discordnotifications-talk' ) . ">",
+				"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingUserContributions . $user_url ) . "|" . self::msg( 'discordnotifications-contribs' ) . ">" );
 		} else {
-			return "<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingUserPage . $user_url ) . "|$user>";
+			return "<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingUserPage . $user_url ) . "|$user>";
 		}
 	}
 
@@ -59,22 +59,22 @@ class DiscordNotificationsCore {
 		if ( $wgDiscordIncludePageUrls ) {
 			$out = sprintf(
 				"%s (%s | %s | %s",
-				self::parseurl( $prefix ) . "|" . $title . ">",
-				self::parseurl( $prefix . "&" . $wgDiscordNotificationWikiUrlEndingEditArticle ) . "|" . self::msg( 'discordnotifications-edit' ) . ">",
-				self::parseurl( $prefix . "&" . $wgDiscordNotificationWikiUrlEndingDeleteArticle ) . "|" . self::msg( 'discordnotifications-delete' ) . ">",
-				self::parseurl( $prefix . "&" . $wgDiscordNotificationWikiUrlEndingHistory ) . "|" . self::msg( 'discordnotifications-history' ) . ">"/*,
+				self::parseUrl( $prefix ) . "|" . $title . ">",
+				self::parseUrl( $prefix . "&" . $wgDiscordNotificationWikiUrlEndingEditArticle ) . "|" . self::msg( 'discordnotifications-edit' ) . ">",
+				self::parseUrl( $prefix . "&" . $wgDiscordNotificationWikiUrlEndingDeleteArticle ) . "|" . self::msg( 'discordnotifications-delete' ) . ">",
+				self::parseUrl( $prefix . "&" . $wgDiscordNotificationWikiUrlEndingHistory ) . "|" . self::msg( 'discordnotifications-history' ) . ">"/*,
 					"move",
 					"protect",
 					"watch"*/ );
 			if ( $diff ) {
 				$revisionId = $article->getRevisionRecord()->getId();
-				$out .= " | " . self::parseurl( $prefix . "&" . $wgDiscordNotificationWikiUrlEndingDiff . $revisionId ) . "|" . self::msg( 'discordnotifications-diff' ) . ">)";
+				$out .= " | " . self::parseUrl( $prefix . "&" . $wgDiscordNotificationWikiUrlEndingDiff . $revisionId ) . "|" . self::msg( 'discordnotifications-diff' ) . ">)";
 			} else {
 				$out .= ")";
 			}
 			return $out . "\n";
 		} else {
-			return self::parseurl( $prefix ) . "|" . $title . ">";
+			return self::parseUrl( $prefix ) . "|" . $title . ">";
 		}
 	}
 
@@ -105,15 +105,15 @@ class DiscordNotificationsCore {
 		if ( $wgDiscordIncludePageUrls ) {
 			return sprintf(
 				"%s (%s | %s | %s)",
-				"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $title_url ) . "|" . $titleName . ">",
-				"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $title_url . "&" . $wgDiscordNotificationWikiUrlEndingEditArticle ) . "|" . self::msg( 'discordnotifications-edit' ) . ">",
-				"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $title_url . "&" . $wgDiscordNotificationWikiUrlEndingDeleteArticle ) . "|" . self::msg( 'discordnotifications-delete' ) . ">",
-				"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $title_url . "&" . $wgDiscordNotificationWikiUrlEndingHistory ) . "|" . self::msg( 'discordnotifications-history' ) . ">"/*,
+				"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $title_url ) . "|" . $titleName . ">",
+				"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $title_url . "&" . $wgDiscordNotificationWikiUrlEndingEditArticle ) . "|" . self::msg( 'discordnotifications-edit' ) . ">",
+				"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $title_url . "&" . $wgDiscordNotificationWikiUrlEndingDeleteArticle ) . "|" . self::msg( 'discordnotifications-delete' ) . ">",
+				"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $title_url . "&" . $wgDiscordNotificationWikiUrlEndingHistory ) . "|" . self::msg( 'discordnotifications-history' ) . ">"/*,
 						"move",
 						"protect",
 						"watch"*/ );
 		} else {
-			return "<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $title_url ) . "|" . $titleName . ">";
+			return "<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $title_url ) . "|" . $titleName . ">";
 		}
 	}
 
@@ -121,7 +121,7 @@ class DiscordNotificationsCore {
 	 * Occurs after an article has been updated.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PageSaveComplete
 	 */
-	public static function onDiscordPageSaveComplete( $wikiPage, $user, $summary, $flags, $revisionRecord, $editResult ) {
+	public static function onPageSaveComplete( $wikiPage, $user, $summary, $flags, $revisionRecord, $editResult ) {
 		global $wgDiscordNotificationEditedArticle, $wgDiscordIgnoreMinorEdits,
 			$wgDiscordNotificationAddedArticle, $wgDiscordIncludeDiffSize;
 		$isNew = (bool)( $flags & EDIT_NEW );
@@ -168,7 +168,7 @@ class DiscordNotificationsCore {
 	 * Occurs after the delete article request has been processed.
 	 * @see http://www.mediawiki.org/wiki/Manual:Hooks/ArticleDeleteComplete
 	 */
-	public static function onDiscordArticleDeleted( WikiPage $article, User $user, $reason, $id, $content, ManualLogEntry $logEntry ) {
+	public static function onArticleDeleteComplete( WikiPage $article, User $user, $reason, $id, $content, ManualLogEntry $logEntry ) {
 		global $wgDiscordNotificationRemovedArticle;
 		if ( !$wgDiscordNotificationRemovedArticle ) return;
 
@@ -196,14 +196,14 @@ class DiscordNotificationsCore {
 	 * Occurs after a page has been moved.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/TitleMoveComplete
 	 */
-	public static function onDiscordArticleMoved( $title, $newtitle, $user, $oldid, $newid, $reason = null ) {
+	public static function onTitleMoveComplete( $old, $nt, $user, $pageid, $redirid, $reason = null ) {
 		global $wgDiscordNotificationMovedArticle;
 		if ( !$wgDiscordNotificationMovedArticle ) return;
 
 		$message = self::msg( 'discordnotifications-article-moved',
 			self::getDiscordUserText( $user ),
-			self::getDiscordTitleText( $title ),
-			self::getDiscordTitleText( $newtitle ),
+			self::getDiscordTitleText( $old ),
+			self::getDiscordTitleText( $nt ),
 			$reason );
 		self::pushDiscordNotify( $message, $user, 'article_moved' );
 		return true;
@@ -213,7 +213,7 @@ class DiscordNotificationsCore {
 	 * Occurs after the protect article request has been processed.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/ArticleProtectComplete
 	 */
-	public static function onDiscordArticleProtected( $article = null, $user = null, $protect = false, $reason = "", $moveonly = false ) {
+	public static function onArticleProtectComplete( $article = null, $user = null, $protect = false, $reason = "", $moveOnly = false ) {
 		global $wgDiscordNotificationProtectedArticle;
 		if ( !$wgDiscordNotificationProtectedArticle ) return;
 
@@ -230,7 +230,7 @@ class DiscordNotificationsCore {
 	 * Occurs after page has been imported into wiki.
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/AfterImportPage
 	 */
-	public static function onDiscordAfterImportPage( $title = null, $origTitle = null, $revCount = null, $sRevCount = null, $pageInfo = null ) {
+	public static function onAfterImportPage( $title = null, $origTitle = null, $revCount = null, $sRevCount = null, $pageInfo = null ) {
 		global $wgDiscordNotificationAfterImportPage;
 		if ( !$wgDiscordNotificationAfterImportPage ) return;
 
@@ -244,31 +244,26 @@ class DiscordNotificationsCore {
 	 * Called after a user account is created.
 	 * @see http://www.mediawiki.org/wiki/Manual:Hooks/AddNewAccount
 	 */
-	public static function onDiscordNewUserAccount( $user, $byEmail ) {
+	public static function onAddNewAccount( $user, $byEmail ) {
 		global $wgDiscordNotificationNewUser, $wgDiscordShowNewUserFullName;
 
 		if ( !$wgDiscordNotificationNewUser ) return;
 
 		$email = "";
-		$realname = "";
-		$ipaddress = "";
+		$realName = "";
 		try {
 			$email = $user->getEmail();
 		} catch ( Exception $e ) {
 		}
 		try {
-			$realname = $user->getRealName();
-		} catch ( Exception $e ) {
-		}
-		try {
-			$ipaddress = $user->getRequest()->getIP();
+			$realName = $user->getRealName();
 		} catch ( Exception $e ) {
 		}
 
 		$messageExtra = "";
 		if ( $wgDiscordShowNewUserFullName ) {
 			$messageExtra = "(";
-			$messageExtra .= $realname . ", ";
+			$messageExtra .= $realName . ", ";
 			$messageExtra = substr( $messageExtra, 0, -2 ); // Remove trailing ,
 			$messageExtra .= ")";
 		}
@@ -284,7 +279,7 @@ class DiscordNotificationsCore {
 	 * Called when a file upload has completed.
 	 * @see http://www.mediawiki.org/wiki/Manual:Hooks/UploadComplete
 	 */
-	public static function onDiscordFileUploaded( $image ) {
+	public static function onUploadComplete( $image ) {
 		global $wgDiscordNotificationFileUpload;
 		if ( !$wgDiscordNotificationFileUpload ) return;
 
@@ -292,26 +287,26 @@ class DiscordNotificationsCore {
 		$localFile = $image->getLocalFile();
 
 		# Use bytes, KiB, and MiB, rounded to two decimal places.
-		$fsize = $localFile->size;
-		$funits = '';
+		$fSize = $localFile->size;
+		$fUnits = '';
 		if ( $localFile->size < 2048 ) {
-			$funits = 'bytes';
+			$fUnits = 'bytes';
 		} elseif ( $localFile->size < 2048 * 1024 ) {
-			$fsize /= 1024;
-			$fsize = round( $fsize, 2 );
-			$funits = 'KiB';
+			$fSize /= 1024;
+			$fSize = round( $fSize, 2 );
+			$fUnits = 'KiB';
 		} else {
-			$fsize /= 1024 * 1024;
-			$fsize = round( $fsize, 2 );
-			$funits = 'MiB';
+			$fSize /= 1024 * 1024;
+			$fSize = round( $fSize, 2 );
+			$fUnits = 'MiB';
 		}
 
 		$message = self::msg( 'discordnotifications-file-uploaded',
 			self::getDiscordUserText( $wgUser->mName ),
-			self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $image->getLocalFile()->getTitle() ),
+			self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $image->getLocalFile()->getTitle() ),
 			$localFile->getTitle(),
 			$localFile->getMimeType(),
-			$fsize, $funits,
+			$fSize, $fUnits,
 			$localFile->getDescription() );
 
 		self::pushDiscordNotify( $message, $wgUser, 'file_uploaded' );
@@ -322,7 +317,7 @@ class DiscordNotificationsCore {
 	 * Occurs after the request to block an IP or user has been processed
 	 * @see http://www.mediawiki.org/wiki/Manual:MediaWiki_hooks/BlockIpComplete
 	 */
-	public static function onDiscordUserBlocked( Block $block, $user ) {
+	public static function onBlockIpComplete( Block $block, $user ) {
 		global $wgDiscordNotificationBlockedUser;
 		if ( !$wgDiscordNotificationBlockedUser ) return;
 
@@ -334,7 +329,7 @@ class DiscordNotificationsCore {
 			self::getDiscordUserText( $block->getTarget() ),
 			$mReason == "" ? "" : self::msg( 'discordnotifications-block-user-reason' ) . " '" . $mReason . "'.",
 			$block->mExpiry,
-			"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingBlockList ) . "|" . self::msg( 'discordnotifications-block-user-list' ) . ">." );
+			"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingBlockList ) . "|" . self::msg( 'discordnotifications-block-user-list' ) . ">." );
 		self::pushDiscordNotify( $message, $user, 'user_blocked' );
 		return true;
 	}
@@ -343,7 +338,7 @@ class DiscordNotificationsCore {
 	 * Occurs after the user groups (rights) have been changed
 	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/UserGroupsChanged
 	 */
-	public static function onDiscordUserGroupsChanged( $user, array $added, array $removed, $performer, $reason, $oldUGMs, $newUGMs ) {
+	public static function onUserGroupsChanged( $user, array $added, array $removed, $performer, $reason, $oldUGMs, $newUGMs ) {
 		global $wgDiscordNotificationUserGroupsChanged;
 		if ( !$wgDiscordNotificationUserGroupsChanged ) return;
 
@@ -353,7 +348,7 @@ class DiscordNotificationsCore {
 			self::getDiscordUserText( $user->getName() ),
 			implode( ", ", array_keys( $oldUGMs ) ),
 			implode( ", ", $user->getGroups() ),
-			"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingUserRights . self::getDiscordUserText( $performer ) ) . "|" . self::msg( 'discordnotifications-view-user-rights' ) . ">." );
+			"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $wgDiscordNotificationWikiUrlEndingUserRights . self::getDiscordUserText( $performer ) ) . "|" . self::msg( 'discordnotifications-view-user-rights' ) . ">." );
 		self::pushDiscordNotify( $message, $user, 'user_groups_changed' );
 		return true;
 	}
@@ -361,7 +356,7 @@ class DiscordNotificationsCore {
 	/**
 	 * Occurs after the execute() method of an Flow API module
 	 */
-	public static function onDiscordApiFlowAfterExecute( APIBase $module ) {
+	public static function onAPIFlowAfterExecute( APIBase $module ) {
 		global $wgDiscordNotificationFlow;
 		if ( !$wgDiscordNotificationFlow || !ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) return;
 
@@ -378,23 +373,23 @@ class DiscordNotificationsCore {
 			case 'edit-header':
 				$message = self::msg( "discordnotifications-flow-edit-header",
 					self::getDiscordUserText( $wgUser ),
-					"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $request['page'] ) . "|" . $request['page'] . ">" );
+					"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $request['page'] ) . "|" . $request['page'] . ">" );
 				break;
 			case 'edit-post':
 				$message = self::msg( "discordnotifications-flow-edit-post",
 					self::getDiscordUserText( $wgUser ),
-					"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . "Topic:" . $result['workflow'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
+					"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . "Topic:" . $result['workflow'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
 				break;
 			case 'edit-title':
 				$message = self::msg( "discordnotifications-flow-edit-title",
 					self::getDiscordUserText( $wgUser ),
 					$request['etcontent'],
-					"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . 'Topic:' . $result['workflow'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
+					"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . 'Topic:' . $result['workflow'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
 				break;
 			case 'edit-topic-summary':
 				$message = self::msg( "discordnotifications-flow-edit-topic-summary",
 					self::getDiscordUserText( $wgUser ),
-					"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . 'Topic:' . $result['workflow'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
+					"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . 'Topic:' . $result['workflow'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
 				break;
 			case 'lock-topic':
 				$message = self::msg( "discordnotifications-flow-lock-topic",
@@ -403,7 +398,7 @@ class DiscordNotificationsCore {
 					// * discordnotifications-flow-lock-topic-lock
 					// * discordnotifications-flow-lock-topic-unlock
 					self::msg( "discordnotifications-flow-lock-topic-" . $request['cotmoderationState'] ),
-					"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $request['page'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
+					"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $request['page'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
 				break;
 			case 'moderate-post':
 				$message = self::msg( "discordnotifications-flow-moderate-post",
@@ -416,7 +411,7 @@ class DiscordNotificationsCore {
 					// * discordnotifications-flow-moderate-delete
 					// * discordnotifications-flow-moderate-undelete
 					self::msg( "discordnotifications-flow-moderate-" . $request['mpmoderationState'] ),
-					"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $request['page'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
+					"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $request['page'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
 				break;
 			case 'moderate-topic':
 				$message = self::msg( "discordnotifications-flow-moderate-topic",
@@ -429,18 +424,18 @@ class DiscordNotificationsCore {
 					// * discordnotifications-flow-moderate-delete
 					// * discordnotifications-flow-moderate-undelete
 					self::msg( "discordnotifications-flow-moderate-" . $request['mtmoderationState'] ),
-					"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $request['page'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
+					"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $request['page'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
 				break;
 			case 'new-topic':
 				$message = self::msg( "discordnotifications-flow-new-topic",
 					self::getDiscordUserText( $wgUser ),
-					"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . "Topic:" . $result['committed']['topiclist']['topic-id'] ) . "|" . $request['nttopic'] . ">",
-					"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $request['page'] ) . "|" . $request['page'] . ">" );
+					"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . "Topic:" . $result['committed']['topiclist']['topic-id'] ) . "|" . $request['nttopic'] . ">",
+					"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . $request['page'] ) . "|" . $request['page'] . ">" );
 				break;
 			case 'reply':
 				$message = self::msg( "discordnotifications-flow-reply",
 					self::getDiscordUserText( $wgUser ),
-					"<" . self::parseurl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . 'Topic:' . $result['workflow'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
+					"<" . self::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding . 'Topic:' . $result['workflow'] ) . "|" . self::flowUUIDToTitleText( $result['workflow'] ) . ">" );
 				break;
 			default:
 				return;
@@ -569,21 +564,21 @@ class DiscordNotificationsCore {
 		// Commented out lines below. Using default curl settings for host and peer verification.
 		//curl_setopt ($h, CURLOPT_SSL_VERIFYHOST, 0);
 		//curl_setopt ($h, CURLOPT_SSL_VERIFYPEER, 0);
-		// ... Aaand execute the curl script!
+		// ... And execute the curl script!
 		$curl_output = curl_exec( $h );
 		curl_close( $h );
 	}
 
 	/** */
 	private static function sendHttpRequest( $url, $postData ) {
-		$extradata = [
+		$extra = [
 			'http' => [
 			'header'  => "Content-type: application/json",
 			'method'  => 'POST',
 			'content' => $postData,
 			],
 		];
-		$context = stream_context_create( $extradata );
+		$context = stream_context_create( $extra );
 		$result = file_get_contents( $url, false, $context );
 	}
 

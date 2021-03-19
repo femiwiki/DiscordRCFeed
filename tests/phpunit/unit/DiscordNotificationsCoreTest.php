@@ -22,12 +22,12 @@ class DiscordNotificationsCoreTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \DiscordNotificationsCore::parseurl
+	 * @covers \DiscordNotificationsCore::parseUrl
 	 */
-	public function testParseurl() {
+	public function testParseUrl() {
 		$this->assertSame(
 			'https://example.com/wiki/title=Foo%20%28bar%29',
-			$this->wrapper->parseurl( 'https://example.com/wiki/title=Foo (bar)' )
+			$this->wrapper->parseUrl( 'https://example.com/wiki/title=Foo (bar)' )
 		);
 	}
 }

@@ -15,16 +15,16 @@
     "DiscordNotifications": ["i18n"]
   },
   "Hooks": {
-    "PageSaveComplete": "DiscordNotificationsCore::onDiscordPageSaveComplete",
-    "ArticleDeleteComplete": "DiscordNotificationsCore::onDiscordArticleDeleted",
-    "TitleMoveComplete": "DiscordNotificationsCore::onDiscordArticleMoved",
-    "AddNewAccount": "DiscordNotificationsCore::onDiscordNewUserAccount",
-    "BlockIpComplete": "DiscordNotificationsCore::onDiscordUserBlocked",
-    "UploadComplete": "DiscordNotificationsCore::onDiscordFileUploaded",
-    "ArticleProtectComplete": "DiscordNotificationsCore::onDiscordArticleProtected",
-    "UserGroupsChanged": "DiscordNotificationsCore::onDiscordUserGroupsChanged",
-    "APIFlowAfterExecute": "DiscordNotificationsCore::onDiscordApiFlowAfterExecute",
-    "AfterImportPage": "DiscordNotificationsCore::onDiscordAfterImportPage"
+    "PageSaveComplete": "DiscordNotificationsCore::onPageSaveComplete",
+    "ArticleDeleteComplete": "DiscordNotificationsCore::onArticleDeleteComplete",
+    "TitleMoveComplete": "DiscordNotificationsCore::onTitleMoveComplete",
+    "AddNewAccount": "DiscordNotificationsCore::onAddNewAccount",
+    "BlockIpComplete": "DiscordNotificationsCore::onBlockIpComplete",
+    "UploadComplete": "DiscordNotificationsCore::onUploadComplete",
+    "ArticleProtectComplete": "DiscordNotificationsCore::onArticleProtectComplete",
+    "UserGroupsChanged": "DiscordNotificationsCore::onUserGroupsChanged",
+    "APIFlowAfterExecute": "DiscordNotificationsCore::onAPIFlowAfterExecute",
+    "AfterImportPage": "DiscordNotificationsCore::onAfterImportPage"
   },
   "config": {
     "DiscordIncomingWebhookUrl": "",
