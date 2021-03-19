@@ -57,7 +57,8 @@ class DiscordNotificationsCore {
 					"protect",
 					"watch"*/ );
 			if ( $diff ) {
-				$out .= " | " . self::parseurl( $prefix . "&" . $wgDiscordNotificationWikiUrlEndingDiff . $article->getRevision()->getID() ) . "|" . self::msg( 'discordnotifications-diff' ) . ">)";
+				$revisionId = $article->getRevisionRecord()->getId();
+				$out .= " | " . self::parseurl( $prefix . "&" . $wgDiscordNotificationWikiUrlEndingDiff . $revisionId ) . "|" . self::msg( 'discordnotifications-diff' ) . ">)";
 			} else {
 				$out .= ")";
 			}
@@ -65,6 +66,19 @@ class DiscordNotificationsCore {
 		} else {
 			return self::parseurl( $prefix ) . "|" . $title . ">";
 		}
+	}
+
+	/**
+	 * Returns whether the given title should be excluded
+	 */
+	private static function titleIsExcluded( $title ) {
+		global $wgDiscordExcludeNotificationsFrom;
+		if ( is_array( $wgDiscordExcludeNotificationsFrom ) && count( $wgDiscordExcludeNotificationsFrom ) > 0 ) {
+			foreach ( $wgDiscordExcludeNotificationsFrom as &$currentExclude ) {
+				if ( strpos( $title, $currentExclude ) === 0 ) return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -94,78 +108,44 @@ class DiscordNotificationsCore {
 	}
 
 	/**
-	 * Occurs after the save page request has been processed.
-	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PageContentSaveComplete
+	 * Occurs after an article has been updated.
+	 * @see https://www.mediawiki.org/wiki/Manual:Hooks/PageSaveComplete
 	 */
-	public static function onDiscordArticleSaved( WikiPage $article, $user, $content, $summary, $isMinor, $isWatch, $section, $flags, $revision, $status, $baseRevId ) {
-		global $wgDiscordNotificationEditedArticle;
-		global $wgDiscordIgnoreMinorEdits, $wgDiscordIncludeDiffSize;
-		if ( !$wgDiscordNotificationEditedArticle ) return;
+	public static function onDiscordPageSaveComplete( $wikiPage, $user, $summary, $flags, $revisionRecord, $editResult ) {
+		global $wgDiscordNotificationEditedArticle, $wgDiscordIgnoreMinorEdits,
+			$wgDiscordNotificationAddedArticle, $wgDiscordIncludeDiffSize;
+		$isNew = (bool)( $flags & EDIT_NEW );
 
-		// Discard notifications from excluded pages
-		global $wgDiscordExcludeNotificationsFrom;
-		if ( is_array( $wgDiscordExcludeNotificationsFrom ) && count( $wgDiscordExcludeNotificationsFrom ) > 0 ) {
-			foreach ( $wgDiscordExcludeNotificationsFrom as &$currentExclude ) {
-				if ( strpos( $article->getTitle(), $currentExclude ) === 0 ) return;
-			}
-		}
+		if ( !$wgDiscordNotificationEditedArticle && !$isNew ) return true;
+		if ( !$wgDiscordNotificationAddedArticle && $isNew ) return true;
+		if ( self::titleIsExcluded( $wikiPage->getTitle() ) ) return true;
 
-		// Skip new articles that have view count below 1. Adding new articles is already handled in article_added function and
-		// calling it also here would trigger two notifications!
-		$isNew = $status->value['new']; // This is 1 if article is new
-		if ( $isNew == 1 ) {
-			return true;
-		}
-
-		// Skip minor edits if user wanted to ignore them
-		if ( $isMinor && $wgDiscordIgnoreMinorEdits ) return;
-
-		// Skip edits that are just refreshing the page
-		if ( $article->getRevision()->getPrevious() == null || $revision->getPrevious() == null || !$revision || $status->getValue()['revision'] === null ) {
-			return;
-		}
-
-		$message = self::msg(
-			'discordnotifications-article-saved',
+		if ( $isNew ) {
+			$message = self::msg( 'discordnotifications-article-created',
 			self::getDiscordUserText( $user ),
-			$isMinor == true ? self::msg( 'discordnotifications-article-saved-minor-edits' ) : self::msg( 'discordnotifications-article-saved-edit' ),
-			self::getDiscordArticleText( $article, true ),
+			self::getDiscordArticleText( $wikiPage ),
 			$summary == "" ? "" : self::msg( 'discordnotifications-summary', $summary ) );
-		if ( $wgDiscordIncludeDiffSize ) {
-			$message .= ' (' . self::msg( 'discordnotifications-bytes',
-				$article->getRevision()->getSize() - $article->getRevision()->getPrevious()->getSize() ) . ')';
-		}
-		self::pushDiscordNotify( $message, $user, 'article_saved' );
-		return true;
-	}
-
-	/**
-	 * Occurs after a new article has been created.
-	 * @see http://www.mediawiki.org/wiki/Manual:Hooks/ArticleInsertComplete
-	 */
-	public static function onDiscordArticleInserted( WikiPage $article, $user, $text, $summary, $isminor, $iswatch, $section, $flags, $revision ) {
-		global $wgDiscordNotificationAddedArticle, $wgDiscordIncludeDiffSize;
-		if ( !$wgDiscordNotificationAddedArticle ) return;
-
-		// Discard notifications from excluded pages
-		global $wgDiscordExcludeNotificationsFrom;
-		if ( is_array( $wgDiscordExcludeNotificationsFrom ) && count( $wgDiscordExcludeNotificationsFrom ) > 0 ) {
-			foreach ( $wgDiscordExcludeNotificationsFrom as &$currentExclude ) {
-				if ( strpos( $article->getTitle(), $currentExclude ) === 0 ) return;
+			if ( $wgDiscordIncludeDiffSize ) {
+				$message .= " (" . self::msg( 'discordnotifications-bytes', $revisionRecord->getSize() ) . ")";
 			}
-		}
+			self::pushDiscordNotify( $message, $user, 'article_inserted' );
+		} else {
+			$isMinor = (bool)( $flags & EDIT_MINOR );
+			// Skip minor edits if user wanted to ignore them
+			if ( $isMinor && $wgDiscordIgnoreMinorEdits ) return true;
 
-		// Do not announce newly added file uploads as articles...
-		if ( $article->getTitle()->getNsText() == self::msg( 'discordnotifications-file-namespace' ) ) return true;
-
-		$message = self::msg( 'discordnotifications-article-created',
-			self::getDiscordUserText( $user ),
-			self::getDiscordArticleText( $article ),
-			$summary == "" ? "" : self::msg( 'discordnotifications-summary', $summary ) );
-		if ( $wgDiscordIncludeDiffSize ) {
-			$message .= " (" . self::msg( 'discordnotifications-bytes', $article->getRevision()->getSize() ) . ")";
+			$message = self::msg(
+				'discordnotifications-article-saved',
+				self::getDiscordUserText( $user ),
+				$isMinor == true ? self::msg( 'discordnotifications-article-saved-minor-edits' ) : self::msg( 'discordnotifications-article-saved-edit' ),
+				self::getDiscordArticleText( $wikiPage, true ),
+				$summary == "" ? "" : self::msg( 'discordnotifications-summary', $summary ) );
+			if ( $wgDiscordIncludeDiffSize ) {
+				$message .= ' (' . self::msg( 'discordnotifications-bytes',
+					$revisionRecord->getSize() - MediaWiki\MediaWikiServices::getInstance()->getRevisionLookup()->getPreviousRevision( $revisionRecord )->getSize() ) . ')';
+			}
+			self::pushDiscordNotify( $message, $user, 'article_saved' );
 		}
-		self::pushDiscordNotify( $message, $user, 'article_inserted' );
 		return true;
 	}
 
@@ -336,12 +316,7 @@ class DiscordNotificationsCore {
 		if ( !$wgDiscordNotificationBlockedUser ) return;
 
 		global $wgDiscordNotificationWikiUrl, $wgDiscordNotificationWikiUrlEnding, $wgDiscordNotificationWikiUrlEndingBlockList;
-		$mReason = "";
-		if ( defined( 'MW_VERSION' ) && version_compare( MW_VERSION, '1.35', '>=' ) ) {  // DatabaseBlock::$mReason was made protected in MW 1.35
-			$mReason = $block->getReasonComment()->text;
-		} else {
-			$mReason = $block->mReason;
-		}
+		$mReason = $block->getReasonComment()->text;
 
 		$message = self::msg( 'discordnotifications-block-user',
 			self::getDiscordUserText( $user ),
@@ -385,13 +360,7 @@ class DiscordNotificationsCore {
 		$result = $module->getResult()->getResultData()['flow'][$action];
 		if ( $result['status'] != 'ok' ) return;
 
-		// Discard notifications from excluded pages
-		global $wgDiscordExcludeNotificationsFrom;
-		if ( count( $wgDiscordExcludeNotificationsFrom ) > 0 ) {
-			foreach ( $wgDiscordExcludeNotificationsFrom as &$currentExclude ) {
-				if ( strpos( $request['page'], $currentExclude ) === 0 ) return;
-			}
-		}
+		if ( self::titleIsExcluded( $request['page'] ) ) return;
 
 		global $wgDiscordNotificationWikiUrl, $wgDiscordNotificationWikiUrlEnding, $wgUser;
 		switch ( $action ) {

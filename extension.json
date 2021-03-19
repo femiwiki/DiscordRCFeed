@@ -15,8 +15,7 @@
     "DiscordNotifications": ["i18n"]
   },
   "Hooks": {
-    "PageContentSaveComplete": "DiscordNotificationsCore::onDiscordArticleSaved",
-    "PageContentInsertComplete": "DiscordNotificationsCore::onDiscordArticleInserted",
+    "PageSaveComplete": "DiscordNotificationsCore::onDiscordPageSaveComplete",
     "ArticleDeleteComplete": "DiscordNotificationsCore::onDiscordArticleDeleted",
     "TitleMoveComplete": "DiscordNotificationsCore::onDiscordArticleMoved",
     "AddNewAccount": "DiscordNotificationsCore::onDiscordNewUserAccount",
