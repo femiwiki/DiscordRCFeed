@@ -64,5 +64,8 @@
     "DiscordShowNewUserFullName": false,
     "DiscordAvatarUrl": ""
   },
+  "TestAutoloadNamespaces": {
+    "MediaWiki\\Extension\\DiscordNotifications\\Tests\\Unit\\": "tests/phpunit/unit/"
+  },
   "manifest_version": 1
 }
