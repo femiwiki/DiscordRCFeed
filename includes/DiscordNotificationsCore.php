@@ -127,10 +127,11 @@ class DiscordNotificationsCore {
 		if ( self::titleIsExcluded( $wikiPage->getTitle() ) ) return true;
 
 		if ( $isNew ) {
-			$message = self::msg( 'discordnotifications-article-created',
+			$message = wfMessage( 'discordnotifications-article-created',
 			self::getDiscordUserText( $user ),
 			self::getDiscordArticleText( $wikiPage ),
-			$summary == "" ? "" : self::msg( 'discordnotifications-summary', $summary ) );
+			$summary == "" ? "" : wfMessage( 'discordnotifications-summary', $summary )->inContentLanguage()->plain()
+				)->inContentLanguage()->text();
 			if ( $wgDiscordIncludeDiffSize ) {
 				$message .= " (" . self::msg( 'discordnotifications-bytes', $revisionRecord->getSize() ) . ")";
 			}
@@ -140,12 +141,13 @@ class DiscordNotificationsCore {
 			// Skip minor edits if user wanted to ignore them
 			if ( $isMinor && $wgDiscordIgnoreMinorEdits ) return true;
 
-			$message = self::msg(
-				'discordnotifications-article-saved',
+			$message = wfMessage(
+				'discordnotifications-article-saved' )->plaintextParams(
 				self::getDiscordUserText( $user ),
 				$isMinor == true ? self::msg( 'discordnotifications-article-saved-minor-edits' ) : self::msg( 'discordnotifications-article-saved-edit' ),
 				self::getDiscordArticleText( $wikiPage, true ),
-				$summary == "" ? "" : self::msg( 'discordnotifications-summary', $summary ) );
+				$summary == "" ? "" : wfMessage( 'discordnotifications-summary', $summary )->inContentLanguage()->plain()
+					)->inContentLanguage()->text();
 			if ( $wgDiscordIncludeDiffSize ) {
 				$old = MediaWiki\MediaWikiServices::getInstance()->getRevisionLookup()->getPreviousRevision( $revisionRecord );
 				if ( $old ) {
@@ -177,10 +179,11 @@ class DiscordNotificationsCore {
 			}
 		}
 
-		$message = self::msg( 'discordnotifications-article-deleted',
+		$message = wfMessage( 'discordnotifications-article-deleted' )->plaintextParams(
 			self::getDiscordUserText( $user ),
 			self::getDiscordArticleText( $article ),
-			$reason );
+			$reason
+		)->inContentLanguage()->text();
 		self::pushDiscordNotify( $message, $user, 'article_deleted' );
 		return true;
 	}
