@@ -1,5 +1,11 @@
 <?php
+
 class DiscordNotificationsCore {
+	/**
+	 * @var string used for phpunit
+	 */
+	public static $lastMessage;
+
 	/**
 	 * Replaces some special characters on urls. This has to be done as Discord webhook api does not accept urlencoded text.
 	 */
@@ -141,8 +147,11 @@ class DiscordNotificationsCore {
 				self::getDiscordArticleText( $wikiPage, true ),
 				$summary == "" ? "" : self::msg( 'discordnotifications-summary', $summary ) );
 			if ( $wgDiscordIncludeDiffSize ) {
-				$message .= ' (' . self::msg( 'discordnotifications-bytes',
-					$revisionRecord->getSize() - MediaWiki\MediaWikiServices::getInstance()->getRevisionLookup()->getPreviousRevision( $revisionRecord )->getSize() ) . ')';
+				$old = MediaWiki\MediaWikiServices::getInstance()->getRevisionLookup()->getPreviousRevision( $revisionRecord );
+				if ( $old ) {
+					$message .= ' (' . self::msg( 'discordnotifications-bytes',
+						$revisionRecord->getSize() - $old->getSize() ) . ')';
+				}
 			}
 			self::pushDiscordNotify( $message, $user, 'article_saved' );
 		}
@@ -442,14 +451,43 @@ class DiscordNotificationsCore {
 	 * @param Message $message to be sent.
 	 * @see https://discordapp.com/developers/docs/resources/webhook#execute-webhook
 	 */
-	private static function pushDiscordNotify( $message, $user, $action ) {
-		global $wgDiscordIncomingWebhookUrl, $wgDiscordFromName, $wgDiscordAvatarUrl, $wgDiscordSendMethod, $wgDiscordExcludedPermission, $wgSitename, $wgDiscordAdditionalIncomingWebhookUrls;
+	public static function pushDiscordNotify( $message, $user, $action ) {
+		global $wgDiscordIncomingWebhookUrl, $wgDiscordSendMethod, $wgDiscordExcludedPermission, $wgDiscordAdditionalIncomingWebhookUrls;
 
 		if ( isset( $wgDiscordExcludedPermission ) && $wgDiscordExcludedPermission != "" ) {
 			if ( $user && $user->isAllowed( $wgDiscordExcludedPermission ) ) {
 				return; // Users with the permission suppress notifications
 			}
 		}
+
+		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
+			self::$lastMessage = $message;
+		}
+
+		$post = self::makePost( $message, $user, $action );
+
+		// Use file_get_contents to send the data. Note that you will need to have allow_url_fopen enabled in php.ini for this to work.
+		if ( $wgDiscordSendMethod == "file_get_contents" ) {
+			self::sendHttpRequest( $wgDiscordIncomingWebhookUrl, $post );
+			if ( $wgDiscordAdditionalIncomingWebhookUrls && is_array( $wgDiscordAdditionalIncomingWebhookUrls ) ) {
+				for ( $i = 0; $i < count( $wgDiscordAdditionalIncomingWebhookUrls ); ++$i ) {
+					self::sendHttpRequest( $wgDiscordAdditionalIncomingWebhookUrls[$i], $post );
+				}
+			}
+		} else {
+			// Call the Discord API through cURL (default way). Note that you will need to have cURL enabled for this to work.
+			self::sendCurlRequest( $wgDiscordIncomingWebhookUrl, $post );
+			if ( $wgDiscordAdditionalIncomingWebhookUrls && is_array( $wgDiscordAdditionalIncomingWebhookUrls ) ) {
+				for ( $i = 0; $i < count( $wgDiscordAdditionalIncomingWebhookUrls ); ++$i ) {
+					self::sendCurlRequest( $wgDiscordAdditionalIncomingWebhookUrls[$i], $post );
+				}
+			}
+		}
+	}
+
+	/** */
+	private static function makePost( $message, $user, $action ) {
+		global $wgDiscordFromName, $wgDiscordAvatarUrl, $wgSitename, $wgSitename;
 
 		// Convert " to ' in the message to be sent as otherwise JSON formatting would break.
 		$message = str_replace( '"', "'", $message );
@@ -509,24 +547,7 @@ class DiscordNotificationsCore {
 			$post .= ', "avatar_url": "' . $wgDiscordAvatarUrl . '"';
 		}
 		$post .= '}';
-
-		// Use file_get_contents to send the data. Note that you will need to have allow_url_fopen enabled in php.ini for this to work.
-		if ( $wgDiscordSendMethod == "file_get_contents" ) {
-			self::sendHttpRequest( $wgDiscordIncomingWebhookUrl, $post );
-			if ( $wgDiscordAdditionalIncomingWebhookUrls && is_array( $wgDiscordAdditionalIncomingWebhookUrls ) ) {
-				for ( $i = 0; $i < count( $wgDiscordAdditionalIncomingWebhookUrls ); ++$i ) {
-					self::sendHttpRequest( $wgDiscordAdditionalIncomingWebhookUrls[$i], $post );
-				}
-			}
-		} else {
-			// Call the Discord API through cURL (default way). Note that you will need to have cURL enabled for this to work.
-			self::sendCurlRequest( $wgDiscordIncomingWebhookUrl, $post );
-			if ( $wgDiscordAdditionalIncomingWebhookUrls && is_array( $wgDiscordAdditionalIncomingWebhookUrls ) ) {
-				for ( $i = 0; $i < count( $wgDiscordAdditionalIncomingWebhookUrls ); ++$i ) {
-					self::sendCurlRequest( $wgDiscordAdditionalIncomingWebhookUrls[$i], $post );
-				}
-			}
-		}
+		return $post;
 	}
 
 	/** */

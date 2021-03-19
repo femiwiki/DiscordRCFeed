@@ -64,6 +64,7 @@
     "DiscordAvatarUrl": ""
   },
   "TestAutoloadNamespaces": {
+    "MediaWiki\\Extension\\DiscordNotifications\\Tests\\Integration\\": "tests/phpunit/integration/",
     "MediaWiki\\Extension\\DiscordNotifications\\Tests\\Unit\\": "tests/phpunit/unit/"
   },
   "manifest_version": 1

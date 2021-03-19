@@ -30,15 +30,4 @@ class DiscordNotificationsCoreTest extends MediaWikiUnitTestCase {
 			$this->wrapper->parseurl( 'https://example.com/wiki/title=Foo (bar)' )
 		);
 	}
-
-	/**
-	 * @covers \DiscordNotificationsCore::getDiscordUserText
-	 */
-	public function testGetDiscordUserText() {
-		$w = TestingAccessWrapper::newFromClass( DiscordNotificationsCore::class );
-		$this->assertSame(
-			'<Foo|Foo>',
-			$w->getDiscordUserText( 'Foo' )
-		);
-	}
 }
