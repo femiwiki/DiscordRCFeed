@@ -9,7 +9,7 @@
     "MediaWiki": ">= 1.35.0"
   },
   "AutoloadClasses": {
-    "DiscordNotificationsCore": "DiscordNotificationsCore.php"
+    "DiscordNotificationsCore": "includes/DiscordNotificationsCore.php"
   },
   "MessagesDirs": {
     "DiscordNotifications": ["i18n"]
