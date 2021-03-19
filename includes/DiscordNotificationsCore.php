@@ -240,9 +240,6 @@ class DiscordNotificationsCore {
 	public static function onDiscordNewUserAccount( $user, $byEmail ) {
 		global $wgDiscordNotificationNewUser, $wgDiscordShowNewUserFullName;
 
-		// Disable reporting of new user email and IP address
-		$showNewUserEmail = false;
-		$showNewUserIP = false;
 		if ( !$wgDiscordNotificationNewUser ) return;
 
 		$email = "";
@@ -262,11 +259,9 @@ class DiscordNotificationsCore {
 		}
 
 		$messageExtra = "";
-		if ( $showNewUserEmail || $wgDiscordShowNewUserFullName || $showNewUserIP ) {
+		if ( $wgDiscordShowNewUserFullName ) {
 			$messageExtra = "(";
-			if ( $showNewUserEmail ) $messageExtra .= $email . ", ";
-			if ( $wgDiscordShowNewUserFullName ) $messageExtra .= $realname . ", ";
-			if ( $showNewUserIP ) $messageExtra .= $ipaddress . ", ";
+			$messageExtra .= $realname . ", ";
 			$messageExtra = substr( $messageExtra, 0, -2 ); // Remove trailing ,
 			$messageExtra .= ")";
 		}
@@ -448,7 +443,7 @@ class DiscordNotificationsCore {
 
 	/**
 	 * Sends the message into Discord room.
-	 * @param Message $message to be sent.
+	 * @param string $message to be sent.
 	 * @see https://discordapp.com/developers/docs/resources/webhook#execute-webhook
 	 */
 	public static function pushDiscordNotify( $message, $user, $action ) {
@@ -487,7 +482,7 @@ class DiscordNotificationsCore {
 
 	/** */
 	private static function makePost( $message, $user, $action ) {
-		global $wgDiscordFromName, $wgDiscordAvatarUrl, $wgSitename, $wgSitename;
+		global $wgDiscordFromName, $wgDiscordAvatarUrl, $wgSitename;
 
 		// Convert " to ' in the message to be sent as otherwise JSON formatting would break.
 		$message = str_replace( '"', "'", $message );
