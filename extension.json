@@ -1,111 +1,77 @@
 {
-	"name": "Discord Notifications",
-	"version": "1.1.3",
-	"author": "Aleksi Postari",
-	"url": "https://github.com/kulttuuri/discord_mediawiki",
-	"descriptionmsg": "discordnotifications-desc",
-	"type": "other",
-	"AutoloadClasses": {
-		"DiscordNotificationsCore": "DiscordNotificationsCore.php"
-	},
-	"MessagesDirs": {
-		"DiscordNotifications": [
-			"i18n"
-		]
-	},
-	"Hooks": {
-		"PageContentSaveComplete": [
-			[
-				"DiscordNotificationsCore::onDiscordArticleSaved"
-			]
-		],
-		"PageContentInsertComplete": [
-			[
-				"DiscordNotificationsCore::onDiscordArticleInserted"
-			]
-		],
-		"ArticleDeleteComplete": [
-			[
-				"DiscordNotificationsCore::onDiscordArticleDeleted"
-			]
-		],
-		"TitleMoveComplete": [
-			[
-				"DiscordNotificationsCore::onDiscordArticleMoved"
-			]
-		],
-		"AddNewAccount": [
-			[
-				"DiscordNotificationsCore::onDiscordNewUserAccount"
-			]
-		],
-		"BlockIpComplete": [
-			[
-				"DiscordNotificationsCore::onDiscordUserBlocked"
-			]
-		],
-		"UploadComplete": [
-			[
-				"DiscordNotificationsCore::onDiscordFileUploaded"
-			]
-		],
-		"ArticleProtectComplete": [
-			[
-				"DiscordNotificationsCore::onDiscordArticleProtected"
-			]
-		],
-		"UserGroupsChanged": [
-			[
-				"DiscordNotificationsCore::onDiscordUserGroupsChanged"
-			]
-		],
-		"APIFlowAfterExecute": [
-			[
-				"DiscordNotificationsCore::onDiscordApiFlowAfterExecute"
-			]
-		],
-		"AfterImportPage": [
-			[
-				"DiscordNotificationsCore::onDiscordAfterImportPage"
-			]
-		]
-	},
-	"config": {
-		"DiscordIncomingWebhookUrl": "",
-		"DiscordAdditionalIncomingWebhookUrls": [],
-		"DiscordFromName": "",
-		"DiscordSendMethod": "curl",
-		"DiscordIncludePageUrls": true,
-		"DiscordIncludeUserUrls": true,
-		"DiscordIgnoreMinorEdits": false,
-		"DiscordExcludeNotificationsFrom": [],
-		"DiscordExcludedPermission": "",
-		"DiscordNotificationWikiUrl": "",
-		"DiscordNotificationWikiUrlEnding": "index.php?title=",
-		"DiscordNotificationWikiUrlEndingUserRights": "Special%3AUserRights&user=",
-		"DiscordNotificationWikiUrlEndingBlockUser": "Special:Block/",
-		"DiscordNotificationWikiUrlEndingUserPage": "User:",
-		"DiscordNotificationWikiUrlEndingUserTalkPage": "User_talk:",
-		"DiscordNotificationWikiUrlEndingUserContributions": "Special:Contributions/",
-		"DiscordNotificationWikiUrlEndingEditArticle": "action=edit",
-		"DiscordNotificationWikiUrlEndingDeleteArticle": "action=delete",
-		"DiscordNotificationWikiUrlEndingHistory": "action=history",
-		"DiscordNotificationWikiUrlEndingDiff": "diff=prev&oldid=",
-		"DiscordNotificationNewUser": true,
-		"DiscordNotificationBlockedUser": true,
-		"DiscordNotificationAddedArticle": true,
-		"DiscordNotificationRemovedArticle": true,
-		"DiscordNotificationMovedArticle": true,
-		"DiscordNotificationEditedArticle": true,
-		"DiscordNotificationFileUpload": true,
-		"DiscordNotificationProtectedArticle": true,
-		"DiscordNotificationShowSuppressed": true,
-		"DiscordNotificationUserGroupsChanged": true,
-		"DiscordNotificationFlow": true,
-		"DiscordNotificationAfterImportPage": true,
-		"DiscordIncludeDiffSize": true,
-		"DiscordShowNewUserFullName": true,
-		"DiscordAvatarUrl": ""
-	},
-	"manifest_version": 1
+  "name": "Discord Notifications",
+  "version": "1.1.3",
+  "author": "Aleksi Postari",
+  "url": "https://github.com/kulttuuri/discord_mediawiki",
+  "descriptionmsg": "discordnotifications-desc",
+  "type": "other",
+  "AutoloadClasses": {
+    "DiscordNotificationsCore": "DiscordNotificationsCore.php"
+  },
+  "MessagesDirs": {
+    "DiscordNotifications": ["i18n"]
+  },
+  "Hooks": {
+    "PageContentSaveComplete": [
+      ["DiscordNotificationsCore::onDiscordArticleSaved"]
+    ],
+    "PageContentInsertComplete": [
+      ["DiscordNotificationsCore::onDiscordArticleInserted"]
+    ],
+    "ArticleDeleteComplete": [
+      ["DiscordNotificationsCore::onDiscordArticleDeleted"]
+    ],
+    "TitleMoveComplete": [["DiscordNotificationsCore::onDiscordArticleMoved"]],
+    "AddNewAccount": [["DiscordNotificationsCore::onDiscordNewUserAccount"]],
+    "BlockIpComplete": [["DiscordNotificationsCore::onDiscordUserBlocked"]],
+    "UploadComplete": [["DiscordNotificationsCore::onDiscordFileUploaded"]],
+    "ArticleProtectComplete": [
+      ["DiscordNotificationsCore::onDiscordArticleProtected"]
+    ],
+    "UserGroupsChanged": [
+      ["DiscordNotificationsCore::onDiscordUserGroupsChanged"]
+    ],
+    "APIFlowAfterExecute": [
+      ["DiscordNotificationsCore::onDiscordApiFlowAfterExecute"]
+    ],
+    "AfterImportPage": [["DiscordNotificationsCore::onDiscordAfterImportPage"]]
+  },
+  "config": {
+    "DiscordIncomingWebhookUrl": "",
+    "DiscordAdditionalIncomingWebhookUrls": [],
+    "DiscordFromName": "",
+    "DiscordSendMethod": "curl",
+    "DiscordIncludePageUrls": true,
+    "DiscordIncludeUserUrls": true,
+    "DiscordIgnoreMinorEdits": false,
+    "DiscordExcludeNotificationsFrom": [],
+    "DiscordExcludedPermission": "",
+    "DiscordNotificationWikiUrl": "",
+    "DiscordNotificationWikiUrlEnding": "index.php?title=",
+    "DiscordNotificationWikiUrlEndingUserRights": "Special%3AUserRights&user=",
+    "DiscordNotificationWikiUrlEndingBlockUser": "Special:Block/",
+    "DiscordNotificationWikiUrlEndingUserPage": "User:",
+    "DiscordNotificationWikiUrlEndingUserTalkPage": "User_talk:",
+    "DiscordNotificationWikiUrlEndingUserContributions": "Special:Contributions/",
+    "DiscordNotificationWikiUrlEndingEditArticle": "action=edit",
+    "DiscordNotificationWikiUrlEndingDeleteArticle": "action=delete",
+    "DiscordNotificationWikiUrlEndingHistory": "action=history",
+    "DiscordNotificationWikiUrlEndingDiff": "diff=prev&oldid=",
+    "DiscordNotificationNewUser": true,
+    "DiscordNotificationBlockedUser": true,
+    "DiscordNotificationAddedArticle": true,
+    "DiscordNotificationRemovedArticle": true,
+    "DiscordNotificationMovedArticle": true,
+    "DiscordNotificationEditedArticle": true,
+    "DiscordNotificationFileUpload": true,
+    "DiscordNotificationProtectedArticle": true,
+    "DiscordNotificationShowSuppressed": true,
+    "DiscordNotificationUserGroupsChanged": true,
+    "DiscordNotificationFlow": true,
+    "DiscordNotificationAfterImportPage": true,
+    "DiscordIncludeDiffSize": true,
+    "DiscordShowNewUserFullName": true,
+    "DiscordAvatarUrl": ""
+  },
+  "manifest_version": 1
 }
