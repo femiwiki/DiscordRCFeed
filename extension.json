@@ -5,6 +5,9 @@
   "url": "https://github.com/kulttuuri/discord_mediawiki",
   "descriptionmsg": "discordnotifications-desc",
   "type": "other",
+  "requires": {
+    "MediaWiki": ">= 1.35.0"
+  },
   "AutoloadClasses": {
     "DiscordNotificationsCore": "DiscordNotificationsCore.php"
   },
@@ -12,29 +15,17 @@
     "DiscordNotifications": ["i18n"]
   },
   "Hooks": {
-    "PageContentSaveComplete": [
-      ["DiscordNotificationsCore::onDiscordArticleSaved"]
-    ],
-    "PageContentInsertComplete": [
-      ["DiscordNotificationsCore::onDiscordArticleInserted"]
-    ],
-    "ArticleDeleteComplete": [
-      ["DiscordNotificationsCore::onDiscordArticleDeleted"]
-    ],
-    "TitleMoveComplete": [["DiscordNotificationsCore::onDiscordArticleMoved"]],
-    "AddNewAccount": [["DiscordNotificationsCore::onDiscordNewUserAccount"]],
-    "BlockIpComplete": [["DiscordNotificationsCore::onDiscordUserBlocked"]],
-    "UploadComplete": [["DiscordNotificationsCore::onDiscordFileUploaded"]],
-    "ArticleProtectComplete": [
-      ["DiscordNotificationsCore::onDiscordArticleProtected"]
-    ],
-    "UserGroupsChanged": [
-      ["DiscordNotificationsCore::onDiscordUserGroupsChanged"]
-    ],
-    "APIFlowAfterExecute": [
-      ["DiscordNotificationsCore::onDiscordApiFlowAfterExecute"]
-    ],
-    "AfterImportPage": [["DiscordNotificationsCore::onDiscordAfterImportPage"]]
+    "PageContentSaveComplete": "DiscordNotificationsCore::onDiscordArticleSaved",
+    "PageContentInsertComplete": "DiscordNotificationsCore::onDiscordArticleInserted",
+    "ArticleDeleteComplete": "DiscordNotificationsCore::onDiscordArticleDeleted",
+    "TitleMoveComplete": "DiscordNotificationsCore::onDiscordArticleMoved",
+    "AddNewAccount": "DiscordNotificationsCore::onDiscordNewUserAccount",
+    "BlockIpComplete": "DiscordNotificationsCore::onDiscordUserBlocked",
+    "UploadComplete": "DiscordNotificationsCore::onDiscordFileUploaded",
+    "ArticleProtectComplete": "DiscordNotificationsCore::onDiscordArticleProtected",
+    "UserGroupsChanged": "DiscordNotificationsCore::onDiscordUserGroupsChanged",
+    "APIFlowAfterExecute": "DiscordNotificationsCore::onDiscordApiFlowAfterExecute",
+    "AfterImportPage": "DiscordNotificationsCore::onDiscordAfterImportPage"
   },
   "config": {
     "DiscordIncomingWebhookUrl": "",
