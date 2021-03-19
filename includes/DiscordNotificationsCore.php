@@ -10,9 +10,13 @@ class DiscordNotificationsCore {
 	 * Replaces some special characters on urls. This has to be done as Discord webhook api does not accept urlencoded text.
 	 */
 	private static function parseurl( $url ) {
-		$url = str_replace( " ", "%20", $url );
-		$url = str_replace( "(", "%28", $url );
-		$url = str_replace( ")", "%29", $url );
+		foreach ( [
+			" " => "%20",
+			"(" => "%28",
+			")" => "%29"
+		] as $ch => $rep ) {
+			$url = str_replace( $ch, $rep, $url );
+		}
 		return $url;
 	}
 
