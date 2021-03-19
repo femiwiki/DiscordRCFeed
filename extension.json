@@ -8,23 +8,29 @@
   "requires": {
     "MediaWiki": ">= 1.35.0"
   },
-  "AutoloadClasses": {
-    "DiscordNotificationsCore": "includes/DiscordNotificationsCore.php"
+  "AutoloadNamespaces": {
+    "MediaWiki\\Extension\\DiscordNotifications\\": "includes/"
   },
   "MessagesDirs": {
     "DiscordNotifications": ["i18n"]
   },
   "Hooks": {
-    "PageSaveComplete": "DiscordNotificationsCore::onPageSaveComplete",
-    "ArticleDeleteComplete": "DiscordNotificationsCore::onArticleDeleteComplete",
-    "TitleMoveComplete": "DiscordNotificationsCore::onTitleMoveComplete",
-    "AddNewAccount": "DiscordNotificationsCore::onAddNewAccount",
-    "BlockIpComplete": "DiscordNotificationsCore::onBlockIpComplete",
-    "UploadComplete": "DiscordNotificationsCore::onUploadComplete",
-    "ArticleProtectComplete": "DiscordNotificationsCore::onArticleProtectComplete",
-    "UserGroupsChanged": "DiscordNotificationsCore::onUserGroupsChanged",
-    "APIFlowAfterExecute": "DiscordNotificationsCore::onAPIFlowAfterExecute",
-    "AfterImportPage": "DiscordNotificationsCore::onAfterImportPage"
+    "PageSaveComplete": "main",
+    "ArticleDeleteComplete": "main",
+    "TitleMoveComplete": "main",
+    "AddNewAccount": "main",
+    "BlockIpComplete": "main",
+    "UploadComplete": "main",
+    "ArticleProtectComplete": "main",
+    "UserGroupsChanged": "main",
+    "APIFlowAfterExecute": "MediaWiki\\Extension\\DiscordNotifications\\Hooks::onAPIFlowAfterExecute",
+    "AfterImportPage": "main"
+  },
+  "HookHandlers": {
+    "main": {
+      "class": "MediaWiki\\Extension\\DiscordNotifications\\Hooks",
+      "services": ["MainConfig"]
+    }
   },
   "config": {
     "DiscordIncomingWebhookUrl": "",
@@ -40,12 +46,7 @@
     "DiscordNotificationWikiUrlEnding": "index.php?title=",
     "DiscordNotificationWikiUrlEndingUserRights": "Special%3AUserRights&user=",
     "DiscordNotificationWikiUrlEndingBlockUser": "Special:Block/",
-    "DiscordNotificationWikiUrlEndingUserPage": "User:",
-    "DiscordNotificationWikiUrlEndingUserTalkPage": "User_talk:",
     "DiscordNotificationWikiUrlEndingUserContributions": "Special:Contributions/",
-    "DiscordNotificationWikiUrlEndingEditArticle": "action=edit",
-    "DiscordNotificationWikiUrlEndingDeleteArticle": "action=delete",
-    "DiscordNotificationWikiUrlEndingHistory": "action=history",
     "DiscordNotificationWikiUrlEndingDiff": "diff=prev&oldid=",
     "DiscordNotificationNewUser": true,
     "DiscordNotificationBlockedUser": true,

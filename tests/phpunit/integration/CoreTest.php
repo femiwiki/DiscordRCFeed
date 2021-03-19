@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\DiscordNotifications\Tests\Integration;
 
-use DiscordNotificationsCore;
+use MediaWiki\Extension\DiscordNotifications\Core;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\TestingAccessWrapper;
 
@@ -10,16 +10,16 @@ use Wikimedia\TestingAccessWrapper;
  * @group DiscordNotifications
  * @group Database
  *
- * @covers \DiscordNotificationsCore
+ * @covers \MediaWiki\Extension\DiscordNotifications\Core
  */
-class DiscordNotificationsCoreTest extends MediaWikiIntegrationTestCase {
+class CoreTest extends MediaWikiIntegrationTestCase {
 
 	/** @var TestingAccessWrapper */
 	private $wrapper;
 
 	protected function setUp() : void {
 		parent::setUp();
-		$this->wrapper = TestingAccessWrapper::newFromClass( DiscordNotificationsCore::class );
+		$this->wrapper = TestingAccessWrapper::newFromClass( Core::class );
 	}
 
 	public static function providerDiscordUserText() {
@@ -57,10 +57,9 @@ class DiscordNotificationsCoreTest extends MediaWikiIntegrationTestCase {
 			],
 			[
 				[
-					'DiscordNotificationWikiUrlEndingUserPage' => 'Usuario:',
+					'LanguageCode' => 'en',
 					'DiscordNotificationWikiUrlEndingBlockUser' => 'Especial:Bloquear/',
 					'DiscordNotificationWikiUrlEndingUserRights' => 'Especial%3APermisosUsuarios&user=',
-					'DiscordNotificationWikiUrlEndingUserTalkPage' => 'Usuario_discusión:',
 					'DiscordNotificationWikiUrlEndingUserContributions' => 'Especial:Contribuciones/'
 				],
 				'Foo',
@@ -75,7 +74,7 @@ class DiscordNotificationsCoreTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerDiscordUserText
-	 * @covers \DiscordNotificationsCore::getDiscordUserText
+	 * @covers \MediaWiki\Extension\DiscordNotifications\Core::getDiscordUserText
 	 */
 	public function testGetDiscordUserText( array $globals, string $name, string $expected, string $message = '' ) {
 		foreach ( $globals as $key => $val ) {
@@ -89,8 +88,8 @@ class DiscordNotificationsCoreTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \DiscordNotificationsCore::getDiscordArticleText
-	 * @covers \DiscordNotificationsCore::getDiscordTitleText
+	 * @covers \MediaWiki\Extension\DiscordNotifications\Core::getDiscordArticleText
+	 * @covers \MediaWiki\Extension\DiscordNotifications\Core::getDiscordTitleText
 	 */
 	public function testGetDiscordArticleText() {
 		$w = $this->wrapper;
@@ -100,22 +99,22 @@ class DiscordNotificationsCoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame(
 			'<index.php?title=Foo|Foo> (<index.php?title=Foo&action=edit|edit> | ' .
 			'<index.php?title=Foo&action=delete|delete> | <index.php?title=Foo&action=history|history> | ' .
-			'<index.php?title=Foo&diff=prev&oldid=2|diff>)' . "\n",
-			$w->getDiscordArticleText( $page, true )
+			'<index.php?title=Foo&diff=prev&oldid=2|diff>)',
+			$w->getDiscordArticleText( $page, 2 )
 		);
 		$expected = '<index.php?title=Foo|Foo> (<index.php?title=Foo&action=edit|edit> | ' .
 			'<index.php?title=Foo&action=delete|delete> | <index.php?title=Foo&action=history|history>)';
-		$this->assertSame( $expected . "\n", $w->getDiscordArticleText( $page, false ) );
+		$this->assertSame( $expected, $w->getDiscordArticleText( $page ) );
 		$this->assertSame( $expected, $w->getDiscordTitleText( $title ) );
 
 		$this->setMwGlobals( 'wgDiscordIncludePageUrls', false );
 		$expected = '<index.php?title=Foo|Foo>';
-		$this->assertSame( $expected, $w->getDiscordArticleText( $page, false ) );
+		$this->assertSame( $expected, $w->getDiscordArticleText( $page ) );
 		$this->assertSame( $expected, $w->getDiscordTitleText( $title ) );
 		$expected = '<index.php?title=Foo%26bar|Foo&bar>';
 		$page = $this->getExistingTestPage( 'foo&bar' );
 		$title = $page->getTitle();
-		$this->assertSame( $expected, $w->getDiscordArticleText( $page, false ) );
+		$this->assertSame( $expected, $w->getDiscordArticleText( $page ) );
 		$this->assertSame( $expected, $w->getDiscordTitleText( $title ) );
 	}
 
@@ -132,7 +131,7 @@ class DiscordNotificationsCoreTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerTitleIsExcluded
-	 * @covers \DiscordNotificationsCore::titleIsExcluded
+	 * @covers \MediaWiki\Extension\DiscordNotifications\Core::titleIsExcluded
 	 */
 	public function testTitleIsExcluded( $excluded, string $titleText, bool $expected ) {
 		$this->setMwGlobals( 'wgDiscordExcludeNotificationsFrom', $excluded );
@@ -154,18 +153,17 @@ class DiscordNotificationsCoreTest extends MediaWikiIntegrationTestCase {
 		$user = $this->getTestUser()->getUser();
 		$arbitrary = 'test' . time() . rand();
 		$this->wrapper->pushDiscordNotify( $arbitrary, $user, 'article_saved' );
-		$this->assertSame( $expected, DiscordNotificationsCore::$lastMessage === $arbitrary );
+		$this->assertSame( $expected, Core::$lastMessage === $arbitrary );
 	}
 
 	/**
-	 * @covers \DiscordNotificationsCore::makePost
+	 * @covers \MediaWiki\Extension\DiscordNotifications\Core::makePost
 	 */
 	public function testMakePost() {
 		$this->assertSame(
 			'{"embeds": [{ "color" : "2993970" ,"description" : "message"}], "username": "TestWiki"}',
 			$this->wrapper->makePost(
 				'message',
-				$this->getTestUser(),
 				'article_saved'
 			)
 		);
@@ -175,7 +173,6 @@ class DiscordNotificationsCoreTest extends MediaWikiIntegrationTestCase {
 			'{"embeds": [{ "color" : "2993970" ,"description" : "message"}], "username": "FooWiki"}',
 			$this->wrapper->makePost(
 				'message',
-				$this->getTestUser(),
 				'article_saved'
 			)
 		);
@@ -185,7 +182,6 @@ class DiscordNotificationsCoreTest extends MediaWikiIntegrationTestCase {
 			'{"embeds": [{ "color" : "2993970" ,"description" : "message"}], "username": "DummyBot"}',
 			$this->wrapper->makePost(
 				'message',
-				$this->getTestUser(),
 				'article_saved'
 			)
 		);
@@ -203,8 +199,7 @@ class DiscordNotificationsCoreTest extends MediaWikiIntegrationTestCase {
 		'<index.php?title=Edit%20Test|Edit Test> ' .
 		'(<index.php?title=Edit%20Test&action=edit|edit> | <index.php?title=Edit%20Test&action=delete|delete> | ' .
 		'<index.php?title=Edit%20Test&action=history|history>)' .
-		"\n" .
 		'  (5 bytes)';
-		$this->assertSame( $expected, DiscordNotificationsCore::$lastMessage );
+		$this->assertSame( $expected, Core::$lastMessage );
 	}
 }
