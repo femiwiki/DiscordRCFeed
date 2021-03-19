@@ -61,7 +61,7 @@
     "DiscordNotificationFlow": true,
     "DiscordNotificationAfterImportPage": true,
     "DiscordIncludeDiffSize": true,
-    "DiscordShowNewUserFullName": true,
+    "DiscordShowNewUserFullName": false,
     "DiscordAvatarUrl": ""
   },
   "manifest_version": 1
