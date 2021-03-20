@@ -63,20 +63,33 @@ class Core {
 		} elseif ( is_string( $hooks ) ) {
 			$hooks = [ $hooks ];
 		}
-		// Use file_get_contents to send the data. Note that you will need to have allow_url_fopen
-		// enabled in php.ini for this to work.
-		if ( $wgDiscordNotificationsSendMethod == 'file_get_contents' ) {
-			foreach ( $hooks as $hook ) {
+
+		foreach ( $hooks as $hook ) {
+			if ( $wgDiscordNotificationsSendMethod == 'file_get_contents' ) {
+				// Use file_get_contents to send the data. Note that you will need to have allow_url_fopen
+				// enabled in php.ini for this to work.
 				self::sendHttpRequest( $hook, $post );
-			}
-		} else {
-			// Call the Discord API through cURL (default way). Note that you will need to have cURL
-			// enabled for this to work.
-			foreach ( $hooks as $hook ) {
+			} else {
+				// Call the Discord API through cURL (default way). Note that you will need to have cURL
+				// enabled for this to work.
 				self::sendCurlRequest( $hook, $post );
 			}
 		}
 	}
+
+	private const ACTION_COLOR_MAP = [
+		'article_saved'       => 2993970,
+		'import_complete'     => 2993970,
+		'user_groups_changed' => 2993970,
+		'article_inserted'    => 3580392,
+		'article_deleted'     => 15217973,
+		'article_moved'       => 14038504,
+		'article_protected'   => 3493864,
+		'new_user_account'    => 3580392,
+		'file_uploaded'       => 3580392,
+		'user_blocked'        => 15217973,
+		'flow'                => 2993970,
+	];
 
 	/**
 	 * @param string $message to be sent.
@@ -87,43 +100,8 @@ class Core {
 		global $wgDiscordNotificationsRequestOverride, $wgSitename;
 
 		$colour = 11777212;
-		switch ( $action ) {
-			case 'article_saved':
-				$colour = 2993970;
-				break;
-			case 'import_complete':
-				$colour = 2993970;
-				break;
-			case 'user_groups_changed':
-				$colour = 2993970;
-				break;
-			case 'article_inserted':
-				$colour = 3580392;
-				break;
-			case 'article_deleted':
-				$colour = 15217973;
-				break;
-			case 'article_moved':
-				$colour = 14038504;
-				break;
-			case 'article_protected':
-				$colour = 3493864;
-				break;
-			case 'new_user_account':
-				$colour = 3580392;
-				break;
-			case 'file_uploaded':
-				$colour = 3580392;
-				break;
-			case 'user_blocked':
-				$colour = 15217973;
-				break;
-			case 'flow':
-				$colour = 2993970;
-				break;
-			default:
-				$colour = 11777212;
-			break;
+		if ( isset( self::ACTION_COLOR_MAP[$action] ) ) {
+			$colour = self::ACTION_COLOR_MAP[$action];
 		}
 
 		$post = [
@@ -145,25 +123,28 @@ class Core {
 	 */
 	private static function sendCurlRequest( $url, $postData ) {
 		$h = curl_init();
-		curl_setopt( $h, CURLOPT_URL, $url );
-		curl_setopt( $h, CURLOPT_POST, 1 );
-		curl_setopt( $h, CURLOPT_POSTFIELDS, $postData );
-		curl_setopt( $h, CURLOPT_RETURNTRANSFER, true );
-		// Set 10 second timeout to connection
-		curl_setopt( $h, CURLOPT_CONNECTTIMEOUT, 10 );
-		// Set global 10 second timeout to handle all data
-		curl_setopt( $h, CURLOPT_TIMEOUT, 10 );
-		// Set Content-Type to application/json
-		curl_setopt( $h, CURLOPT_HTTPHEADER, [
-			'Content-Type: application/json',
-			'Content-Length: ' . strlen( $postData )
-			]
-		);
-		// Commented out lines below. Using default curl settings for host and peer verification.
-		//curl_setopt ($h, CURLOPT_SSL_VERIFYHOST, 0);
-		//curl_setopt ($h, CURLOPT_SSL_VERIFYPEER, 0);
+		foreach ( [
+			CURLOPT_URL => $url,
+			CURLOPT_POST => 1,
+			CURLOPT_POSTFIELDS => $postData,
+			CURLOPT_RETURNTRANSFER => true,
+			// Set 10 second timeout to connection
+			CURLOPT_CONNECTTIMEOUT => 10,
+			// Set global 10 second timeout to handle all data
+			CURLOPT_TIMEOUT => 10,
+			// Set Content-Type to application/json
+			CURLOPT_HTTPHEADER => [
+				'Content-Type: application/json',
+				'Content-Length: ' . strlen( $postData )
+			],
+			// Commented out lines below. Using default curl settings for host and peer verification.
+			// CURLOPT_SSL_VERIFYHOST => 0,
+			// CURLOPT_SSL_VERIFYPEER => 0,
+		] as $option => $value ) {
+			curl_setopt( $h, $option, $value );
+		}
 		// ... And execute the curl script!
-		$curl_output = curl_exec( $h );
+		curl_exec( $h );
 		curl_close( $h );
 	}
 
@@ -180,7 +161,7 @@ class Core {
 			],
 		];
 		$context = stream_context_create( $extra );
-		$result = file_get_contents( $url, false, $context );
+		file_get_contents( $url, false, $context );
 	}
 
 	/**

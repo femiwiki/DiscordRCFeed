@@ -38,8 +38,41 @@
     "DiscordNotificationsShowSuppressed": { "value": true },
     "DiscordNotificationsDisplay": {
       "value": {
-        "page-tools": true,
-        "user-tools": true,
+        "user-tools": [
+          {
+            "target": "special",
+            "special": "Block",
+            "msg": "discordnotifications-block"
+          },
+          {
+            "target": "special",
+            "special": "Userrights",
+            "msg": "discordnotifications-groups"
+          },
+          {
+            "target": "talk",
+            "msg": "discordnotifications-talk"
+          },
+          {
+            "target": "special",
+            "special": "Contributions",
+            "msg": "discordnotifications-contribs"
+          }
+        ],
+        "page-tools": [
+          {
+            "query": "action=edit",
+            "msg": "discordnotifications-edit"
+          },
+          {
+            "query": "action=delete",
+            "msg": "discordnotifications-delete"
+          },
+          {
+            "query": "action=history",
+            "msg": "discordnotifications-history"
+          }
+        ],
         "diff": true,
         "full-name": false
       }

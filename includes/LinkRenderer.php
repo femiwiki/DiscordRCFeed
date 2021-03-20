@@ -18,9 +18,9 @@ class LinkRenderer {
 		foreach ( [
 			" " => "%20",
 			"(" => "%28",
-			")" => "%29"
-		] as $ch => $rep ) {
-			$url = str_replace( $ch, $rep, $url );
+			")" => "%29",
+		] as $search => $replace ) {
+			$url = str_replace( $search, $replace, $url );
 		}
 		return $url;
 	}
@@ -43,7 +43,8 @@ class LinkRenderer {
 		if ( is_string( $tools ) ) {
 			$tools = [ $tools ];
 		}
-		return '(' . implode( ' | ', $tools ) . ')';
+		$tools = implode( ' | ', $tools );
+		return "($tools)";
 	}
 
 	/**
@@ -67,22 +68,24 @@ class LinkRenderer {
 		global $wgDiscordNotificationsDisplay;
 
 		$name = $user->getName();
-		$userUrl = str_replace( "&", "%26", $name );
+		$userTools = $wgDiscordNotificationsDisplay['user-tools'];
 
-		if ( $wgDiscordNotificationsDisplay['user-tools'] && $user instanceof User ) {
-			$tools = self::MakeNiceTools( [
-				self::makeLink( SpecialPage::getTitleFor( 'Block', $name )->getFullURL(),
-					Core::msg( 'discordnotifications-block' ) ),
-				self::makeLink( SpecialPage::getTitleFor( 'Userrights', $name )->getFullURL(),
-					Core::msg( 'discordnotifications-groups' ) ),
-				self::makeLink( $user->getTalkPage()->getFullURL(), Core::msg( 'discordnotifications-talk' ) ),
-				self::makeLink( SpecialPage::getTitleFor( 'Contributions', $name )->getFullURL(),
-					Core::msg( 'discordnotifications-contribs' ) )
-			] );
-			return self::makeLink( $user->getUserPage()->getFullURL(), $name ) . " $tools";
-		} else {
-			return self::makeLink( $user->getUserPage()->getFullURL(), $name );
+		$rt = self::makeLink( $user->getUserPage()->getFullURL(), $name );
+		if ( $userTools && $user instanceof User ) {
+			$tools = [];
+			foreach ( $userTools as $tool ) {
+				if ( $tool['target'] == 'talk' ) {
+					$link = $user->getTalkPage()->getFullURL();
+				} else {
+					$link = SpecialPage::getTitleFor( $tool['special'], $name )->getFullURL();
+				}
+				$text = isset( $tool['msg'] ) ? Core::msg( $tool['msg'] ) : $text = $tool['text'];
+				$tools[] = self::makeLink( $link, $text );
+			}
+			$tools = self::MakeNiceTools( $tools );
+			$rt .= " $tools";
 		}
+		return $rt;
 	}
 
 	/**
@@ -94,29 +97,25 @@ class LinkRenderer {
 	 */
 	public static function getDiscordArticleText( $title, $newId = false ) {
 		global $wgDiscordNotificationsDisplay;
+		$pageTools = $wgDiscordNotificationsDisplay['page-tools'];
 
 		if ( $title instanceof WikiPage ) {
 			$title = $title->getTitle();
 		}
-		$fullText = $title->getFullText();
-		$titleUrl = str_replace( "&", "%26", $fullText );
+		$link = self::makeLink( $title->getFullURL(), $title->getFullText() );
 		if ( $wgDiscordNotificationsDisplay['page-tools'] ) {
-			$tools = [
-				self::makeLink( $title->getFullURL( 'action=edit' ),
-					Core::msg( 'discordnotifications-edit' ) ),
-				self::makeLink( $title->getFullURL( 'action=delete' ),
-					Core::msg( 'discordnotifications-delete' ) ),
-				self::makeLink( $title->getFullURL( 'action=history' ),
-					Core::msg( 'discordnotifications-history' ) )
-			];
+			$tools = [];
+			foreach ( $pageTools as $tool ) {
+				$tools[] = self::makeLink( $title->getFullURL( $tool['query'] ),
+					Core::msg( $tool['msg'] ) );
+			}
 			if ( $newId ) {
 				$tools[] = self::makeLink( $title->getFullURL( "diff=prev&oldid=$newId" ),
 					Core::msg( 'discordnotifications-diff' ) );
 			}
 			$tools = self::makeNiceTools( $tools );
-			return self::makeLink( $title->getFullURL(), $fullText ) . " $tools";
-		} else {
-			return self::makeLink( $title->getFullURL(), $fullText );
+			$link .= " $tools";
 		}
+		return $link;
 	}
 }

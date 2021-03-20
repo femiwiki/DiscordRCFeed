@@ -36,6 +36,21 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 			],
 			[
 				[
+					'wgDiscordNotificationsDisplay' => array_merge( $d, [ 'user-tools' => [
+						[
+							'target' => 'special',
+							'special' => 'Block',
+							'text' => 'IP Block'
+						]
+					] ] ),
+					'wgServer' => 'https://foo.bar'
+				],
+				'Foo',
+				// phpcs:ignore Generic.Files.LineLength.TooLong
+				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)User:Foo\) \(\[IP Block\]\(https://foo\.bar/index\.php(\?title=|/)Special:Block/Foo\)\)~'
+			],
+			[
+				[
 					'wgLanguageCode' => 'es',
 					'wgServer' => 'https://foo.bar'
 				],

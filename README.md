@@ -115,18 +115,32 @@ $wgDiscordNotificationsExcludeList = [
 
 ### Change Display Options for Notification
 
-| Option         | Default value | Description                                                                                                        |
-| -------------- | ------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `'page-tools'` | `true`        | If this is true, pages will get additional links in the notification message (edit \| delete \| history).          |
-| `'user-tools'` | `true`        | If this is true, users will get additional links in the notification message (block \| groups \| talk \| contribs) |
-| `'diff'`       | `true`        | show size of the edit                                                                                              |
-| `'full-name'`  | `false`       | If this is true, newly created user full name is added to notification.                                            |
-
-Example:
+| Option         | Default value | Description                                                                                                             |
+| -------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `'user-tools'` | array         | If this is false, users will not get additional links in the notification message (block \| groups \| talk \| contribs) |
+| `'page-tools'` | array         | If this is false, pages will not get additional links in the notification message (edit \| delete \| history).          |
+| `'diff'`       | `true`        | show size of the edit                                                                                                   |
+| `'full-name'`  | `false`       | If this is true, newly created user full name is added to notification.                                                 |
 
 ```php
+// Remove page tools
 $wgDiscordNotificationsDisplay = [
   'page-tools' => false
+];
+
+// Override user tools
+$wgDiscordNotificationsDisplay = [
+  'user-tools' => [
+    [
+      'target' => 'special',
+      'special' => 'Block',
+      'text' => 'IP Block'
+    ],
+    [
+      'target' => 'talk',
+      'text' => 'Discussion'
+    ],
+  ];
 ];
 ```
 
