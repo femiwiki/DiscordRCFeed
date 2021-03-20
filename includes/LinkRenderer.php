@@ -2,6 +2,7 @@
 namespace MediaWiki\Extension\DiscordNotifications;
 
 use MediaWiki\User\UserIdentity;
+use SpecialPage;
 use Title;
 use User;
 use WikiPage;
@@ -52,22 +53,19 @@ class LinkRenderer {
 	 * @return string
 	 */
 	public static function getDiscordUserText( $user ) {
-		global $wgDiscordNotificationWikiUrl, $wgDiscordNotificationWikiUrlEnding,
-			$wgDiscordNotificationWikiUrlEndingBlockUser, $wgDiscordNotificationWikiUrlEndingUserRights,
-			$wgDiscordNotificationWikiUrlEndingUserContributions,
-			$wgDiscordIncludeUserUrls;
+		global $wgDiscordIncludeUserUrls;
 
 		$name = $user->getName();
 		$userUrl = str_replace( "&", "%26", $name );
-		$prefix = $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding;
+
 		if ( $wgDiscordIncludeUserUrls && $user instanceof User ) {
 			$tools = self::MakeNiceTools( [
-				self::makeLink( $prefix . $wgDiscordNotificationWikiUrlEndingBlockUser . $userUrl,
+				self::makeLink( SpecialPage::getTitleFor( 'Block', $name )->getFullURL(),
 					Core::msg( 'discordnotifications-block' ) ),
-				self::makeLink( $prefix . $wgDiscordNotificationWikiUrlEndingUserRights . $userUrl,
+				self::makeLink( SpecialPage::getTitleFor( 'Userrights', $name )->getFullURL(),
 					Core::msg( 'discordnotifications-groups' ) ),
 				self::makeLink( $user->getTalkPage()->getFullURL(), Core::msg( 'discordnotifications-talk' ) ),
-				self::makeLink( $prefix . $wgDiscordNotificationWikiUrlEndingUserContributions . $userUrl,
+				self::makeLink( SpecialPage::getTitleFor( 'Contributions', $name )->getFullURL(),
 					Core::msg( 'discordnotifications-contribs' ) )
 			] );
 			return self::makeLink( $user->getUserPage()->getFullURL(), $name ) . " $tools";
@@ -104,7 +102,7 @@ class LinkRenderer {
 				$tools[] = self::makeLink( $title->getFullURL( "diff=prev&oldid=$newId" ),
 					Core::msg( 'discordnotifications-diff' ) );
 			}
-			$tools = self::MakeNiceTools( $tools );
+			$tools = self::makeNiceTools( $tools );
 			return self::makeLink( $title->getFullURL(), $fullText ) . " $tools";
 		} else {
 			return self::makeLink( $title->getFullURL(), $fullText );

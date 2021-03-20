@@ -44,10 +44,12 @@ class LinkRendererTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
+	 * @covers \MediaWiki\Extension\DiscordNotifications\LinkRenderer::makeNiceTools
 	 * @param string|array $tools
 	 * @param string $expected
+	 * @dataProvider providerTools
 	 */
 	public function testMakeNiceTools( $tools, $expected ) {
-		$this->assertSame( $expected, LinkRenderer::MakeNiceTools( $tools ) );
+		$this->assertSame( $expected, LinkRenderer::makeNiceTools( $tools ) );
 	}
 }

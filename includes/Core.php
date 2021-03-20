@@ -18,16 +18,12 @@ class Core {
 	 * Returns whether the given title should be excluded
 	 * @param Title $title
 	 * @return bool
+	 * @todo Check case-sensitively when $wgCapitalLinks is false. Case-sensitive only now.
 	 */
 	public static function titleIsExcluded( Title $title ) {
 		global $wgDiscordExcludeNotificationsFrom;
-		if ( is_array( $wgDiscordExcludeNotificationsFrom ) && count( $wgDiscordExcludeNotificationsFrom ) > 0 ) {
-			foreach ( $wgDiscordExcludeNotificationsFrom as &$currentExclude ) {
-				if ( strpos( $title, $currentExclude ) === 0 ) { return true;
-				}
-			}
-		}
-		return false;
+		return is_array( $wgDiscordExcludeNotificationsFrom ) &&
+			in_array( $title->getText(), $wgDiscordExcludeNotificationsFrom );
 	}
 
 	/**

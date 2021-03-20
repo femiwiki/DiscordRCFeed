@@ -7,7 +7,6 @@ use Config;
 use Exception;
 use ExtensionRegistry;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Revision\RevisionStore;
 
 class Hooks implements
 	\MediaWiki\Storage\Hook\PageSaveCompleteHook,
@@ -27,33 +26,18 @@ class Hooks implements
 	private $config;
 
 	/**
-	 * @var RevisionStore
-	 */
-	private $revisionStore;
-
-	/**
 	 * @param Config $config
-	 * @param RevisionStore $revisionStore
 	 */
 	public function __construct(
-		Config $config,
-		RevisionStore $revisionStore
+		Config $config
 	) {
 		$this->config = $config;
-		$this->revisionStore = $revisionStore;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onPageSaveComplete(
-		$wikiPage,
-		$user,
-		$summary,
-		$flags,
-		$revisionRecord,
-		$editResult
-	) {
+	public function onPageSaveComplete( $wikiPage, $user, $summary, $flags, $revisionRecord, $editResult ) {
 		global $wgDiscordNotificationEditedArticle, $wgDiscordIgnoreMinorEdits,
 			$wgDiscordNotificationAddedArticle, $wgDiscordIncludeDiffSize;
 		$isNew = (bool)( $flags & EDIT_NEW );
