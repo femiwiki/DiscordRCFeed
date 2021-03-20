@@ -47,6 +47,17 @@ class LinkRenderer {
 	}
 
 	/**
+	 * @param User|WikiPage|Title $target
+	 * @return string
+	 */
+	public static function getDiscordText( $target ) {
+		if ( $target instanceof User ) {
+			return self::getDiscordUserText( $target );
+		}
+		return self::getDiscordArticleText( $target );
+	}
+
+	/**
 	 * Gets nice HTML text for user containing the link to user page
 	 * and also links to user site, groups editing, talk and contribs pages.
 	 * @param User|UserIdentity $user

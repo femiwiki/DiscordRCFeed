@@ -33,33 +33,38 @@
     }
   },
   "config": {
-    "DiscordNotificationsIncomingWebhookUrl": "",
-    "DiscordNotificationsFromName": "",
-    "DiscordNotificationsSendMethod": "curl",
-    "DiscordIncludePageUrls": true,
-    "DiscordIncludeUserUrls": true,
-    "DiscordIgnoreMinorEdits": false,
-    "DiscordExcludeNotificationsFrom": [],
-    "DiscordExcludedPermission": "",
-    "DiscordNotificationsNewUser": true,
-    "DiscordNotificationsBlockedUser": true,
-    "DiscordNotificationsAddedArticle": true,
-    "DiscordNotificationsRemovedArticle": true,
-    "DiscordNotificationsMovedArticle": true,
-    "DiscordNotificationsEditedArticle": true,
-    "DiscordNotificationsFileUpload": true,
-    "DiscordNotificationsProtectedArticle": true,
-    "DiscordNotificationsShowSuppressed": true,
-    "DiscordNotificationsUserGroupsChanged": true,
-    "DiscordNotificationsFlow": true,
-    "DiscordNotificationsAfterImportPage": true,
-    "DiscordIncludeDiffSize": true,
-    "DiscordShowNewUserFullName": false,
-    "DiscordNotificationsAvatarUrl": ""
+    "DiscordNotificationsIncomingWebhookUrl": { "value": false },
+    "DiscordNotificationsSendMethod": { "value": "curl" },
+    "DiscordNotificationsRequestOverride": { "value": [] },
+    "DiscordIncludePageUrls": { "value": true },
+    "DiscordIncludeUserUrls": { "value": true },
+    "DiscordIncludeDiffSize": { "value": true },
+    "DiscordShowNewUserFullName": { "value": false },
+    "DiscordIgnoreMinorEdits": { "value": false },
+    "DiscordExcludeNotificationsFrom": { "value": [] },
+    "DiscordExcludedPermission": { "value": "" },
+    "DiscordNotificationsShowSuppressed": { "value": true },
+    "DiscordNotificationsEditedArticle": { "value": true },
+    "DiscordNotificationsActions": {
+      "value": {
+        "new-user": true,
+        "block-user": true,
+        "add-page": true,
+        "remove-page": true,
+        "move-page": true,
+        "edit-page": true,
+        "minor-edit-page": true,
+        "upload-file": true,
+        "protect-page": true,
+        "change-user-groups": true,
+        "flow": true,
+        "import-page": true
+      }
+    }
   },
   "TestAutoloadNamespaces": {
     "MediaWiki\\Extension\\DiscordNotifications\\Tests\\Integration\\": "tests/phpunit/integration/",
     "MediaWiki\\Extension\\DiscordNotifications\\Tests\\Unit\\": "tests/phpunit/unit/"
   },
-  "manifest_version": 1
+  "manifest_version": 2
 }

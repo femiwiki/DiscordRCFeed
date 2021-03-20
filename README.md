@@ -30,9 +30,9 @@ This is a fork of kulttuuri/DiscordNotifications and an extension for [MediaWiki
 4. Add settings listed below in your `localSettings.php`. Note that it is mandatory to set these settings for this extension to work:
 
 ```php
-require_once("$IP/extensions/DiscordNotifications/DiscordNotifications.php");
-// Required. Your Discord webhook URL. Read more from here: https://support.discordapp.com/hc/en-us/articles/228383668
-$wgDiscordNotificationsIncomingWebhookUrl = "";
+wfLoadExtension( 'DiscordNotifications' )
+// Required. Your Discord webhook URL. Read more from here: https://support.discord.com/hc/articles/228383668
+$wgDiscordNotificationsIncomingWebhookUrl = "https://discord.com/api/webhooks/xx/xxxx";
 ```
 
 5. Enjoy the notifications in your Discord room!
@@ -40,38 +40,98 @@ $wgDiscordNotificationsIncomingWebhookUrl = "";
 ## Additional options
 
 These options can be set after including your plugin in your `localSettings.php` file.
-Each configuration option is shown without the $wgDiscord prefix for brevity; replace the '…' when using.
 
-| Option                             | Default value | Documentation                                                                                                                                                                                                                                         |
-| ---------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `…NotificationsIncomingWebhookUrl` | `''`          | You can add multiple webhook urls that you want to send notifications to by adding them in this array: `["https://yourUrlOne.com", "https://yourUrlTwo..."]`                                                                                          |
-| `…NotificationsSendMethod`         | `"curl"`      | If you use VisualEditor and get unknown errors, do not have curl enabled on your server or notice other problems, the recommended solution is to change method to `"file_get_contents"`. This can be: "curl" or "file_get_contents". Default: "curl". |
-| `…NotificationsFromName`           | `''`          |                                                                                                                                                                                                                                                       |
-| `…NotificationsAvatarUrl`          | `''`          | Avatar to use for messages. If blank, uses the webhook's default avatar.                                                                                                                                                                              |
-| `…IncludePageUrls`                 | `true`        | If this is true, pages will get additional links in the notification message (edit \| delete \| history).                                                                                                                                             |
-| `…IncludeUserUrls`                 | `true`        | If this is true, users will get additional links in the notification message (block \| groups \| talk \| contribs).                                                                                                                                   |
-| `…IncludeDiffSize`                 | `true`        | By default we show size of the edit. You can hide this information with the setting below.                                                                                                                                                            |
-| `…ShowNewUserFullName`             | `false`       | If this is true, newly created user full name is added to notification.                                                                                                                                                                               |
-| `…IgnoreMinorEdits`                | `false`       | If this is true, all minor edits made to articles will not be submitted to Discord.                                                                                                                                                                   |
-| `…ExcludeNotificationsFrom`        | `[]`          | Actions (add, edit, modify) won't be notified to Discord room from articles starting with these names                                                                                                                                                 |
-| `…ExcludedPermission`              | `''`          | If this is set, actions by users with this permission won't cause alerts                                                                                                                                                                              |
-| `…NotificationsNewUser`            | `true`        | Set to false to disable notifications of those actions.                                                                                                                                                                                               |
-| `…NotificationsBlockedUser`        | `true`        | Set to false to disable notifications of those actions.                                                                                                                                                                                               |
-| `…NotificationsAddedArticle`       | `true`        | Set to false to disable notifications of those actions.                                                                                                                                                                                               |
-| `…NotificationsRemovedArticle`     | `true`        | Set to false to disable notifications of those actions.                                                                                                                                                                                               |
-| `…NotificationsMovedArticle`       | `true`        | Set to false to disable notifications of those actions.                                                                                                                                                                                               |
-| `…NotificationsEditedArticle`      | `true`        | Set to false to disable notifications of those actions.                                                                                                                                                                                               |
-| `…NotificationsFileUpload`         | `true`        | Set to false to disable notifications of those actions.                                                                                                                                                                                               |
-| `…NotificationsProtectedArticle`   | `true`        | Set to false to disable notifications of those actions.                                                                                                                                                                                               |
-| `…NotificationsShowSuppressed`     | `true`        | By default we do not show non-public article deletion notifications. You can change this using the parameter below.                                                                                                                                   |
-| `…NotificationsUserGroupsChanged`  | `true`        | Set to false to disable notifications of those actions.                                                                                                                                                                                               |
-| `…NotificationsFlow`               | `true`        | Set to false to disable notifications of those actions. (experimental)                                                                                                                                                                                |
-| `…NotificationsAfterImportPage`    | `true`        | Set to false to disable notifications of those actions.                                                                                                                                                                                               |
+- `$wgDiscordNotificationsIncomingWebhookUrl` - (Required) Your Discord webhook URL. You can add multiple webhook urls that you want to send notifications to by adding them in this array: `[ 'https://yourUrlOne.com', 'https://yourUrlTwo...' ]`. Defaults to `false`.
+- `$wgDiscordNotificationsSendMethod` - Can be `'file_get_contents'` or `'curl'`. If you use VisualEditor and get unknown errors, do not have curl enabled on your server or notice other problems, the recommended solution is to change method to `"file_get_contents"`. Defaults to `'curl'`.
+- `$wgDiscordNotificationsRequestOverride` - An array used for overriding the post data of the webhook request. See [Webhook Request Overriding](#webhook-request-overriding) below for details. Defaults to `[]`.
+- `$wgDiscordIncludePageUrls` - If this is true, pages will get additional links in the notification message (edit \| delete \| history). Defaults to `true`.
+- `$wgDiscordIncludeUserUrls` - If this is true, users will get additional links in the notification message (block \| groups \| talk \| contribs). Defaults to `true`.
+- `$wgDiscordIncludeDiffSize` - By default we show size of the edit. You can hide this information with the setting below. Defaults to `true`.
+- `$wgDiscordShowNewUserFullName` - If this is true, newly created user full name is added to notification. Defaults to `false.
+- `$wgDiscordIgnoreMinorEdits` - If this is true, all minor edits made to articles will not be submitted to Discord. Defaults to `false`.
+- `$wgDiscordExcludeNotificationsFrom` - Actions (add, edit, modify) won't be notified to Discord room from articles starting with these names Defaults to `[]`.
+- `$wgDiscordExcludedPermission` - If this is set, actions by users with this permission won't cause alerts Defaults to `''`.
+- `$wgDiscordNotificationsShowSuppressed` - By default we do not show non-public article deletion notifications. You can change this using the parameter below. Defaults to `true`.
+- `$wgDiscordNotificationsActions` - An associative array for actions to notify. See [Disabling Each Notification Individually](#disabling-each-notification-individually) below for details.
+
+### Webhook Request Overriding
+
+`$wgDiscordNotificationsRequestOverride` is an array used for overriding the post data of the webhook request. You can set username or avatar using this.
+See https://discord.com/developers/docs/resources/webhook#execute-webhook-jsonform-params for all available parameters.
+
+```php
+$wgDiscordNotificationsRequestOverride = [
+  'username' => 'Captain Hook',
+  'avatar_url' => '',
+];
+```
+
+This array is used as the second argument for [array_replace_recursive()].
+
+```php
+// Disable an action
+$wgDiscordNotificationsActions = [ 'new-user' => false ];
+
+// Disable multiple actions at once
+$wgDiscordNotificationsActions = [
+  'add-page' => false,
+  'remove-page' => false,
+];
+```
+
+### Disabling Each Notification Individually
+
+`$wgDiscordNotificationsActions` is an associative array to disable notification.
+
+## Migrating from the base of this fork
+
+```php
+# Configurations for kulttuuri/DiscordNotifications
+$wgDiscordFromName = 'FROM_NAME';
+$wgDiscordAvatarUrl = 'https://AVARTAR_URL';
+
+$wgDiscordNotificationsNewUser = false;
+$wgDiscordNotificationsBlockedUser = false;
+$wgDiscordNotificationsAddedArticle = false;
+$wgDiscordNotificationsRemovedArticle = false;
+$wgDiscordNotificationsMovedArticle = false;
+$wgDiscordNotificationsEditedArticle = false;
+$wgDiscordNotificationsFileUpload = false;
+$wgDiscordNotificationsProtectedArticle = false;
+$wgDiscordNotificationsUserGroupsChanged = false;
+$wgDiscordNotificationsFlow = false;
+$wgDiscordNotificationsAfterImportPage = false;
+
+$wgDiscordIgnoreMinorEdits = true;
+```
+
+below config for this fork has the same effect above:
+
+```php
+# Configurations for femiwiki/DiscordNotifications
+$wgDiscordNotificationsRequestOverride = [
+  'username' => 'FROM_NAME';,
+  'avatar_url' => 'https://AVARTAR_URL';,
+];
+
+$wgDiscordNotificationsActions = [
+  'new-user' => false,
+  'block-user' => false,
+  'add-page' => false,
+  'remove-page' => false,
+  'move-page' => false,
+  'edit-page' => false,
+  'minor-edit-page' => false,
+  'upload-file' => false,
+  'protect-page' => false,
+  'change-user-groups' => false,
+  'flow' => false,
+  'import-page' => false,
+];
+```
 
 ## License
 
 [MIT License](http://en.wikipedia.org/wiki/MIT_License)
 
-```
-
-```
+[array_replace_recursive()]: https://www.php.net/manual/en/function.array-replace-recursive.php

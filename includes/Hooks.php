@@ -7,6 +7,8 @@ use Config;
 use Exception;
 use ExtensionRegistry;
 use MediaWiki\MediaWikiServices;
+use SpecialPage;
+use Title;
 
 class Hooks implements
 	\MediaWiki\Storage\Hook\PageSaveCompleteHook,
@@ -38,43 +40,52 @@ class Hooks implements
 	 * @inheritDoc
 	 */
 	public function onPageSaveComplete( $wikiPage, $user, $summary, $flags, $revisionRecord, $editResult ) {
-		global $wgDiscordNotificationsEditedArticle, $wgDiscordIgnoreMinorEdits,
-			$wgDiscordNotificationsAddedArticle, $wgDiscordIncludeDiffSize;
+		global $wgDiscordNotificationsActions, $wgDiscordIncludeDiffSize;
 		$isNew = (bool)( $flags & EDIT_NEW );
+		$isMinor = (bool)( $flags & EDIT_MINOR );
 
-		if ( ( !$wgDiscordNotificationsEditedArticle && !$isNew )
-			|| ( !$wgDiscordNotificationsAddedArticle && $isNew )
-			|| Core::titleIsExcluded( $wikiPage->getTitle() ) ) {
+		if ( Core::titleIsExcluded( $wikiPage->getTitle() ) ) {
 			return true;
 		}
 
 		if ( $summary != "" ) {
 			$summary = wfMessage( 'discordnotifications-summary', $summary )->inContentLanguage()->plain();
 		}
-		if ( $isNew ) {
+		if ( $wgDiscordNotificationsActions['add-page'] && $isNew ) {
 			$message = wfMessage( 'discordnotifications-article-created',
 				LinkRenderer::getDiscordUserText( $user ),
 				LinkRenderer::getDiscordArticleText( $wikiPage ),
 				$summary
 				)->inContentLanguage()->text();
 			if ( $wgDiscordIncludeDiffSize ) {
-				$message .= " (" . Core::msg( 'discordnotifications-bytes', $revisionRecord->getSize() ) . ")";
+				$size = Core::msg( 'discordnotifications-bytes', $revisionRecord->getSize() );
+				$message .= " ($size)";
 			}
 			Core::pushDiscordNotify( $message, $user, 'article_inserted' );
-		} else {
-			$isMinor = (bool)( $flags & EDIT_MINOR );
-			// Skip minor edits if user wanted to ignore them
-			if ( $isMinor && $wgDiscordIgnoreMinorEdits ) {return true;
+		} elseif ( $wgDiscordNotificationsActions['edit-page'] && !$isNew && !$isMinor ) {
+			$message = wfMessage( 'discordnotifications-article-saved' )
+				->plaintextParams(
+					LinkRenderer::getDiscordUserText( $user ),
+					Core::msg( 'discordnotifications-article-saved-edit' ),
+					LinkRenderer::getDiscordArticleText( $wikiPage, $revisionRecord->getId() ),
+					$summary
+				)->inContentLanguage()->text();
+			if ( $wgDiscordIncludeDiffSize ) {
+				$old = MediaWikiServices::getInstance()->getRevisionLookup()->getPreviousRevision( $revisionRecord );
+				if ( $old ) {
+					$message .= ' (' . Core::msg( 'discordnotifications-bytes',
+						$revisionRecord->getSize() - $old->getSize() ) . ')';
+				}
 			}
-
-			$message = wfMessage(
-				'discordnotifications-article-saved' )->plaintextParams(
-				LinkRenderer::getDiscordUserText( $user ),
-				Core::msg( $isMinor == true ? 'discordnotifications-article-saved-minor-edits' :
-					'discordnotifications-article-saved-edit' ),
-				LinkRenderer::getDiscordArticleText( $wikiPage, $revisionRecord->getId() ),
-				$summary
-					)->inContentLanguage()->text();
+			Core::pushDiscordNotify( $message, $user, 'article_saved' );
+		} elseif ( $wgDiscordNotificationsActions['minor-edit-page'] && $isMinor ) {
+			$message = wfMessage( 'discordnotifications-article-saved' )
+				->plaintextParams(
+					LinkRenderer::getDiscordUserText( $user ),
+					Core::msg( 'discordnotifications-article-saved-minor-edits' ),
+					LinkRenderer::getDiscordArticleText( $wikiPage, $revisionRecord->getId() ),
+					$summary
+				)->inContentLanguage()->text();
 			if ( $wgDiscordIncludeDiffSize ) {
 				$old = MediaWikiServices::getInstance()->getRevisionLookup()->getPreviousRevision( $revisionRecord );
 				if ( $old ) {
@@ -93,8 +104,9 @@ class Hooks implements
 	public function onArticleDeleteComplete( $wikiPage, $user, $reason, $id,
 		$content, $logEntry, $archivedRevisionCount
 	) {
-		global $wgDiscordNotificationsRemovedArticle;
-		if ( !$wgDiscordNotificationsRemovedArticle ) {return;
+		global $wgDiscordNotificationsActions;
+		if ( !$wgDiscordNotificationsActions['remove-page'] ) {
+			return;
 		}
 
 		global $wgDiscordNotificationsShowSuppressed;
@@ -127,8 +139,8 @@ class Hooks implements
 	public function onTitleMoveComplete( $old, $nt, $user, $pageid, $redirid,
 		$reason, $revision
 	) {
-		global $wgDiscordNotificationsMovedArticle;
-		if ( !$wgDiscordNotificationsMovedArticle ) {return;
+		global $wgDiscordNotificationsActions;
+		if ( !$wgDiscordNotificationsActions['move-page'] ) {return;
 		}
 
 		$message = Core::msg( 'discordnotifications-article-moved',
@@ -144,9 +156,9 @@ class Hooks implements
 	 * @inheritDoc
 	 */
 	public function onAddNewAccount( $user, $byEmail ) {
-		global $wgDiscordNotificationsNewUser, $wgDiscordShowNewUserFullName;
+		global $wgDiscordNotificationsActions, $wgDiscordShowNewUserFullName;
 
-		if ( !$wgDiscordNotificationsNewUser ) {
+		if ( !$wgDiscordNotificationsActions['new-user'] ) {
 			return;
 		}
 
@@ -181,8 +193,8 @@ class Hooks implements
 	 * @inheritDoc
 	 */
 	public function onBlockIpComplete( $block, $user, $priorBlock ) {
-		global $wgDiscordNotificationsBlockedUser;
-		if ( !$wgDiscordNotificationsBlockedUser ) {
+		global $wgDiscordNotificationsActions;
+		if ( !$wgDiscordNotificationsActions['block-user'] ) {
 			return;
 		}
 
@@ -203,8 +215,8 @@ class Hooks implements
 	 * @inheritDoc
 	 */
 	public function onUploadComplete( $uploadBase ) {
-		global $wgDiscordNotificationsFileUpload;
-		if ( !$wgDiscordNotificationsFileUpload ) {
+		global $wgDiscordNotificationsActions;
+		if ( !$wgDiscordNotificationsActions['upload-file'] ) {
 			return;
 		}
 
@@ -242,8 +254,9 @@ class Hooks implements
 	 * @inheritDoc
 	 */
 	public function onArticleProtectComplete( $wikiPage, $user, $protect, $reason ) {
-		global $wgDiscordNotificationsProtectedArticle;
-		if ( !$wgDiscordNotificationsProtectedArticle ) {return;
+		global $wgDiscordNotificationsActions;
+		if ( !$wgDiscordNotificationsActions['protect-page'] ) {
+			return;
 		}
 
 		$message = Core::msg( 'discordnotifications-article-protected',
@@ -268,8 +281,8 @@ class Hooks implements
 		$oldUGMs,
 		$newUGMs
 	) {
-		global $wgDiscordNotificationsUserGroupsChanged;
-		if ( !$wgDiscordNotificationsUserGroupsChanged ) {
+		global $wgDiscordNotificationsActions;
+		if ( !$wgDiscordNotificationsActions['change-user-group'] ) {
 			return;
 		}
 
@@ -278,7 +291,7 @@ class Hooks implements
 			LinkRenderer::getDiscordUserText( $user ),
 			implode( ", ", array_keys( $oldUGMs ) ),
 			implode( ", ", $user->getGroups() ),
-			LinkRenderer::makeLink( SpecialPage::getTitleFor( 'Userrights', $performer->getName )->getFullURL(),
+			LinkRenderer::makeLink( SpecialPage::getTitleFor( 'Userrights', $performer->getName() )->getFullURL(),
 				Core::msg( 'discordnotifications-view-user-rights' ) ) );
 		Core::pushDiscordNotify( $message, $user, 'user_groups_changed' );
 		return true;
@@ -290,9 +303,9 @@ class Hooks implements
 	 * @return void
 	 */
 	public static function onAPIFlowAfterExecute( APIBase $module ) {
-		global $wgDiscordNotificationsFlow;
+		global $wgDiscordNotificationsActions;
 
-		if ( !$wgDiscordNotificationsFlow || !ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
+		if ( !$wgDiscordNotificationsActions['flow'] || !ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
 			return;
 		}
 
@@ -399,8 +412,8 @@ class Hooks implements
 	public function onAfterImportPage( $title, $foreignTitle, $revCount,
 		$sRevCount, $pageInfo
 	) {
-		global $wgDiscordNotificationsAfterImportPage;
-		if ( !$wgDiscordNotificationsAfterImportPage ) {
+		global $wgDiscordNotificationsActions;
+		if ( !$wgDiscordNotificationsActions['import-page'] ) {
 			return;
 		}
 

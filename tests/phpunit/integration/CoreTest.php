@@ -24,7 +24,7 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 
 	public static function providerTitleIsExcluded() {
 		return [
-			[ '', 'test', false ],
+			[ [], 'test', false ],
 			[ [ 'Test' ], 'Test', true ],
 			[ [ 'Text' ], 'Test', false ],
 			[ [ 'Foo', 'Bar' ], 'Test', false ],
@@ -65,7 +65,7 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\DiscordNotifications\Core::makePost
 	 */
 	public function testMakePost() {
-		$this->assertSame(
+		$this->assertJsonStringEqualsJsonString(
 			'{"embeds": [{ "color" : "2993970" ,"description" : "message"}], "username": "TestWiki"}',
 			$this->wrapper->makePost(
 				'message',
@@ -74,7 +74,7 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 		);
 
 		$this->setMwGlobals( 'wgSitename', 'FooWiki' );
-		$this->assertSame(
+		$this->assertJsonStringEqualsJsonString(
 			'{"embeds": [{ "color" : "2993970" ,"description" : "message"}], "username": "FooWiki"}',
 			$this->wrapper->makePost(
 				'message',
@@ -82,9 +82,9 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 			)
 		);
 
-		$this->setMwGlobals( 'wgDiscordNotificationsFromName', 'DummyBot' );
-		$this->assertSame(
-			'{"embeds": [{ "color" : "2993970" ,"description" : "message"}], "username": "DummyBot"}',
+		$this->setMwGlobals( 'wgDiscordNotificationsRequestOverride', [ 'username' => 'DummyBot' ] );
+		$this->assertJsonStringEqualsJsonString(
+			'{"embeds": [ { "color" : "2993970" ,"description" : "message"} ], "username": "DummyBot"}',
 			$this->wrapper->makePost(
 				'message',
 				'article_saved'
@@ -93,7 +93,10 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public function testDiscordNotifications() {
-		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
+		$this->setMwGlobals( [
+			'wgDiscordNotificationsIncomingWebhookUrl' => 'https://webhook',
+			'wgServer' => 'https://foo.bar'
+		] );
 		$ct = 1;
 		$this->editPage( 'Edit Test', str_repeat( 'lorem', $ct++ ), '', NS_MAIN );
 		// phpcs:ignore Generic.Files.LineLength.TooLong

@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\DiscordNotifications;
 
+use Exception;
 use Flow\Model\UUID;
 use MediaWiki\User\UserIdentity;
 use MessageSpecifier;
@@ -34,7 +35,8 @@ class Core {
 	 * @see https://discordapp.com/developers/docs/resources/webhook#execute-webhook
 	 */
 	public static function pushDiscordNotify( string $message, $user, string $action ) {
-		global $wgDiscordNotificationsIncomingWebhookUrl, $wgDiscordNotificationsSendMethod, $wgDiscordExcludedPermission;
+		global $wgDiscordNotificationsIncomingWebhookUrl, $wgDiscordNotificationsSendMethod,
+			$wgDiscordExcludedPermission;
 
 		// Users with the permission suppress notifications
 		if ( isset( $wgDiscordExcludedPermission ) && $wgDiscordExcludedPermission != "" ) {
@@ -45,17 +47,20 @@ class Core {
 
 		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
 			self::$lastMessage = $message;
+			return;
 		}
 
 		$post = self::makePost( $message, $action );
 
 		$hooks = $wgDiscordNotificationsIncomingWebhookUrl;
-		if ( is_string( $hooks ) ) {
+		if ( !$hooks ) {
+			throw new Exception( '$wgDiscordNotificationsIncomingWebhookUrl is not set' );
+		} elseif ( is_string( $hooks ) ) {
 			$hooks = [ $hooks ];
 		}
 		// Use file_get_contents to send the data. Note that you will need to have allow_url_fopen
 		// enabled in php.ini for this to work.
-		if ( $wgDiscordNotificationsSendMethod == "file_get_contents" ) {
+		if ( $wgDiscordNotificationsSendMethod == 'file_get_contents' ) {
 			foreach ( $hooks as $hook ) {
 				self::sendHttpRequest( $hook, $post );
 			}
@@ -74,15 +79,10 @@ class Core {
 	 * @return string
 	 */
 	private static function makePost( $message, $action ) {
-		global $wgDiscordNotificationsFromName, $wgDiscordNotificationsAvatarUrl, $wgSitename;
+		global $wgDiscordNotificationsRequestOverride, $wgSitename;
 
 		// Convert " to ' in the message to be sent as otherwise JSON formatting would break.
 		$message = str_replace( '"', "'", $message );
-
-		$discordFromName = $wgDiscordNotificationsFromName;
-		if ( $discordFromName == "" ) {
-			$discordFromName = $wgSitename;
-		}
 
 		$message = preg_replace( "~(<)(http)([^|]*)(\|)([^\>]*)(>)~", "[$5]($2$3)", $message );
 		$message = str_replace( [ "\r", "\n" ], '', $message );
@@ -127,14 +127,17 @@ class Core {
 			break;
 		}
 
-		$post = sprintf( '{"embeds": [{ "color" : "' . $colour . '" ,"description" : "%s"}], "username": "%s"',
-		$message,
-		$discordFromName );
-		if ( isset( $wgDiscordNotificationsAvatarUrl ) && !empty( $wgDiscordNotificationsAvatarUrl ) ) {
-			$post .= ', "avatar_url": "' . $wgDiscordNotificationsAvatarUrl . '"';
-		}
-		$post .= '}';
-		return $post;
+		$post = [
+			'embeds' => [
+				[
+					'color' => "$colour",
+					'description' => $message,
+				]
+			],
+			'username' => $wgSitename
+		];
+		$post = array_replace_recursive( $post, $wgDiscordNotificationsRequestOverride );
+		return json_encode( $post );
 	}
 
 	/**
