@@ -22,9 +22,8 @@ class Core {
 	 * @todo Check case-sensitively when $wgCapitalLinks is false. Case-sensitive only now.
 	 */
 	public static function titleIsExcluded( Title $title ) {
-		global $wgDiscordExcludeNotificationsFrom;
-		return is_array( $wgDiscordExcludeNotificationsFrom ) &&
-			in_array( $title->getText(), $wgDiscordExcludeNotificationsFrom );
+		global $wgDiscordNotificationsExcludeList;
+		return in_array( $title->getText(), $wgDiscordNotificationsExcludeList['pages'] );
 	}
 
 	/**
@@ -36,12 +35,18 @@ class Core {
 	 */
 	public static function pushDiscordNotify( string $message, $user, string $action ) {
 		global $wgDiscordNotificationsIncomingWebhookUrl, $wgDiscordNotificationsSendMethod,
-			$wgDiscordExcludedPermission;
+			$wgDiscordNotificationsExcludeList;
 
 		// Users with the permission suppress notifications
-		if ( isset( $wgDiscordExcludedPermission ) && $wgDiscordExcludedPermission != "" ) {
-			if ( $user && $user instanceof User && $user->isAllowed( $wgDiscordExcludedPermission ) ) {
-				return;
+		if ( $user && $user instanceof User ) {
+			$permissions = $wgDiscordNotificationsExcludeList['permissions'];
+			if ( !is_array( $permissions ) ) {
+				$permissions = [ $permissions ];
+			}
+			foreach ( $permissions as $p ) {
+				if ( $user->isAllowed( $p ) ) {
+					return;
+				}
 			}
 		}
 

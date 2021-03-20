@@ -43,12 +43,11 @@ These options can be set after including your plugin in your `localSettings.php`
 
 - `$wgDiscordNotificationsIncomingWebhookUrl` - (Required) Your Discord webhook URL. You can add multiple webhook urls that you want to send notifications to by adding them in this array: `[ 'https://yourUrlOne.com', 'https://yourUrlTwo...' ]`. Defaults to `false`.
 - `$wgDiscordNotificationsSendMethod` - Can be `'file_get_contents'` or `'curl'`. If you use VisualEditor and get unknown errors, do not have curl enabled on your server or notice other problems, the recommended solution is to change method to `"file_get_contents"`. Defaults to `'curl'`.
-- `$wgDiscordNotificationsRequestOverride` - An array used for overriding the post data of the webhook request. See [Webhook Request Overriding](#webhook-request-overriding) below for details. Defaults to `[]`.
-- `$wgDiscordExcludeNotificationsFrom` - Actions (add, edit, modify) won't be notified to Discord room from articles starting with these names. Defaults to `[]`.
-- `$wgDiscordExcludedPermission` - If this is set, actions by users with this permission won't cause alerts. Defaults to `''`.
 - `$wgDiscordNotificationsShowSuppressed` - By default we do not show non-public article deletion notifications. You can change this using the parameter below. Defaults to `true`.
 - `$wgDiscordNotificationsActions` - An associative array for actions to notify. See [Disabling Each Notification Individually](#disabling-each-notification-individually) below for details.
 - `$wgDiscordNotificationsDisplay` - An associative array for tweaks the display of notification. See [Change Display Options for Notification](#change-display-options-for-notification) below for details.
+- `$wgDiscordNotificationsExcludeList - An associative array to disable notifications related to certain pages or users. See [Disabling Notifications by origin](#disabling-notifications-by-origin) below for details.
+- `$wgDiscordNotificationsRequestOverride` - An array used for overriding the post data of the webhook request. See [Webhook Request Overriding](#webhook-request-overriding) below for details. Defaults to `[]`.
 
 ### Webhook Request Overriding
 
@@ -98,20 +97,36 @@ $wgDiscordNotificationsActions = [
 ];
 ```
 
+### Disabling Notifications by origin
+
+`wgDiscordNotificationsExcludeList` is an associative array to disable notifications related to certain pages or users. This config has below keys:
+
+- `'pages'` - Actions (add, edit, modify) won't be notified to Discord room from articles starting with these names.
+- `'permissions'` - If this is set, actions by users with this permission won't cause alerts. Defaults to `''`. Can be string or an array of strings.
+
+Defaults to:
+
+```php
+$wgDiscordNotificationsExcludeList = [
+  'pages' => [],
+  'permissions' => [],
+];
+```
+
 ### Change Display Options for Notification
 
-| Option     | Default value | Description                                                                                                        |
-| ---------- | ------------- | ------------------------------------------------------------------------------------------------------------------ |
-| page-tools | true          | If this is true, pages will get additional links in the notification message (edit \| delete \| history).          |
-| user-tools | true          | If this is true, users will get additional links in the notification message (block \| groups \| talk \| contribs) |
-| diff       | true          | show size of the edit                                                                                              |
-| full-name  | false         | If this is true, newly created user full name is added to notification.                                            |
+| Option         | Default value | Description                                                                                                        |
+| -------------- | ------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `'page-tools'` | `true`        | If this is true, pages will get additional links in the notification message (edit \| delete \| history).          |
+| `'user-tools'` | `true`        | If this is true, users will get additional links in the notification message (block \| groups \| talk \| contribs) |
+| `'diff'`       | `true`        | show size of the edit                                                                                              |
+| `'full-name'`  | `false`       | If this is true, newly created user full name is added to notification.                                            |
 
 Example:
 
 ```php
 $wgDiscordNotificationsDisplay = [
-  "page-tools" => false
+  'page-tools' => false
 ];
 ```
 

@@ -115,13 +115,8 @@ class Hooks implements
 		}
 
 		// Discard notifications from excluded pages
-		global $wgDiscordExcludeNotificationsFrom;
-		if ( is_array( $wgDiscordExcludeNotificationsFrom ) && count( $wgDiscordExcludeNotificationsFrom ) > 0 ) {
-			foreach ( $wgDiscordExcludeNotificationsFrom as &$currentExclude ) {
-				if ( strpos( $wikiPage->getTitle(), $currentExclude ) === 0 ) {
-					return;
-				}
-			}
+		if ( Core::titleIsExcluded( $wikiPage->getTitle() ) ) {
+			return;
 		}
 
 		$message = wfMessage( 'discordnotifications-wikiPage-deleted' )->plaintextParams(

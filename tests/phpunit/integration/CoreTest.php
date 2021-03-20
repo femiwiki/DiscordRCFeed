@@ -38,7 +38,9 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\DiscordNotifications\Core::titleIsExcluded
 	 */
 	public function testTitleIsExcluded( $excluded, string $titleText, bool $expected ) {
-		$this->setMwGlobals( 'wgDiscordExcludeNotificationsFrom', $excluded );
+		global $wgDiscordNotificationsExcludeList;
+		$excluded = array_merge( $wgDiscordNotificationsExcludeList, [ 'pages' => $excluded ] );
+		$this->setMwGlobals( 'wgDiscordNotificationsExcludeList', $excluded );
 		$title = $this->getExistingTestPage( $titleText )->getTitle();
 		$this->assertSame( $expected, Core::titleIsExcluded( $title ) );
 	}
@@ -46,7 +48,9 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 	public static function providerPermissions() {
 		return [
 			[ 'not-exist', true ],
-			[ 'read', false ]
+			[ 'read', false ],
+			[ [ 'not-exist' ], true ],
+			[ [ 'read' ], false ],
 		];
 	}
 
@@ -54,7 +58,9 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider providerPermissions
 	 */
 	public function testExcludedPermission( $excluded, $expected ) {
-		$this->setMwGlobals( 'wgDiscordExcludedPermission', $excluded );
+		global $wgDiscordNotificationsExcludeList;
+		$excluded = array_merge( $wgDiscordNotificationsExcludeList, [ 'permissions' => $excluded ] );
+		$this->setMwGlobals( 'wgDiscordNotificationsExcludeList', $excluded );
 		$user = $this->getTestUser()->getUser();
 		$arbitrary = 'test' . time() . rand();
 		$this->wrapper->pushDiscordNotify( $arbitrary, $user, 'article_saved' );

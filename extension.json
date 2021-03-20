@@ -35,7 +35,7 @@
   "config": {
     "DiscordNotificationsIncomingWebhookUrl": { "value": false },
     "DiscordNotificationsSendMethod": { "value": "curl" },
-    "DiscordNotificationsRequestOverride": { "value": [] },
+    "DiscordNotificationsShowSuppressed": { "value": true },
     "DiscordNotificationsDisplay": {
       "value": {
         "page-tools": true,
@@ -44,9 +44,6 @@
         "full-name": false
       }
     },
-    "DiscordExcludeNotificationsFrom": { "value": [] },
-    "DiscordExcludedPermission": { "value": "" },
-    "DiscordNotificationsShowSuppressed": { "value": true },
     "DiscordNotificationsActions": {
       "value": {
         "new-user": true,
@@ -62,7 +59,14 @@
         "flow": true,
         "import-page": true
       }
-    }
+    },
+    "DiscordNotificationsExcludeList": {
+      "value": {
+        "pages": [],
+        "permissions": []
+      }
+    },
+    "DiscordNotificationsRequestOverride": { "value": [] }
   },
   "TestAutoloadNamespaces": {
     "MediaWiki\\Extension\\DiscordNotifications\\Tests\\Integration\\": "tests/phpunit/integration/",
