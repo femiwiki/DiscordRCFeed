@@ -68,6 +68,10 @@ $wgDiscordNotificationsRequestOverride = [
 
 This array is used as the second argument for [array_replace_recursive()].
 
+### Disabling Each Notification Individually
+
+`$wgDiscordNotificationsActions` is an associative array to disable notification. You can disable notification indivisually.
+
 ```php
 // Disable an action
 $wgDiscordNotificationsActions = [ 'new-user' => false ];
@@ -78,10 +82,6 @@ $wgDiscordNotificationsActions = [
   'remove-page' => false,
 ];
 ```
-
-### Disabling Each Notification Individually
-
-`$wgDiscordNotificationsActions` is an associative array to disable notification.
 
 ## Migrating from the base of this fork
 
