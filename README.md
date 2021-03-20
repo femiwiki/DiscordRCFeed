@@ -49,8 +49,8 @@ These options can be set after including your plugin in your `localSettings.php`
 - `$wgDiscordIncludeDiffSize` - By default we show size of the edit. You can hide this information with the setting below. Defaults to `true`.
 - `$wgDiscordShowNewUserFullName` - If this is true, newly created user full name is added to notification. Defaults to `false.
 - `$wgDiscordIgnoreMinorEdits` - If this is true, all minor edits made to articles will not be submitted to Discord. Defaults to `false`.
-- `$wgDiscordExcludeNotificationsFrom` - Actions (add, edit, modify) won't be notified to Discord room from articles starting with these names Defaults to `[]`.
-- `$wgDiscordExcludedPermission` - If this is set, actions by users with this permission won't cause alerts Defaults to `''`.
+- `$wgDiscordExcludeNotificationsFrom` - Actions (add, edit, modify) won't be notified to Discord room from articles starting with these names. Defaults to `[]`.
+- `$wgDiscordExcludedPermission` - If this is set, actions by users with this permission won't cause alerts. Defaults to `''`.
 - `$wgDiscordNotificationsShowSuppressed` - By default we do not show non-public article deletion notifications. You can change this using the parameter below. Defaults to `true`.
 - `$wgDiscordNotificationsActions` - An associative array for actions to notify. See [Disabling Each Notification Individually](#disabling-each-notification-individually) below for details.
 
