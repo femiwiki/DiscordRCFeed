@@ -44,19 +44,15 @@ These options can be set after including your plugin in your `localSettings.php`
 - `$wgDiscordNotificationsIncomingWebhookUrl` - (Required) Your Discord webhook URL. You can add multiple webhook urls that you want to send notifications to by adding them in this array: `[ 'https://yourUrlOne.com', 'https://yourUrlTwo...' ]`. Defaults to `false`.
 - `$wgDiscordNotificationsSendMethod` - Can be `'file_get_contents'` or `'curl'`. If you use VisualEditor and get unknown errors, do not have curl enabled on your server or notice other problems, the recommended solution is to change method to `"file_get_contents"`. Defaults to `'curl'`.
 - `$wgDiscordNotificationsRequestOverride` - An array used for overriding the post data of the webhook request. See [Webhook Request Overriding](#webhook-request-overriding) below for details. Defaults to `[]`.
-- `$wgDiscordIncludePageUrls` - If this is true, pages will get additional links in the notification message (edit \| delete \| history). Defaults to `true`.
-- `$wgDiscordIncludeUserUrls` - If this is true, users will get additional links in the notification message (block \| groups \| talk \| contribs). Defaults to `true`.
-- `$wgDiscordIncludeDiffSize` - By default we show size of the edit. You can hide this information with the setting below. Defaults to `true`.
-- `$wgDiscordShowNewUserFullName` - If this is true, newly created user full name is added to notification. Defaults to `false.
-- `$wgDiscordIgnoreMinorEdits` - If this is true, all minor edits made to articles will not be submitted to Discord. Defaults to `false`.
 - `$wgDiscordExcludeNotificationsFrom` - Actions (add, edit, modify) won't be notified to Discord room from articles starting with these names. Defaults to `[]`.
 - `$wgDiscordExcludedPermission` - If this is set, actions by users with this permission won't cause alerts. Defaults to `''`.
 - `$wgDiscordNotificationsShowSuppressed` - By default we do not show non-public article deletion notifications. You can change this using the parameter below. Defaults to `true`.
 - `$wgDiscordNotificationsActions` - An associative array for actions to notify. See [Disabling Each Notification Individually](#disabling-each-notification-individually) below for details.
+- `$wgDiscordNotificationsDisplay` - An associative array for tweaks the display of notification. See [Change Display Options for Notification](#change-display-options-for-notification) below for details.
 
 ### Webhook Request Overriding
 
-`$wgDiscordNotificationsRequestOverride` is an array used for overriding the post data of the webhook request. You can set username or avatar using this.
+`$wgDiscordNotificationsRequestOverride` is an associative array used for overriding the post data of the webhook request. You can set username or avatar using this.
 See https://discord.com/developers/docs/resources/webhook#execute-webhook-jsonform-params for all available parameters.
 
 ```php
@@ -83,50 +79,39 @@ $wgDiscordNotificationsActions = [
 ];
 ```
 
-## Migrating from the base of this fork
+Defaults to:
 
 ```php
-# Configurations for kulttuuri/DiscordNotifications
-$wgDiscordFromName = 'FROM_NAME';
-$wgDiscordAvatarUrl = 'https://AVARTAR_URL';
-
-$wgDiscordNotificationsNewUser = false;
-$wgDiscordNotificationsBlockedUser = false;
-$wgDiscordNotificationsAddedArticle = false;
-$wgDiscordNotificationsRemovedArticle = false;
-$wgDiscordNotificationsMovedArticle = false;
-$wgDiscordNotificationsEditedArticle = false;
-$wgDiscordNotificationsFileUpload = false;
-$wgDiscordNotificationsProtectedArticle = false;
-$wgDiscordNotificationsUserGroupsChanged = false;
-$wgDiscordNotificationsFlow = false;
-$wgDiscordNotificationsAfterImportPage = false;
-
-$wgDiscordIgnoreMinorEdits = true;
+$wgDiscordNotificationsActions = [
+  'new-user' => true,
+  'block-user' => true,
+  'add-page' => true,
+  'remove-page' => true,
+  'move-page' => true,
+  'edit-page' => true,
+  'minor-edit-page' => true,
+  'upload-file' => true,
+  'protect-page' => true,
+  'change-user-groups' => true,
+  'flow' => true,
+  'import-page' => true,
+];
 ```
 
-below config for this fork has the same effect above:
+### Change Display Options for Notification
+
+| Option     | Default value | Description                                                                                                        |
+| ---------- | ------------- | ------------------------------------------------------------------------------------------------------------------ |
+| page-tools | true          | If this is true, pages will get additional links in the notification message (edit \| delete \| history).          |
+| user-tools | true          | If this is true, users will get additional links in the notification message (block \| groups \| talk \| contribs) |
+| diff       | true          | show size of the edit                                                                                              |
+| full-name  | false         | If this is true, newly created user full name is added to notification.                                            |
+
+Example:
 
 ```php
-# Configurations for femiwiki/DiscordNotifications
-$wgDiscordNotificationsRequestOverride = [
-  'username' => 'FROM_NAME';,
-  'avatar_url' => 'https://AVARTAR_URL';,
-];
-
-$wgDiscordNotificationsActions = [
-  'new-user' => false,
-  'block-user' => false,
-  'add-page' => false,
-  'remove-page' => false,
-  'move-page' => false,
-  'edit-page' => false,
-  'minor-edit-page' => false,
-  'upload-file' => false,
-  'protect-page' => false,
-  'change-user-groups' => false,
-  'flow' => false,
-  'import-page' => false,
+$wgDiscordNotificationsDisplay = [
+  "page-tools" => false
 ];
 ```
 

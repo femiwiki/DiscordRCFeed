@@ -15,27 +15,29 @@ use User;
 class LinkRendererTest extends MediaWikiIntegrationTestCase {
 
 	public static function providerDiscordUserText() {
+		global $wgDiscordNotificationsDisplay;
+		$d = $wgDiscordNotificationsDisplay;
 		return [
 			[
 				[
-					'DiscordIncludeUserUrls' => false,
-					'Server' => 'https://foo.bar'
+					'wgDiscordNotificationsDisplay' => array_merge( $d, [ 'user-tools' => false ] ),
+					'wgServer' => 'https://foo.bar'
 				],
 				'Foo',
 				'~<https://foo\.bar/index\.php/User:Foo\|Foo>~'
 			],
 			[
 				[
-					'DiscordIncludeUserUrls' => false,
-					'Server' => 'https://foo.bar'
+					'wgDiscordNotificationsDisplay' => array_merge( $d, [ 'user-tools' => false ] ),
+					'wgServer' => 'https://foo.bar'
 				],
 				'Foo&bar',
 				'~<https://foo\.bar/index\.php/User:Foo%26bar\|Foo&bar>~'
 			],
 			[
 				[
-					'LanguageCode' => 'es',
-					'Server' => 'https://foo.bar'
+					'wgLanguageCode' => 'es',
+					'wgServer' => 'https://foo.bar'
 				],
 				'Foo',
 				// phpcs:ignore Generic.Files.LineLength.TooLong
@@ -49,9 +51,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\DiscordNotifications\LinkRenderer::getDiscordUserText
 	 */
 	public function testGetDiscordUserText( array $globals, string $name, string $regex, string $message = '' ) {
-		foreach ( $globals as $key => $val ) {
-			$this->setMwGlobals( "wg$key", $val );
-		}
+		$this->setMwGlobals( $globals );
 		$user = new User();
 		$user->setName( $name );
 		$user->addToDatabase();
@@ -66,6 +66,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\DiscordNotifications\LinkRenderer::getDiscordArticleText
 	 */
 	public function testGetDiscordArticleText() {
+		global $wgDiscordNotificationsDisplay;
 		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
 		$page = $this->getExistingTestPage( 'foo' );
 		$title = $page->getTitle();
@@ -79,7 +80,8 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 		$expected = '<https://foo.bar/index.php/Foo|Foo> (<https://foo.bar/index.php?title=Foo&action=edit|edit> | <https://foo.bar/index.php?title=Foo&action=delete|delete> | <https://foo.bar/index.php?title=Foo&action=history|history>)';
 		$this->assertSame( $expected, LinkRenderer::getDiscordArticleText( $page ) );
 
-		$this->setMwGlobals( 'wgDiscordIncludePageUrls', false );
+		$this->setMwGlobals( 'wgDiscordNotificationsDisplay',
+			array_merge( $wgDiscordNotificationsDisplay, [ 'page-tools' => false ] ) );
 		$expected = '<https://foo.bar/index.php/Foo|Foo>';
 		$this->assertSame( $expected, LinkRenderer::getDiscordArticleText( $page ) );
 		$expected = '<https://foo.bar/index.php/Foo%26bar|Foo&bar>';

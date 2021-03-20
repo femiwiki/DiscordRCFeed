@@ -40,7 +40,7 @@ class Hooks implements
 	 * @inheritDoc
 	 */
 	public function onPageSaveComplete( $wikiPage, $user, $summary, $flags, $revisionRecord, $editResult ) {
-		global $wgDiscordNotificationsActions, $wgDiscordIncludeDiffSize;
+		global $wgDiscordNotificationsActions, $wgDiscordNotificationsDisplay;
 		$isNew = (bool)( $flags & EDIT_NEW );
 		$isMinor = (bool)( $flags & EDIT_MINOR );
 
@@ -57,7 +57,7 @@ class Hooks implements
 				LinkRenderer::getDiscordArticleText( $wikiPage ),
 				$summary
 				)->inContentLanguage()->text();
-			if ( $wgDiscordIncludeDiffSize ) {
+			if ( $wgDiscordNotificationsDisplay['diff'] ) {
 				$size = Core::msg( 'discordnotifications-bytes', $revisionRecord->getSize() );
 				$message .= " ($size)";
 			}
@@ -70,7 +70,7 @@ class Hooks implements
 					LinkRenderer::getDiscordArticleText( $wikiPage, $revisionRecord->getId() ),
 					$summary
 				)->inContentLanguage()->text();
-			if ( $wgDiscordIncludeDiffSize ) {
+			if ( $wgDiscordNotificationsDisplay['diff'] ) {
 				$old = MediaWikiServices::getInstance()->getRevisionLookup()->getPreviousRevision( $revisionRecord );
 				if ( $old ) {
 					$message .= ' (' . Core::msg( 'discordnotifications-bytes',
@@ -86,7 +86,7 @@ class Hooks implements
 					LinkRenderer::getDiscordArticleText( $wikiPage, $revisionRecord->getId() ),
 					$summary
 				)->inContentLanguage()->text();
-			if ( $wgDiscordIncludeDiffSize ) {
+			if ( $wgDiscordNotificationsDisplay['diff'] ) {
 				$old = MediaWikiServices::getInstance()->getRevisionLookup()->getPreviousRevision( $revisionRecord );
 				if ( $old ) {
 					$message .= ' (' . Core::msg( 'discordnotifications-bytes',
@@ -156,7 +156,7 @@ class Hooks implements
 	 * @inheritDoc
 	 */
 	public function onAddNewAccount( $user, $byEmail ) {
-		global $wgDiscordNotificationsActions, $wgDiscordShowNewUserFullName;
+		global $wgDiscordNotificationsActions, $wgDiscordNotificationsDisplay;
 
 		if ( !$wgDiscordNotificationsActions['new-user'] ) {
 			return;
@@ -174,7 +174,7 @@ class Hooks implements
 		}
 
 		$messageExtra = "";
-		if ( $wgDiscordShowNewUserFullName ) {
+		if ( $wgDiscordNotificationsDisplay['full-name'] ) {
 			$messageExtra = "(";
 			$messageExtra .= $realName . ", ";
 			// Remove trailing ,

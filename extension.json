@@ -36,15 +36,17 @@
     "DiscordNotificationsIncomingWebhookUrl": { "value": false },
     "DiscordNotificationsSendMethod": { "value": "curl" },
     "DiscordNotificationsRequestOverride": { "value": [] },
-    "DiscordIncludePageUrls": { "value": true },
-    "DiscordIncludeUserUrls": { "value": true },
-    "DiscordIncludeDiffSize": { "value": true },
-    "DiscordShowNewUserFullName": { "value": false },
-    "DiscordIgnoreMinorEdits": { "value": false },
+    "DiscordNotificationsDisplay": {
+      "value": {
+        "page-tools": true,
+        "user-tools": true,
+        "diff": true,
+        "full-name": false
+      }
+    },
     "DiscordExcludeNotificationsFrom": { "value": [] },
     "DiscordExcludedPermission": { "value": "" },
     "DiscordNotificationsShowSuppressed": { "value": true },
-    "DiscordNotificationsEditedArticle": { "value": true },
     "DiscordNotificationsActions": {
       "value": {
         "new-user": true,

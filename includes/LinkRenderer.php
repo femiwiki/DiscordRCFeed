@@ -64,12 +64,12 @@ class LinkRenderer {
 	 * @return string
 	 */
 	public static function getDiscordUserText( $user ) {
-		global $wgDiscordIncludeUserUrls;
+		global $wgDiscordNotificationsDisplay;
 
 		$name = $user->getName();
 		$userUrl = str_replace( "&", "%26", $name );
 
-		if ( $wgDiscordIncludeUserUrls && $user instanceof User ) {
+		if ( $wgDiscordNotificationsDisplay['user-tools'] && $user instanceof User ) {
 			$tools = self::MakeNiceTools( [
 				self::makeLink( SpecialPage::getTitleFor( 'Block', $name )->getFullURL(),
 					Core::msg( 'discordnotifications-block' ) ),
@@ -93,14 +93,14 @@ class LinkRenderer {
 	 * @return string
 	 */
 	public static function getDiscordArticleText( $title, $newId = false ) {
-		global $wgDiscordIncludePageUrls;
+		global $wgDiscordNotificationsDisplay;
 
 		if ( $title instanceof WikiPage ) {
 			$title = $title->getTitle();
 		}
 		$fullText = $title->getFullText();
 		$titleUrl = str_replace( "&", "%26", $fullText );
-		if ( $wgDiscordIncludePageUrls ) {
+		if ( $wgDiscordNotificationsDisplay['page-tools'] ) {
 			$tools = [
 				self::makeLink( $title->getFullURL( 'action=edit' ),
 					Core::msg( 'discordnotifications-edit' ) ),
