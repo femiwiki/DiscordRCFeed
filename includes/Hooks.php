@@ -38,12 +38,12 @@ class Hooks implements
 	 * @inheritDoc
 	 */
 	public function onPageSaveComplete( $wikiPage, $user, $summary, $flags, $revisionRecord, $editResult ) {
-		global $wgDiscordNotificationEditedArticle, $wgDiscordIgnoreMinorEdits,
-			$wgDiscordNotificationAddedArticle, $wgDiscordIncludeDiffSize;
+		global $wgDiscordNotificationsEditedArticle, $wgDiscordIgnoreMinorEdits,
+			$wgDiscordNotificationsAddedArticle, $wgDiscordIncludeDiffSize;
 		$isNew = (bool)( $flags & EDIT_NEW );
 
-		if ( ( !$wgDiscordNotificationEditedArticle && !$isNew )
-			|| ( !$wgDiscordNotificationAddedArticle && $isNew )
+		if ( ( !$wgDiscordNotificationsEditedArticle && !$isNew )
+			|| ( !$wgDiscordNotificationsAddedArticle && $isNew )
 			|| Core::titleIsExcluded( $wikiPage->getTitle() ) ) {
 			return true;
 		}
@@ -93,19 +93,21 @@ class Hooks implements
 	public function onArticleDeleteComplete( $wikiPage, $user, $reason, $id,
 		$content, $logEntry, $archivedRevisionCount
 	) {
-		global $wgDiscordNotificationRemovedArticle;
-		if ( !$wgDiscordNotificationRemovedArticle ) {return;
+		global $wgDiscordNotificationsRemovedArticle;
+		if ( !$wgDiscordNotificationsRemovedArticle ) {return;
 		}
 
-		global $wgDiscordNotificationShowSuppressed;
-		if ( !$wgDiscordNotificationShowSuppressed && $logEntry->getType() != 'delete' ) {return;
+		global $wgDiscordNotificationsShowSuppressed;
+		if ( !$wgDiscordNotificationsShowSuppressed && $logEntry->getType() != 'delete' ) {
+			return;
 		}
 
 		// Discard notifications from excluded pages
 		global $wgDiscordExcludeNotificationsFrom;
 		if ( is_array( $wgDiscordExcludeNotificationsFrom ) && count( $wgDiscordExcludeNotificationsFrom ) > 0 ) {
 			foreach ( $wgDiscordExcludeNotificationsFrom as &$currentExclude ) {
-				if ( strpos( $wikiPage->getTitle(), $currentExclude ) === 0 ) {return;
+				if ( strpos( $wikiPage->getTitle(), $currentExclude ) === 0 ) {
+					return;
 				}
 			}
 		}
@@ -125,8 +127,8 @@ class Hooks implements
 	public function onTitleMoveComplete( $old, $nt, $user, $pageid, $redirid,
 		$reason, $revision
 	) {
-		global $wgDiscordNotificationMovedArticle;
-		if ( !$wgDiscordNotificationMovedArticle ) {return;
+		global $wgDiscordNotificationsMovedArticle;
+		if ( !$wgDiscordNotificationsMovedArticle ) {return;
 		}
 
 		$message = Core::msg( 'discordnotifications-article-moved',
@@ -142,9 +144,9 @@ class Hooks implements
 	 * @inheritDoc
 	 */
 	public function onAddNewAccount( $user, $byEmail ) {
-		global $wgDiscordNotificationNewUser, $wgDiscordShowNewUserFullName;
+		global $wgDiscordNotificationsNewUser, $wgDiscordShowNewUserFullName;
 
-		if ( !$wgDiscordNotificationNewUser ) {
+		if ( !$wgDiscordNotificationsNewUser ) {
 			return;
 		}
 
@@ -179,13 +181,11 @@ class Hooks implements
 	 * @inheritDoc
 	 */
 	public function onBlockIpComplete( $block, $user, $priorBlock ) {
-		global $wgDiscordNotificationBlockedUser;
-		if ( !$wgDiscordNotificationBlockedUser ) {
+		global $wgDiscordNotificationsBlockedUser;
+		if ( !$wgDiscordNotificationsBlockedUser ) {
 			return;
 		}
 
-		global $wgDiscordNotificationWikiUrl, $wgDiscordNotificationWikiUrlEnding,
-			$wgDiscordNotificationWikiUrlEndingBlockList;
 		$mReason = $block->getReasonComment()->text;
 
 		$message = Core::msg( 'discordnotifications-block-user',
@@ -193,8 +193,8 @@ class Hooks implements
 			LinkRenderer::getDiscordUserText( $block->getTarget() ),
 			$mReason == "" ? "" : Core::msg( 'discordnotifications-block-user-reason' ) . " '" . $mReason . "'.",
 			$block->mExpiry,
-			LinkRenderer::makeLink( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding .
-				$wgDiscordNotificationWikiUrlEndingBlockList, Core::msg( 'discordnotifications-block-user-list' ) ) );
+			LinkRenderer::makeLink( SpecialPage::getTitleFor( 'Block' )->getFullURL(),
+				Core::msg( 'discordnotifications-block-user-list' ) ) );
 		Core::pushDiscordNotify( $message, $user, 'user_blocked' );
 		return true;
 	}
@@ -203,12 +203,12 @@ class Hooks implements
 	 * @inheritDoc
 	 */
 	public function onUploadComplete( $uploadBase ) {
-		global $wgDiscordNotificationFileUpload;
-		if ( !$wgDiscordNotificationFileUpload ) {
+		global $wgDiscordNotificationsFileUpload;
+		if ( !$wgDiscordNotificationsFileUpload ) {
 			return;
 		}
 
-		global $wgDiscordNotificationWikiUrl, $wgDiscordNotificationWikiUrlEnding, $wgUser;
+		global $wgUser;
 		$localFile = $uploadBase->getLocalFile();
 
 		# Use bytes, KiB, and MiB, rounded to two decimal places.
@@ -228,8 +228,7 @@ class Hooks implements
 
 		$message = Core::msg( 'discordnotifications-file-uploaded',
 			LinkRenderer::getDiscordUserText( $wgUser ),
-			LinkRenderer::parseUrl( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding .
-				$uploadBase->getLocalFile()->getTitle() ),
+			LinkRenderer::parseUrl( $uploadBase->getLocalFile()->getTitle()->getFullURL() ),
 			$localFile->getTitle(),
 			$localFile->getMimeType(),
 			$fSize, $fUnits,
@@ -243,8 +242,8 @@ class Hooks implements
 	 * @inheritDoc
 	 */
 	public function onArticleProtectComplete( $wikiPage, $user, $protect, $reason ) {
-		global $wgDiscordNotificationProtectedArticle;
-		if ( !$wgDiscordNotificationProtectedArticle ) {return;
+		global $wgDiscordNotificationsProtectedArticle;
+		if ( !$wgDiscordNotificationsProtectedArticle ) {return;
 		}
 
 		$message = Core::msg( 'discordnotifications-article-protected',
@@ -269,19 +268,17 @@ class Hooks implements
 		$oldUGMs,
 		$newUGMs
 	) {
-		global $wgDiscordNotificationUserGroupsChanged;
-		if ( !$wgDiscordNotificationUserGroupsChanged ) {return;
+		global $wgDiscordNotificationsUserGroupsChanged;
+		if ( !$wgDiscordNotificationsUserGroupsChanged ) {
+			return;
 		}
 
-		global $wgDiscordNotificationWikiUrl, $wgDiscordNotificationWikiUrlEnding,
-			$wgDiscordNotificationWikiUrlEndingUserRights;
 		$message = Core::msg( 'discordnotifications-change-user-groups-with-old',
 			LinkRenderer::getDiscordUserText( $performer ),
 			LinkRenderer::getDiscordUserText( $user ),
 			implode( ", ", array_keys( $oldUGMs ) ),
 			implode( ", ", $user->getGroups() ),
-			LinkRenderer::makeLink( $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding .
-				$wgDiscordNotificationWikiUrlEndingUserRights . LinkRenderer::getDiscordUserText( $performer ),
+			LinkRenderer::makeLink( SpecialPage::getTitleFor( 'Userrights', $performer->getName )->getFullURL(),
 				Core::msg( 'discordnotifications-view-user-rights' ) ) );
 		Core::pushDiscordNotify( $message, $user, 'user_groups_changed' );
 		return true;
@@ -293,9 +290,9 @@ class Hooks implements
 	 * @return void
 	 */
 	public static function onAPIFlowAfterExecute( APIBase $module ) {
-		global $wgDiscordNotificationFlow;
+		global $wgDiscordNotificationsFlow;
 
-		if ( !$wgDiscordNotificationFlow || !ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
+		if ( !$wgDiscordNotificationsFlow || !ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
 			return;
 		}
 
@@ -307,35 +304,35 @@ class Hooks implements
 			return;
 		}
 
-		if ( Core::titleIsExcluded( $request['page'] ) ) {
+		$title = Title::newFromText( $request['page'] );
+		if ( Core::titleIsExcluded( $title ) ) {
 			return;
 		}
 
-		global $wgDiscordNotificationWikiUrl, $wgDiscordNotificationWikiUrlEnding, $wgUser;
-		$prefix = $wgDiscordNotificationWikiUrl . $wgDiscordNotificationWikiUrlEnding;
+		global $wgUser;
 		switch ( $action ) {
 			case 'edit-header':
 				$message = Core::msg( "discordnotifications-flow-edit-header",
 					LinkRenderer::getDiscordUserText( $wgUser ),
-					LinkRenderer::makeLink( $prefix . $request['page'], $request['page'] ) );
+					LinkRenderer::makeLink( $title->getFullUrl(), $request['page'] ) );
 				break;
 			case 'edit-post':
 				$message = Core::msg( "discordnotifications-flow-edit-post",
 					LinkRenderer::getDiscordUserText( $wgUser ),
-					LinkRenderer::makeLink( $prefix . "Topic:" . $result['workflow'],
+					LinkRenderer::makeLink( Title::newFromText( $result['workflow'], NS_TOPIC )->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
 				break;
 			case 'edit-title':
 				$message = Core::msg( "discordnotifications-flow-edit-title",
 					LinkRenderer::getDiscordUserText( $wgUser ),
 					$request['etcontent'],
-					LinkRenderer::makeLink( $prefix . 'Topic:' . $result['workflow'],
+					LinkRenderer::makeLink( Title::newFromText( $result['workflow'], NS_TOPIC )->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
 				break;
 			case 'edit-topic-summary':
 				$message = Core::msg( "discordnotifications-flow-edit-topic-summary",
 					LinkRenderer::getDiscordUserText( $wgUser ),
-					LinkRenderer::makeLink( $prefix . 'Topic:' . $result['workflow'],
+					LinkRenderer::makeLink( Title::newFromText( $result['workflow'], NS_TOPIC )->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
 				break;
 			case 'lock-topic':
@@ -345,7 +342,7 @@ class Hooks implements
 					// * discordnotifications-flow-lock-topic-lock
 					// * discordnotifications-flow-lock-topic-unlock
 					Core::msg( "discordnotifications-flow-lock-topic-" . $request['cotmoderationState'] ),
-					LinkRenderer::makeLink( $prefix . $request['page'],
+					LinkRenderer::makeLink( $title->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
 				break;
 			case 'moderate-post':
@@ -359,7 +356,7 @@ class Hooks implements
 					// * discordnotifications-flow-moderate-delete
 					// * discordnotifications-flow-moderate-undelete
 					Core::msg( "discordnotifications-flow-moderate-" . $request['mpmoderationState'] ),
-					LinkRenderer::makeLink( $prefix . $request['page'],
+					LinkRenderer::makeLink( $title->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
 				break;
 			case 'moderate-topic':
@@ -373,20 +370,21 @@ class Hooks implements
 					// * discordnotifications-flow-moderate-delete
 					// * discordnotifications-flow-moderate-undelete
 					Core::msg( "discordnotifications-flow-moderate-" . $request['mtmoderationState'] ),
-					LinkRenderer::makeLink( $prefix . $request['page'],
+					LinkRenderer::makeLink( $title->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
 				break;
 			case 'new-topic':
 				$message = Core::msg( "discordnotifications-flow-new-topic",
 					LinkRenderer::getDiscordUserText( $wgUser ),
-					LinkRenderer::makeLink( $prefix . "Topic:" . $result['committed']['topiclist']['topic-id'],
+					LinkRenderer::makeLink(
+						Title::newFromText( $result['committed']['topiclist']['topic-id'], NS_TOPIC )->getFullUrl(),
 						$request['nttopic'] ),
-					LinkRenderer::makeLink( $prefix . $request['page'], $request['page'] ) );
+					LinkRenderer::makeLink( $title->getFullUrl(), $request['page'] ) );
 				break;
 			case 'reply':
 				$message = Core::msg( "discordnotifications-flow-reply",
 					LinkRenderer::getDiscordUserText( $wgUser ),
-					LinkRenderer::makeLink( $prefix . 'Topic:' . $result['workflow'],
+					LinkRenderer::makeLink( Title::newFromText( $result['workflow'], NS_TOPIC )->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
 				break;
 			default:
@@ -401,8 +399,8 @@ class Hooks implements
 	public function onAfterImportPage( $title, $foreignTitle, $revCount,
 		$sRevCount, $pageInfo
 	) {
-		global $wgDiscordNotificationAfterImportPage;
-		if ( !$wgDiscordNotificationAfterImportPage ) {
+		global $wgDiscordNotificationsAfterImportPage;
+		if ( !$wgDiscordNotificationsAfterImportPage ) {
 			return;
 		}
 

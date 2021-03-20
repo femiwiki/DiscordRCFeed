@@ -82,7 +82,7 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 			)
 		);
 
-		$this->setMwGlobals( 'wgDiscordFromName', 'DummyBot' );
+		$this->setMwGlobals( 'wgDiscordNotificationsFromName', 'DummyBot' );
 		$this->assertSame(
 			'{"embeds": [{ "color" : "2993970" ,"description" : "message"}], "username": "DummyBot"}',
 			$this->wrapper->makePost(

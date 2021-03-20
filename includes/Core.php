@@ -34,8 +34,7 @@ class Core {
 	 * @see https://discordapp.com/developers/docs/resources/webhook#execute-webhook
 	 */
 	public static function pushDiscordNotify( string $message, $user, string $action ) {
-		global $wgDiscordIncomingWebhookUrl, $wgDiscordSendMethod, $wgDiscordExcludedPermission,
-			$wgDiscordAdditionalIncomingWebhookUrls;
+		global $wgDiscordNotificationsIncomingWebhookUrl, $wgDiscordNotificationsSendMethod, $wgDiscordExcludedPermission;
 
 		// Users with the permission suppress notifications
 		if ( isset( $wgDiscordExcludedPermission ) && $wgDiscordExcludedPermission != "" ) {
@@ -50,23 +49,21 @@ class Core {
 
 		$post = self::makePost( $message, $action );
 
+		$hooks = $wgDiscordNotificationsIncomingWebhookUrl;
+		if ( is_string( $hooks ) ) {
+			$hooks = [ $hooks ];
+		}
 		// Use file_get_contents to send the data. Note that you will need to have allow_url_fopen
 		// enabled in php.ini for this to work.
-		if ( $wgDiscordSendMethod == "file_get_contents" ) {
-			self::sendHttpRequest( $wgDiscordIncomingWebhookUrl, $post );
-			if ( $wgDiscordAdditionalIncomingWebhookUrls && is_array( $wgDiscordAdditionalIncomingWebhookUrls ) ) {
-				for ( $i = 0; $i < count( $wgDiscordAdditionalIncomingWebhookUrls ); ++$i ) {
-					self::sendHttpRequest( $wgDiscordAdditionalIncomingWebhookUrls[$i], $post );
-				}
+		if ( $wgDiscordNotificationsSendMethod == "file_get_contents" ) {
+			foreach ( $hooks as $hook ) {
+				self::sendHttpRequest( $hook, $post );
 			}
 		} else {
 			// Call the Discord API through cURL (default way). Note that you will need to have cURL
 			// enabled for this to work.
-			self::sendCurlRequest( $wgDiscordIncomingWebhookUrl, $post );
-			if ( $wgDiscordAdditionalIncomingWebhookUrls && is_array( $wgDiscordAdditionalIncomingWebhookUrls ) ) {
-				for ( $i = 0; $i < count( $wgDiscordAdditionalIncomingWebhookUrls ); ++$i ) {
-					self::sendCurlRequest( $wgDiscordAdditionalIncomingWebhookUrls[$i], $post );
-				}
+			foreach ( $hooks as $hook ) {
+				self::sendCurlRequest( $hook, $post );
 			}
 		}
 	}
@@ -77,12 +74,12 @@ class Core {
 	 * @return string
 	 */
 	private static function makePost( $message, $action ) {
-		global $wgDiscordFromName, $wgDiscordAvatarUrl, $wgSitename;
+		global $wgDiscordNotificationsFromName, $wgDiscordNotificationsAvatarUrl, $wgSitename;
 
 		// Convert " to ' in the message to be sent as otherwise JSON formatting would break.
 		$message = str_replace( '"', "'", $message );
 
-		$discordFromName = $wgDiscordFromName;
+		$discordFromName = $wgDiscordNotificationsFromName;
 		if ( $discordFromName == "" ) {
 			$discordFromName = $wgSitename;
 		}
@@ -133,8 +130,8 @@ class Core {
 		$post = sprintf( '{"embeds": [{ "color" : "' . $colour . '" ,"description" : "%s"}], "username": "%s"',
 		$message,
 		$discordFromName );
-		if ( isset( $wgDiscordAvatarUrl ) && !empty( $wgDiscordAvatarUrl ) ) {
-			$post .= ', "avatar_url": "' . $wgDiscordAvatarUrl . '"';
+		if ( isset( $wgDiscordNotificationsAvatarUrl ) && !empty( $wgDiscordNotificationsAvatarUrl ) ) {
+			$post .= ', "avatar_url": "' . $wgDiscordNotificationsAvatarUrl . '"';
 		}
 		$post .= '}';
 		return $post;
@@ -175,9 +172,9 @@ class Core {
 	private static function sendHttpRequest( $url, $postData ) {
 		$extra = [
 			'http' => [
-			'header'  => "Content-type: application/json",
-			'method'  => 'POST',
-			'content' => $postData,
+				'header'  => 'Content-type: application/json',
+				'method'  => 'POST',
+				'content' => $postData,
 			],
 		];
 		$context = stream_context_create( $extra );

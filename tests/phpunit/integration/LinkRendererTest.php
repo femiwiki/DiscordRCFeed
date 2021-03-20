@@ -34,30 +34,8 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 			],
 			[
 				[
-					'DiscordNotificationWikiUrl' => 'https://foo.bar/',
-					'Server' => 'https://foo.bar'
-				],
-				'Foo',
-				// phpcs:ignore Generic.Files.LineLength.TooLong
-				'~<https://foo\.bar/index\.php(\?title=|/)User:Foo\|Foo> \(<https://foo\.bar/index\.php(\?title=|/)Special:Block/Foo\|block> \| <https://foo\.bar/index\.php(\?title=|/)Special(%3A|:)UserRights(&user=|/)Foo\|groups> \| <https://foo\.bar/index\.php(\?title=|/)User_talk:Foo\|talk> \| <https://foo\.bar/index\.php(\?title=|/)Special:Contributions/Foo\|contribs>\)~'
-			],
-			[
-				[
-					'DiscordNotificationWikiUrl' => 'https://foo.bar/',
-					'DiscordNotificationWikiUrlEndingBlockUser' => 'Special:Foo/',
-					'Server' => 'https://foo.bar'
-				],
-				'Foo',
-				// phpcs:ignore Generic.Files.LineLength.TooLong
-				'~<https://foo\.bar/index\.php(\?title=|/)User:Foo\|Foo> \(<https://foo\.bar/index\.php(\?title=|/)Special:Block/Foo\|block> \| <https://foo\.bar/index\.php(\?title=|/)Special(%3A|:)UserRights(&user=|/)Foo\|groups> \| <https://foo\.bar/index\.php(\?title=|/)User_talk:Foo\|talk> \| <https://foo\.bar/index\.php(\?title=|/)Special:Contributions/Foo\|contribs>\)~'
-			],
-			[
-				[
 					'LanguageCode' => 'es',
-					'Server' => 'https://foo.bar',
-					'DiscordNotificationWikiUrlEndingBlockUser' => 'Especial:Bloquear/',
-					'DiscordNotificationWikiUrlEndingUserRights' => 'Especial(%3A|:)PermisosUsuarios&user=',
-					'DiscordNotificationWikiUrlEndingUserContributions' => 'Especial:Contribuciones/'
+					'Server' => 'https://foo.bar'
 				],
 				'Foo',
 				// phpcs:ignore Generic.Files.LineLength.TooLong
