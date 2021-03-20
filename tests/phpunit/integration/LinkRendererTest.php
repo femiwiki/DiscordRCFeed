@@ -24,7 +24,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 					'wgServer' => 'https://foo.bar'
 				],
 				'Foo',
-				'~<https://foo\.bar/index\.php/User:Foo\|Foo>~'
+				'~\[Foo\]\(https://foo\.bar/index\.php/User:Foo\)~'
 			],
 			[
 				[
@@ -32,7 +32,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 					'wgServer' => 'https://foo.bar'
 				],
 				'Foo&bar',
-				'~<https://foo\.bar/index\.php/User:Foo%26bar\|Foo&bar>~'
+				'~\[Foo&bar\]\(https://foo\.bar/index\.php/User:Foo%26bar\)~'
 			],
 			[
 				[
@@ -41,7 +41,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 				],
 				'Foo',
 				// phpcs:ignore Generic.Files.LineLength.TooLong
-				'~<https://foo\.bar/index\.php(\?title=|/)Usuario:Foo\|Foo> \(<https://foo\.bar/index\.php(\?title=|/)Especial:Bloquear/Foo\|bloquear> \| <https://foo\.bar/index\.php(\?title=|/)Especial(%3A|:)PermisosUsuarios(&user=|/)Foo\|grupos> \| <https://foo\.bar/index\.php(\?title=|/)Usuario_discusi%C3%B3n:Foo\|discusión> \| <https://foo\.bar/index\.php(\?title=|/)Especial:Contribuciones/Foo\|contribuciones>\)~'
+				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)Usuario:Foo\) \(\[bloquear\]\(https://foo\.bar/index\.php(\?title=|/)Especial:Bloquear/Foo\) \| \[grupos\]\(https://foo\.bar/index\.php(\?title=|/)Especial(%3A|:)PermisosUsuarios(&user=|/)Foo\) \| \[discusión\]\(https://foo\.bar/index\.php(\?title=|/)Usuario_discusi%C3%B3n:Foo\) \| \[contribuciones\]\(https://foo\.bar/index\.php(\?title=|/)Especial:Contribuciones/Foo\)\)~'
 			]
 		];
 	}
@@ -73,18 +73,18 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertSame(
 			// phpcs:ignore Generic.Files.LineLength.TooLong
-			'<https://foo.bar/index.php/Foo|Foo> (<https://foo.bar/index.php?title=Foo&action=edit|edit> | <https://foo.bar/index.php?title=Foo&action=delete|delete> | <https://foo.bar/index.php?title=Foo&action=history|history> | <https://foo.bar/index.php?title=Foo&diff=prev&oldid=2|diff>)',
+			'[Foo](https://foo.bar/index.php/Foo) ([edit](https://foo.bar/index.php?title=Foo&action=edit) | [delete](https://foo.bar/index.php?title=Foo&action=delete) | [history](https://foo.bar/index.php?title=Foo&action=history) | [diff](https://foo.bar/index.php?title=Foo&diff=prev&oldid=2))',
 			LinkRenderer::getDiscordArticleText( $page, 2 )
 		);
 		// phpcs:ignore Generic.Files.LineLength.TooLong
-		$expected = '<https://foo.bar/index.php/Foo|Foo> (<https://foo.bar/index.php?title=Foo&action=edit|edit> | <https://foo.bar/index.php?title=Foo&action=delete|delete> | <https://foo.bar/index.php?title=Foo&action=history|history>)';
+		$expected = '[Foo](https://foo.bar/index.php/Foo) ([edit](https://foo.bar/index.php?title=Foo&action=edit) | [delete](https://foo.bar/index.php?title=Foo&action=delete) | [history](https://foo.bar/index.php?title=Foo&action=history))';
 		$this->assertSame( $expected, LinkRenderer::getDiscordArticleText( $page ) );
 
 		$this->setMwGlobals( 'wgDiscordNotificationsDisplay',
 			array_merge( $wgDiscordNotificationsDisplay, [ 'page-tools' => false ] ) );
-		$expected = '<https://foo.bar/index.php/Foo|Foo>';
+		$expected = '[Foo](https://foo.bar/index.php/Foo)';
 		$this->assertSame( $expected, LinkRenderer::getDiscordArticleText( $page ) );
-		$expected = '<https://foo.bar/index.php/Foo%26bar|Foo&bar>';
+		$expected = '[Foo&bar](https://foo.bar/index.php/Foo%26bar)';
 		$page = $this->getExistingTestPage( 'foo&bar' );
 		$title = $page->getTitle();
 		$this->assertSame( $expected, LinkRenderer::getDiscordArticleText( $page ) );

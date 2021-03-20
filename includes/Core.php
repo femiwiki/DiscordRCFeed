@@ -86,12 +86,6 @@ class Core {
 	private static function makePost( $message, $action ) {
 		global $wgDiscordNotificationsRequestOverride, $wgSitename;
 
-		// Convert " to ' in the message to be sent as otherwise JSON formatting would break.
-		$message = str_replace( '"', "'", $message );
-
-		$message = preg_replace( "~(<)(http)([^|]*)(\|)([^\>]*)(>)~", "[$5]($2$3)", $message );
-		$message = str_replace( [ "\r", "\n" ], '', $message );
-
 		$colour = 11777212;
 		switch ( $action ) {
 			case 'article_saved':

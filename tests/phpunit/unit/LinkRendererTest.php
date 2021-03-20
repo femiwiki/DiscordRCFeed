@@ -27,11 +27,11 @@ class LinkRendererTest extends MediaWikiUnitTestCase {
 	 */
 	public function testMakeLink() {
 		$this->assertSame(
-			'<Foo|Foo>',
+			'[Foo](Foo)',
 			LinkRenderer::makeLink( 'Foo', 'Foo' )
 		);
 		$this->assertSame(
-			'<Foo%20Bar|Foo>',
+			'[Foo](Foo%20Bar)',
 			LinkRenderer::makeLink( 'Foo Bar', 'Foo' )
 		);
 	}

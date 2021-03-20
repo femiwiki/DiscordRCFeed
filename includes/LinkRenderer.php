@@ -32,7 +32,7 @@ class LinkRenderer {
 	 */
 	public static function makeLink( string $target, $text ) : string {
 		$target = self::parseUrl( $target );
-		return "<$target|$text>";
+		return "[$text]($target)";
 	}
 
 	/**
