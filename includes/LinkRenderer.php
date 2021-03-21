@@ -16,9 +16,9 @@ class LinkRenderer {
 	 */
 	public static function parseUrl( string $url ) : string {
 		foreach ( [
-			" " => "%20",
-			"(" => "%28",
-			")" => "%29",
+			' ' => '%20',
+			'(' => '%28',
+			')' => '%29',
 		] as $search => $replace ) {
 			$url = str_replace( $search, $replace, $url );
 		}

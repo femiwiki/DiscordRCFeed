@@ -48,7 +48,7 @@ class Hooks implements
 			return true;
 		}
 
-		if ( $summary != "" ) {
+		if ( $summary != '' ) {
 			$summary = wfMessage( 'discordnotifications-summary', $summary )->inContentLanguage()->plain();
 		}
 		if ( $wgDiscordNotificationsActions['add-page'] && $isNew ) {
@@ -160,8 +160,8 @@ class Hooks implements
 			return;
 		}
 
-		$email = "";
-		$realName = "";
+		$email = '';
+		$realName = '';
 		try {
 			$email = $user->getEmail();
 		} catch ( Exception $e ) {
@@ -171,13 +171,13 @@ class Hooks implements
 		} catch ( Exception $e ) {
 		}
 
-		$messageExtra = "";
+		$messageExtra = '';
 		if ( $wgDiscordNotificationsDisplay['full-name'] ) {
-			$messageExtra = "(";
-			$messageExtra .= $realName . ", ";
+			$messageExtra = '(';
+			$messageExtra .= $realName . ', ';
 			// Remove trailing ,
 			$messageExtra = substr( $messageExtra, 0, -2 );
-			$messageExtra .= ")";
+			$messageExtra .= ')';
 		}
 
 		$message = Core::msg( 'discordnotifications-new-user',
@@ -201,7 +201,7 @@ class Hooks implements
 		$message = Core::msg( 'discordnotifications-block-user',
 			LinkRenderer::getDiscordUserText( $user ),
 			LinkRenderer::getDiscordUserText( $block->getTarget() ),
-			$mReason == "" ? "" : Core::msg( 'discordnotifications-block-user-reason' ) . " '" . $mReason . "'.",
+			$mReason == '' ? '' : Core::msg( 'discordnotifications-block-user-reason' ) . " '" . $mReason . "'.",
 			$block->mExpiry,
 			LinkRenderer::makeLink( SpecialPage::getTitleFor( 'Block' )->getFullURL(),
 				Core::msg( 'discordnotifications-block-user-list' ) ) );
@@ -287,8 +287,8 @@ class Hooks implements
 		$message = Core::msg( 'discordnotifications-change-user-groups-with-old',
 			LinkRenderer::getDiscordUserText( $performer ),
 			LinkRenderer::getDiscordUserText( $user ),
-			implode( ", ", array_keys( $oldUGMs ) ),
-			implode( ", ", $user->getGroups() ),
+			implode( ', ', array_keys( $oldUGMs ) ),
+			implode( ', ', $user->getGroups() ),
 			LinkRenderer::makeLink( SpecialPage::getTitleFor( 'Userrights', $performer->getName() )->getFullURL(),
 				Core::msg( 'discordnotifications-view-user-rights' ) ) );
 		Core::pushDiscordNotify( $message, $user, 'user_groups_changed' );
@@ -323,41 +323,41 @@ class Hooks implements
 		global $wgUser;
 		switch ( $action ) {
 			case 'edit-header':
-				$message = Core::msg( "discordnotifications-flow-edit-header",
+				$message = Core::msg( 'discordnotifications-flow-edit-header',
 					LinkRenderer::getDiscordUserText( $wgUser ),
 					LinkRenderer::makeLink( $title->getFullUrl(), $request['page'] ) );
 				break;
 			case 'edit-post':
-				$message = Core::msg( "discordnotifications-flow-edit-post",
+				$message = Core::msg( 'discordnotifications-flow-edit-post',
 					LinkRenderer::getDiscordUserText( $wgUser ),
 					LinkRenderer::makeLink( Title::newFromText( $result['workflow'], NS_TOPIC )->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
 				break;
 			case 'edit-title':
-				$message = Core::msg( "discordnotifications-flow-edit-title",
+				$message = Core::msg( 'discordnotifications-flow-edit-title',
 					LinkRenderer::getDiscordUserText( $wgUser ),
 					$request['etcontent'],
 					LinkRenderer::makeLink( Title::newFromText( $result['workflow'], NS_TOPIC )->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
 				break;
 			case 'edit-topic-summary':
-				$message = Core::msg( "discordnotifications-flow-edit-topic-summary",
+				$message = Core::msg( 'discordnotifications-flow-edit-topic-summary',
 					LinkRenderer::getDiscordUserText( $wgUser ),
 					LinkRenderer::makeLink( Title::newFromText( $result['workflow'], NS_TOPIC )->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
 				break;
 			case 'lock-topic':
-				$message = Core::msg( "discordnotifications-flow-lock-topic",
+				$message = Core::msg( 'discordnotifications-flow-lock-topic',
 					LinkRenderer::getDiscordUserText( $wgUser ),
 					// Messages that can be used here:
 					// * discordnotifications-flow-lock-topic-lock
 					// * discordnotifications-flow-lock-topic-unlock
-					Core::msg( "discordnotifications-flow-lock-topic-" . $request['cotmoderationState'] ),
+					Core::msg( 'discordnotifications-flow-lock-topic-' . $request['cotmoderationState'] ),
 					LinkRenderer::makeLink( $title->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
 				break;
 			case 'moderate-post':
-				$message = Core::msg( "discordnotifications-flow-moderate-post",
+				$message = Core::msg( 'discordnotifications-flow-moderate-post',
 					LinkRenderer::getDiscordUserText( $wgUser ),
 					// Messages that can be used here:
 					// * discordnotifications-flow-moderate-hide
@@ -366,12 +366,12 @@ class Hooks implements
 					// * discordnotifications-flow-moderate-unsuppress
 					// * discordnotifications-flow-moderate-delete
 					// * discordnotifications-flow-moderate-undelete
-					Core::msg( "discordnotifications-flow-moderate-" . $request['mpmoderationState'] ),
+					Core::msg( 'discordnotifications-flow-moderate-' . $request['mpmoderationState'] ),
 					LinkRenderer::makeLink( $title->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
 				break;
 			case 'moderate-topic':
-				$message = Core::msg( "discordnotifications-flow-moderate-topic",
+				$message = Core::msg( 'discordnotifications-flow-moderate-topic',
 					LinkRenderer::getDiscordUserText( $wgUser ),
 					// Messages that can be used here:
 					// * discordnotifications-flow-moderate-hide
@@ -380,12 +380,12 @@ class Hooks implements
 					// * discordnotifications-flow-moderate-unsuppress
 					// * discordnotifications-flow-moderate-delete
 					// * discordnotifications-flow-moderate-undelete
-					Core::msg( "discordnotifications-flow-moderate-" . $request['mtmoderationState'] ),
+					Core::msg( 'discordnotifications-flow-moderate-' . $request['mtmoderationState'] ),
 					LinkRenderer::makeLink( $title->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
 				break;
 			case 'new-topic':
-				$message = Core::msg( "discordnotifications-flow-new-topic",
+				$message = Core::msg( 'discordnotifications-flow-new-topic',
 					LinkRenderer::getDiscordUserText( $wgUser ),
 					LinkRenderer::makeLink(
 						Title::newFromText( $result['committed']['topiclist']['topic-id'], NS_TOPIC )->getFullUrl(),
@@ -393,7 +393,7 @@ class Hooks implements
 					LinkRenderer::makeLink( $title->getFullUrl(), $request['page'] ) );
 				break;
 			case 'reply':
-				$message = Core::msg( "discordnotifications-flow-reply",
+				$message = Core::msg( 'discordnotifications-flow-reply',
 					LinkRenderer::getDiscordUserText( $wgUser ),
 					LinkRenderer::makeLink( Title::newFromText( $result['workflow'], NS_TOPIC )->getFullUrl(),
 						Core::flowUUIDToTitleText( $result['workflow'] ) ) );
