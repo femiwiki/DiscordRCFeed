@@ -29,8 +29,7 @@ jobs:
           - phan
           - coverage
           - phpunit-unit
-          # Disabled while refactoring
-          # - phpunit
+          - phpunit
           - phpunit-standalone
           - npm-test
           - composer-test
