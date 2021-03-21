@@ -119,7 +119,7 @@ class Hooks implements
 			return;
 		}
 
-		$message = wfMessage( 'discordnotifications-wikiPage-deleted' )->plaintextParams(
+		$message = wfMessage( 'discordnotifications-article-deleted' )->plaintextParams(
 			LinkRenderer::getDiscordUserText( $user ),
 			LinkRenderer::getDiscordArticleText( $wikiPage ),
 			$reason
@@ -280,7 +280,7 @@ class Hooks implements
 		$newUGMs
 	) {
 		global $wgDiscordNotificationsActions;
-		if ( !$wgDiscordNotificationsActions['change-user-group'] ) {
+		if ( !$wgDiscordNotificationsActions['change-user-groups'] ) {
 			return;
 		}
 

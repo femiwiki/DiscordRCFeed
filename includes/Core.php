@@ -201,10 +201,10 @@ class Core {
 	}
 
 	/**
-	 * @param UUID $uuid
+	 * @param string $uuid
 	 * @return string
 	 */
-	public static function flowUUIDToTitleText( UUID $uuid ) {
+	public static function flowUUIDToTitleText( string $uuid ) {
 		$uuid = UUID::create( $uuid );
 		$collection = \Flow\Collection\PostCollection::newFromId( $uuid );
 		$revision = $collection->getLastRevision();
