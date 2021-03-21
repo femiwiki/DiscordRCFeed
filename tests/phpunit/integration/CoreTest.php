@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\DiscordNotifications\Tests\Integration;
 
 use MediaWiki\Extension\DiscordNotifications\Core;
 use MediaWikiIntegrationTestCase;
+use User;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -108,9 +109,13 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 			'wgServer' => 'https://foo.bar'
 		] );
 		$ct = 1;
-		$this->editPage( 'Edit Test', str_repeat( 'lorem', $ct++ ), '', NS_MAIN );
+		$user = new User();
+		$user->setName( 'EditTest' );
+		$user->addToDatabase();
+		$this->editPage( 'Edit Test', str_repeat( 'lorem', $ct++ ), '', NS_MAIN, $user );
+
 		// phpcs:ignore Generic.Files.LineLength.TooLong
-		$regex = '~📄 \[127\.0\.0\.1\]\(https://foo\.bar/index\.php/User:127\.0\.0\.1\) \(\[block\]\(https://foo\.bar/index\.php(\?title=|/)Special:Block/127\.0\.0\.1\) \| \[groups\]\(https://foo\.bar/index\.php(\?title=|/)Special(%3A|:)UserRights(&user=|/)127\.0\.0\.1\) \| \[talk\]\(https://foo\.bar/index\.php(\?title=|/)User_talk:127\.0\.0\.1\) \| \[contribs\]\(https://foo\.bar/index\.php(\?title=|/)Special:Contributions/127\.0\.0\.1\)\) has created article \[Edit Test\]\(https://foo\.bar/index\.php(\?title=|/)Edit(%20|_)Test\) \(\[edit\]\(https://foo\.bar/index\.php\?title=Edit(%20|_)Test&action=edit\) \| \[delete\]\(https://foo\.bar/index\.php\?title=Edit(%20|_)Test&action=delete\) \| \[history\]\(https://foo\.bar/index\.php\?title=Edit(%20|_)Test&action=history\)\)  \(5 bytes\)~';
+		$regex = '~📄 \[EditTest\]\(https://foo\.bar/index\.php/User:EditTest\) \(\[block\]\(https://foo\.bar/index\.php(\?title=|/)Special:Block/EditTest\) \| \[groups\]\(https://foo\.bar/index\.php(\?title=|/)Special(%3A|:)UserRights(&user=|/)EditTest\) \| \[talk\]\(https://foo\.bar/index\.php(\?title=|/)User_talk:EditTest\) \| \[contribs\]\(https://foo\.bar/index\.php(\?title=|/)Special:Contributions/EditTest\)\) has created article \[Edit Test\]\(https://foo\.bar/index\.php(\?title=|/)Edit(%20|_)Test\) \(\[edit\]\(https://foo\.bar/index\.php\?title=Edit(%20|_)Test&action=edit\) \| \[delete\]\(https://foo\.bar/index\.php\?title=Edit(%20|_)Test&action=delete\) \| \[history\]\(https://foo\.bar/index\.php\?title=Edit(%20|_)Test&action=history\)\)  \(5 bytes\)~';
 		$this->assertRegExp( $regex, Core::$lastMessage );
 	}
 }
