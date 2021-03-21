@@ -13,7 +13,7 @@ use Title;
 class Hooks implements
 	\MediaWiki\Storage\Hook\PageSaveCompleteHook,
 	\MediaWiki\Page\Hook\ArticleDeleteCompleteHook,
-	\MediaWiki\Hook\TitleMoveCompleteHook,
+	\MediaWiki\Hook\PageMoveCompleteHook,
 	\MediaWiki\Hook\AddNewAccountHook,
 	\MediaWiki\Hook\BlockIpCompleteHook,
 	\MediaWiki\Hook\UploadCompleteHook,
@@ -131,20 +131,23 @@ class Hooks implements
 	/**
 	 * @inheritDoc
 	 */
-	public function onTitleMoveComplete( $old, $nt, $user, $pageid, $redirid,
-		$reason, $revision
-	) {
+	public function onPageMoveComplete( $old, $new, $user, $pageid, $redirid,
+			$reason, $revision
+		) {
+		if ( !( $old instanceof Title ) || !( $new instanceof Title ) ) {
+			return;
+		}
 		global $wgDiscordNotificationsActions;
-		if ( !$wgDiscordNotificationsActions['move-page'] ) {return;
+		if ( !$wgDiscordNotificationsActions['move-page'] ) {
+			return;
 		}
 
 		$message = Core::msg( 'discordnotifications-article-moved',
 			LinkRenderer::getDiscordUserText( $user ),
 			LinkRenderer::getDiscordArticleText( $old ),
-			LinkRenderer::getDiscordArticleText( $nt ),
+			LinkRenderer::getDiscordArticleText( $new ),
 			$reason );
 		Core::pushDiscordNotify( $message, $user, 'article_moved' );
-		return true;
 	}
 
 	/**

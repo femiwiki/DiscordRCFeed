@@ -17,7 +17,7 @@
   "Hooks": {
     "PageSaveComplete": "main",
     "ArticleDeleteComplete": "main",
-    "TitleMoveComplete": "main",
+    "PageMoveComplete": "main",
     "AddNewAccount": "main",
     "BlockIpComplete": "main",
     "UploadComplete": "main",
