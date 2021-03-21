@@ -93,9 +93,12 @@
         "import-page": true
       }
     },
-    "DiscordNotificationsExcludeList": {
+    "DiscordNotificationsExclude": {
       "value": {
-        "pages": [],
+        "page": {
+          "list": [],
+          "patterns": []
+        },
         "permissions": []
       }
     },

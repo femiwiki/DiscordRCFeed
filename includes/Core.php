@@ -22,8 +22,31 @@ class Core {
 	 * @todo Check case-sensitively when $wgCapitalLinks is false. Case-sensitive only now.
 	 */
 	public static function titleIsExcluded( Title $title ) {
-		global $wgDiscordNotificationsExcludeList;
-		return in_array( $title->getText(), $wgDiscordNotificationsExcludeList['pages'] );
+		global $wgDiscordNotificationsExclude;
+		$exclude = $wgDiscordNotificationsExclude['page'];
+		if ( isset( $exclude['list'] ) ) {
+			$list = $exclude['list'];
+			if ( !is_array( $list ) ) {
+				$list = [ $list ];
+			}
+			if ( in_array( $title->getText(), $list ) ) {
+				return true;
+			}
+		}
+
+		if ( isset( $exclude['patterns'] ) ) {
+			$patterns = $exclude['patterns'];
+			if ( !is_array( $patterns ) ) {
+				$patterns = [ $patterns ];
+			}
+			foreach ( $patterns as $pattern ) {
+				if ( preg_match( $pattern, $title ) ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -35,11 +58,11 @@ class Core {
 	 */
 	public static function pushDiscordNotify( string $message, $user, string $action ) {
 		global $wgDiscordNotificationsIncomingWebhookUrl, $wgDiscordNotificationsSendMethod,
-			$wgDiscordNotificationsExcludeList;
+			$wgDiscordNotificationsExclude;
 
 		// Users with the permission suppress notifications
 		if ( $user && $user instanceof User ) {
-			$permissions = $wgDiscordNotificationsExcludeList['permissions'];
+			$permissions = $wgDiscordNotificationsExclude['permissions'];
 			if ( !is_array( $permissions ) ) {
 				$permissions = [ $permissions ];
 			}

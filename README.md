@@ -1,6 +1,6 @@
-# DiscordNotifications
+# DiscordNotifications [![Github checks status]][github checks link] [![codecov.io status]][codecov.io link]
 
-This is a fork of kulttuuri/DiscordNotifications and an extension for [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) that sends notifications of actions in your Wiki like editing, adding or removing a page into [Discord](https://discordapp.com/) channel.
+This is a fork of [kulttuuri/DiscordNotifications] is an extension for [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) that sends notifications of actions in your Wiki like editing, adding or removing a page into [Discord](https://discordapp.com/) channel.
 
 ## Supported MediaWiki operations to send notifications
 
@@ -15,7 +15,7 @@ This is a fork of kulttuuri/DiscordNotifications and an extension for [MediaWiki
 
 ## Requirements
 
-- [cURL](http://curl.haxx.se/) or ability to use PHP function `file_get_contents` for sending the data. Defaults to cURL. See the configuration parameter `$wgDiscordNotificationsSendMethod` below to switch between cURL and file_get_contents.
+- [cURL](http://curl.haxx.se/) or ability to use PHP function `file_get_contents()` for sending the data. Defaults to cURL. See the configuration parameter `$wgDiscordNotificationsSendMethod` below to switch between cURL and file_get_contents.
 - MediaWiki 1.35+
 - Apache should have NE (NoEscape) flag on to prevent issues in URLs. By default you should have this enabled.
 
@@ -30,9 +30,9 @@ This is a fork of kulttuuri/DiscordNotifications and an extension for [MediaWiki
 4. Add settings listed below in your `localSettings.php`. Note that it is mandatory to set these settings for this extension to work:
 
 ```php
-wfLoadExtension( 'DiscordNotifications' )
+wfLoadExtension( 'DiscordNotifications' );
 // Required. Your Discord webhook URL. Read more from here: https://support.discord.com/hc/articles/228383668
-$wgDiscordNotificationsIncomingWebhookUrl = "https://discord.com/api/webhooks/xx/xxxx";
+$wgDiscordNotificationsIncomingWebhookUrl = 'https://discord.com/api/webhooks/xx/xxxx';
 ```
 
 5. Enjoy the notifications in your Discord room!
@@ -42,16 +42,16 @@ $wgDiscordNotificationsIncomingWebhookUrl = "https://discord.com/api/webhooks/xx
 These options can be set after including your plugin in your `localSettings.php` file.
 
 - `$wgDiscordNotificationsIncomingWebhookUrl` - (Required) Your Discord webhook URL. You can add multiple webhook urls that you want to send notifications to by adding them in this array: `[ 'https://yourUrlOne.com', 'https://yourUrlTwo...' ]`. Defaults to `false`.
-- `$wgDiscordNotificationsSendMethod` - Can be `'file_get_contents'` or `'curl'`. If you use VisualEditor and get unknown errors, do not have curl enabled on your server or notice other problems, the recommended solution is to change method to `"file_get_contents"`. Defaults to `'curl'`.
+- `$wgDiscordNotificationsSendMethod` - Can be `'file_get_contents'` or `'curl'`. If you use [VisualEditor] and get unknown errors, do not have curl enabled on your server or notice other problems, the recommended solution is to change method to `'file_get_contents'`. Defaults to `'curl'`.
 - `$wgDiscordNotificationsShowSuppressed` - By default we do not show non-public article deletion notifications. You can change this using the parameter below. Defaults to `true`.
 - `$wgDiscordNotificationsActions` - An associative array for actions to notify. See [Disabling Each Notification Individually](#disabling-each-notification-individually) below for details.
 - `$wgDiscordNotificationsDisplay` - An associative array for tweaks the display of notification. See [Change Display Options for Notification](#change-display-options-for-notification) below for details.
-- `$wgDiscordNotificationsExcludeList - An associative array to disable notifications related to certain pages or users. See [Disabling Notifications by origin](#disabling-notifications-by-origin) below for details.
-- `$wgDiscordNotificationsRequestOverride` - An array used for overriding the post data of the webhook request. See [Webhook Request Overriding](#webhook-request-overriding) below for details. Defaults to `[]`.
+- `$wgDiscordNotificationsExclude` - An associative array to disable notifications related to certain pages or users. See [Denylisting Notifications](#denylisting-notifications) below for details.
+- `$wgDiscordNotificationsRequestOverride` - An array used to override the post data of the webhook request. See [Webhook Request Overriding](#webhook-request-overriding) below for details. Defaults to `[]`.
 
 ### Webhook Request Overriding
 
-`$wgDiscordNotificationsRequestOverride` is an associative array used for overriding the post data of the webhook request. You can set username or avatar using this.
+`$wgDiscordNotificationsRequestOverride` is an associative array used to override the post data of the webhook request. You can set username or avatar using this instead of setting in Discord.
 See https://discord.com/developers/docs/resources/webhook#execute-webhook-jsonform-params for all available parameters.
 
 ```php
@@ -60,8 +60,6 @@ $wgDiscordNotificationsRequestOverride = [
   'avatar_url' => '',
 ];
 ```
-
-This array is used as the second argument for [array_replace_recursive()].
 
 ### Disabling Each Notification Individually
 
@@ -97,18 +95,21 @@ $wgDiscordNotificationsActions = [
 ];
 ```
 
-### Disabling Notifications by origin
+### Denylisting Notifications
 
-`wgDiscordNotificationsExcludeList` is an associative array to disable notifications related to certain pages or users. This config has below keys:
+`wgDiscordNotificationsExclude` is an associative array to disable notifications related to certain pages or users. This config has below keys:
 
-- `'pages'` - Actions (add, edit, modify) won't be notified to Discord room from articles starting with these names.
+- `'page'` - Actions (add, edit, modify) won't be notified to Discord room from articles matching with these names.
 - `'permissions'` - If this is set, actions by users with this permission won't cause alerts. Defaults to `''`. Can be string or an array of strings.
 
 Defaults to:
 
 ```php
-$wgDiscordNotificationsExcludeList = [
-  'pages' => [],
+$wgDiscordNotificationsExclude = [
+  'pages' => [
+    'list' => [],
+    'pattern' => [],
+  ],
   'permissions' => [],
 ];
 ```
@@ -140,7 +141,7 @@ $wgDiscordNotificationsDisplay = [
       'target' => 'talk',
       'text' => 'Discussion'
     ],
-  ];
+  ]
 ];
 ```
 
@@ -148,4 +149,9 @@ $wgDiscordNotificationsDisplay = [
 
 [MIT License](http://en.wikipedia.org/wiki/MIT_License)
 
-[array_replace_recursive()]: https://www.php.net/manual/en/function.array-replace-recursive.php
+[github checks status]: https://badgen.net/github/checks/femiwiki/DiscordNotifications
+[github checks link]: https://github.com/femiwiki/DiscordNotifications/actions
+[codecov.io status]: https://badgen.net/codecov/c/github/femiwiki/DiscordNotifications
+[codecov.io link]: https://codecov.io/gh/femiwiki/DiscordNotifications
+[kulttuuri/discordnotifications]: https://github.com/kulttuuri/DiscordNotifications
+[visualeditor]: https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:VisualEditor
