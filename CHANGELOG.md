@@ -2,7 +2,7 @@
 
 Versions and bullets are arranged chronologically from latest to oldest.
 
-## Unreleased
+## 1.0.1-femiwiki
 
 - Fix oddly parsed summary when an article is created.
 - Move from deprecated AddNewAccount hook to new LocalUserCreated hook. (https://github.com/femiwiki/DiscordNotifications/issues/2)
