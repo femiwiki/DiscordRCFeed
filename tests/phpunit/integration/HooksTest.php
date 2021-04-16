@@ -46,6 +46,9 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 		return $mock;
 	}
 
+	/**
+	 * @covers \MediaWiki\Extension\DiscordNotifications\Hooks::onPageSaveComplete
+	 */
 	public function testOnPageSaveComplete() {
 		$this->setMwGlobals( [
 			'wgServer' => '',
