@@ -56,7 +56,7 @@ class Core {
 	 * @param string $action
 	 * @see https://discordapp.com/developers/docs/resources/webhook#execute-webhook
 	 */
-	public static function pushDiscordNotify( string $message, $user, string $action ) {
+	public function pushDiscordNotify( string $message, $user, string $action ) {
 		global $wgDiscordNotificationsIncomingWebhookUrl, $wgDiscordNotificationsSendMethod,
 			$wgDiscordNotificationsExclude;
 
@@ -78,7 +78,7 @@ class Core {
 			return;
 		}
 
-		$post = self::makePost( $message, $action );
+		$post = $this->makePost( $message, $action );
 
 		$hooks = $wgDiscordNotificationsIncomingWebhookUrl;
 		if ( !$hooks ) {
@@ -119,7 +119,7 @@ class Core {
 	 * @param string $action
 	 * @return string
 	 */
-	private static function makePost( $message, $action ) {
+	private function makePost( $message, $action ) {
 		global $wgDiscordNotificationsRequestOverride, $wgSitename;
 
 		$colour = 11777212;

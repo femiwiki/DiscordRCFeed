@@ -15,16 +15,16 @@
     "DiscordNotifications": ["i18n"]
   },
   "Hooks": {
-    "PageSaveComplete": "main",
-    "ArticleDeleteComplete": "main",
-    "PageMoveComplete": "main",
-    "AddNewAccount": "main",
-    "BlockIpComplete": "main",
-    "UploadComplete": "main",
-    "ArticleProtectComplete": "main",
-    "UserGroupsChanged": "main",
+    "AfterImportPage": "main",
     "APIFlowAfterExecute": "MediaWiki\\Extension\\DiscordNotifications\\Hooks::onAPIFlowAfterExecute",
-    "AfterImportPage": "main"
+    "ArticleDeleteComplete": "main",
+    "ArticleProtectComplete": "main",
+    "BlockIpComplete": "main",
+    "LocalUserCreated": "main",
+    "PageMoveComplete": "main",
+    "PageSaveComplete": "main",
+    "UploadComplete": "main",
+    "UserGroupsChanged": "main"
   },
   "HookHandlers": {
     "main": {

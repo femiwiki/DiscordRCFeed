@@ -68,7 +68,7 @@ class LinkRenderer {
 		global $wgDiscordNotificationsDisplay;
 
 		$name = $user->getName();
-		$userTools = $wgDiscordNotificationsDisplay['user-tools'];
+		$userTools = $wgDiscordNotificationsDisplay['user-tools'] ?? [];
 
 		$rt = self::makeLink( $user->getUserPage()->getFullURL(), $name );
 		if ( $userTools && $user instanceof User ) {
@@ -97,13 +97,13 @@ class LinkRenderer {
 	 */
 	public static function getDiscordArticleText( $title, $newId = false ) {
 		global $wgDiscordNotificationsDisplay;
-		$pageTools = $wgDiscordNotificationsDisplay['page-tools'];
+		$pageTools = $wgDiscordNotificationsDisplay['page-tools'] ?? [];
 
 		if ( $title instanceof WikiPage ) {
 			$title = $title->getTitle();
 		}
 		$link = self::makeLink( $title->getFullURL(), $title->getFullText() );
-		if ( $wgDiscordNotificationsDisplay['page-tools'] ) {
+		if ( $pageTools ) {
 			$tools = [];
 			foreach ( $pageTools as $tool ) {
 				$tools[] = self::makeLink( $title->getFullURL( $tool['query'] ),

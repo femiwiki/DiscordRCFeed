@@ -15,12 +15,16 @@ use Wikimedia\TestingAccessWrapper;
  */
 class CoreTest extends MediaWikiIntegrationTestCase {
 
+	/** @var Core */
+	private $core;
+
 	/** @var TestingAccessWrapper */
 	private $wrapper;
 
 	protected function setUp() : void {
 		parent::setUp();
-		$this->wrapper = TestingAccessWrapper::newFromClass( Core::class );
+		$this->core = new Core();
+		$this->wrapper = TestingAccessWrapper::newFromObject( $this->core );
 	}
 
 	public static function providerTitleIsExcluded() {
@@ -52,9 +56,9 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 
 	public static function providerPermissions() {
 		return [
-			[ 'not - exist', true ],
+			[ 'not-exist', true ],
 			[ 'read', false ],
-			[ [ 'not - exist' ], true ],
+			[ [ 'not-exist' ], true ],
 			[ [ 'read' ], false ],
 		];
 	}
@@ -68,7 +72,7 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 		$this->setMwGlobals( 'wgDiscordNotificationsExclude', $excluded );
 		$user = $this->getTestUser()->getUser();
 		$arbitrary = 'test' . time() . rand();
-		$this->wrapper->pushDiscordNotify( $arbitrary, $user, 'article_saved' );
+		$this->core->pushDiscordNotify( $arbitrary, $user, 'article_saved' );
 		$this->assertSame( $expected, Core::$lastMessage === $arbitrary );
 	}
 

@@ -11,15 +11,15 @@ use SpecialPage;
 use Title;
 
 class Hooks implements
-	\MediaWiki\Storage\Hook\PageSaveCompleteHook,
-	\MediaWiki\Page\Hook\ArticleDeleteCompleteHook,
-	\MediaWiki\Hook\PageMoveCompleteHook,
-	\MediaWiki\Hook\AddNewAccountHook,
+	\MediaWiki\Auth\Hook\LocalUserCreatedHook,
+	\MediaWiki\Hook\AfterImportPageHook,
 	\MediaWiki\Hook\BlockIpCompleteHook,
+	\MediaWiki\Hook\PageMoveCompleteHook,
 	\MediaWiki\Hook\UploadCompleteHook,
+	\MediaWiki\Page\Hook\ArticleDeleteCompleteHook,
 	\MediaWiki\Page\Hook\ArticleProtectCompleteHook,
-	\MediaWiki\User\Hook\UserGroupsChangedHook,
-	\MediaWiki\Hook\AfterImportPageHook
+	\MediaWiki\Storage\Hook\PageSaveCompleteHook,
+	\MediaWiki\User\Hook\UserGroupsChangedHook
 {
 
 	/**
@@ -28,12 +28,25 @@ class Hooks implements
 	private $config;
 
 	/**
+	 * @var Core
+	 */
+	private $core;
+
+	/**
 	 * @param Config $config
 	 */
 	public function __construct(
 		Config $config
 	) {
 		$this->config = $config;
+		$this->core = new Core();
+	}
+
+	/**
+	 * @param Core $core
+	 */
+	public function setCore( Core $core ) {
+		$this->core = $core;
 	}
 
 	/**
@@ -52,16 +65,17 @@ class Hooks implements
 			$summary = wfMessage( 'discordnotifications-summary', $summary )->inContentLanguage()->plain();
 		}
 		if ( $wgDiscordNotificationsActions['add-page'] && $isNew ) {
-			$message = wfMessage( 'discordnotifications-article-created',
-				LinkRenderer::getDiscordUserText( $user ),
-				LinkRenderer::getDiscordArticleText( $wikiPage ),
-				$summary
+			$message = wfMessage( 'discordnotifications-article-created' )
+				->plaintextParams(
+					LinkRenderer::getDiscordUserText( $user ),
+					LinkRenderer::getDiscordArticleText( $wikiPage ),
+					$summary
 				)->inContentLanguage()->text();
-			if ( $wgDiscordNotificationsDisplay['diff'] ) {
+			if ( $wgDiscordNotificationsDisplay['diff'] ?? true ) {
 				$size = Core::msg( 'discordnotifications-bytes', $revisionRecord->getSize() );
 				$message .= " ($size)";
 			}
-			Core::pushDiscordNotify( $message, $user, 'article_inserted' );
+			$this->core->pushDiscordNotify( $message, $user, 'article_inserted' );
 		} elseif ( $wgDiscordNotificationsActions['edit-page'] && !$isNew && !$isMinor ) {
 			$message = wfMessage( 'discordnotifications-article-saved' )
 				->plaintextParams(
@@ -77,7 +91,7 @@ class Hooks implements
 						$revisionRecord->getSize() - $old->getSize() ) . ')';
 				}
 			}
-			Core::pushDiscordNotify( $message, $user, 'article_saved' );
+			$this->core->pushDiscordNotify( $message, $user, 'article_saved' );
 		} elseif ( $wgDiscordNotificationsActions['minor-edit-page'] && $isMinor ) {
 			$message = wfMessage( 'discordnotifications-article-saved' )
 				->plaintextParams(
@@ -93,7 +107,7 @@ class Hooks implements
 						$revisionRecord->getSize() - $old->getSize() ) . ')';
 				}
 			}
-			Core::pushDiscordNotify( $message, $user, 'article_saved' );
+			$this->core->pushDiscordNotify( $message, $user, 'article_saved' );
 		}
 		return true;
 	}
@@ -124,7 +138,7 @@ class Hooks implements
 			LinkRenderer::getDiscordArticleText( $wikiPage ),
 			$reason
 		)->inContentLanguage()->text();
-		Core::pushDiscordNotify( $message, $user, 'article_deleted' );
+		$this->core->pushDiscordNotify( $message, $user, 'article_deleted' );
 		return true;
 	}
 
@@ -147,13 +161,13 @@ class Hooks implements
 			LinkRenderer::getDiscordArticleText( $old ),
 			LinkRenderer::getDiscordArticleText( $new ),
 			$reason );
-		Core::pushDiscordNotify( $message, $user, 'article_moved' );
+		$this->core->pushDiscordNotify( $message, $user, 'article_moved' );
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public function onAddNewAccount( $user, $byEmail ) {
+	public function onLocalUserCreated( $user, $autocreated ) {
 		global $wgDiscordNotificationsActions, $wgDiscordNotificationsDisplay;
 
 		if ( !$wgDiscordNotificationsActions['new-user'] ) {
@@ -172,7 +186,7 @@ class Hooks implements
 		}
 
 		$messageExtra = '';
-		if ( $wgDiscordNotificationsDisplay['full-name'] ) {
+		if ( $wgDiscordNotificationsDisplay['full-name'] ?? false ) {
 			$messageExtra = '(';
 			$messageExtra .= $realName . ', ';
 			// Remove trailing ,
@@ -183,7 +197,7 @@ class Hooks implements
 		$message = Core::msg( 'discordnotifications-new-user',
 			LinkRenderer::getDiscordUserText( $user ),
 			$messageExtra );
-		Core::pushDiscordNotify( $message, $user, 'new_user_account' );
+		$this->core->pushDiscordNotify( $message, $user, 'new_user_account' );
 		return true;
 	}
 
@@ -205,7 +219,7 @@ class Hooks implements
 			$block->mExpiry,
 			LinkRenderer::makeLink( SpecialPage::getTitleFor( 'Block' )->getFullURL(),
 				Core::msg( 'discordnotifications-block-user-list' ) ) );
-		Core::pushDiscordNotify( $message, $user, 'user_blocked' );
+		$this->core->pushDiscordNotify( $message, $user, 'user_blocked' );
 		return true;
 	}
 
@@ -244,7 +258,7 @@ class Hooks implements
 			$fSize, $fUnits,
 			$localFile->getDescription() );
 
-		Core::pushDiscordNotify( $message, $wgUser, 'file_uploaded' );
+		$this->core->pushDiscordNotify( $message, $wgUser, 'file_uploaded' );
 		return true;
 	}
 
@@ -263,7 +277,7 @@ class Hooks implements
 				'discordnotifications-article-protected-remove' ),
 			LinkRenderer::getDiscordArticleText( $wikiPage ),
 			$reason );
-		Core::pushDiscordNotify( $message, $user, 'article_protected' );
+		$this->core->pushDiscordNotify( $message, $user, 'article_protected' );
 		return true;
 	}
 
@@ -291,7 +305,7 @@ class Hooks implements
 			implode( ', ', $user->getGroups() ),
 			LinkRenderer::makeLink( SpecialPage::getTitleFor( 'Userrights', $performer->getName() )->getFullURL(),
 				Core::msg( 'discordnotifications-view-user-rights' ) ) );
-		Core::pushDiscordNotify( $message, $user, 'user_groups_changed' );
+		$this->core->pushDiscordNotify( $message, $user, 'user_groups_changed' );
 		return true;
 	}
 
@@ -401,7 +415,8 @@ class Hooks implements
 			default:
 				return;
 		}
-		Core::pushDiscordNotify( $message, $wgUser, 'flow' );
+		$core = new Core();
+		$core->pushDiscordNotify( $message, $wgUser, 'flow' );
 	}
 
 	/**
@@ -417,7 +432,7 @@ class Hooks implements
 
 		$message = Core::msg( 'discordnotifications - import - complete',
 			LinkRenderer::getDiscordArticleText( $title ) );
-		Core::pushDiscordNotify( $message, null, 'import_complete' );
+		$this->core->pushDiscordNotify( $message, null, 'import_complete' );
 		return true;
 	}
 }
