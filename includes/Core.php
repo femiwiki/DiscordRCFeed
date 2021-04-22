@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\DiscordNotifications;
 
 use Flow\Model\UUID;
+use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\User\UserIdentity;
 use MessageSpecifier;
 use Psr\Log\LoggerInterface;
