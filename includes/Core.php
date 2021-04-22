@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\DiscordNotifications;
 
-use Exception;
 use Flow\Model\UUID;
 use MediaWiki\User\UserIdentity;
 use MessageSpecifier;
+use Psr\Log\LoggerInterface;
 use Title;
 use User;
 
@@ -14,6 +14,11 @@ class Core {
 	 * @var string used for phpunit
 	 */
 	public static $lastMessage;
+
+	/**
+	 * @var LoggerInterface
+	 */
+	private static $logger = null;
 
 	/**
 	 * Returns whether the given title should be excluded
@@ -82,7 +87,7 @@ class Core {
 
 		$hooks = $wgDiscordNotificationsIncomingWebhookUrl;
 		if ( !$hooks ) {
-			throw new Exception( '$wgDiscordNotificationsIncomingWebhookUrl is not set' );
+			self::getLogger()->warning( '$wgDiscordNotificationsIncomingWebhookUrl is not set' );
 		} elseif ( is_string( $hooks ) ) {
 			$hooks = [ $hooks ];
 		}
@@ -209,5 +214,15 @@ class Core {
 		$collection = \Flow\Collection\PostCollection::newFromId( $uuid );
 		$revision = $collection->getLastRevision();
 		return $revision->getContent( 'topic-title-plaintext' );
+	}
+
+	/**
+	 * @return LoggerInterface
+	 */
+	private static function getLogger(): LoggerInterface {
+		if ( !self::$logger ) {
+			self::$logger = LoggerFactory::getInstance( 'DiscordNotifications' );
+		}
+		return self::$logger;
 	}
 }

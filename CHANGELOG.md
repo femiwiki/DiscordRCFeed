@@ -2,6 +2,10 @@
 
 Versions and bullets are arranged chronologically from latest to oldest.
 
+## Unreleased
+
+- Avoid throwing an exception even if the extension is not configured. (https://github.com/femiwiki/DiscordNotifications/issues/4)
+
 ## 1.0.1-femiwiki
 
 - Fix oddly parsed summary when an article is created.
