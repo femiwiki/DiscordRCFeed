@@ -8,6 +8,6 @@
   },
   "devDependencies": {
     "@prettier/plugin-xml": "^0.13.1",
-    "prettier": "^2.2.1"
+    "prettier": "^2.3.0"
   }
 }
