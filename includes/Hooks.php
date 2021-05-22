@@ -258,6 +258,10 @@ class Hooks implements
 			$fSize, $fUnits,
 			$localFile->getDescription() );
 
+		# The i18n message contains Slack style link, resolve it.
+		# https://github.com/femiwiki/DiscordNotifications/issues/8
+		$message = preg_replace( '~<(https?[^|]*)\|([^\>]*)>~', '[$2]($1)', $message );
+
 		$this->core->pushDiscordNotify( $message, $wgUser, 'file_uploaded' );
 		return true;
 	}
