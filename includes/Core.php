@@ -89,6 +89,7 @@ class Core {
 		$hooks = $wgDiscordNotificationsIncomingWebhookUrl;
 		if ( !$hooks ) {
 			self::getLogger()->warning( '$wgDiscordNotificationsIncomingWebhookUrl is not set' );
+			return;
 		} elseif ( is_string( $hooks ) ) {
 			$hooks = [ $hooks ];
 		}
