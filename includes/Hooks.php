@@ -451,6 +451,12 @@ class Hooks implements
 	) {
 		global $wgDiscordNotificationsActions;
 
+		if ( !in_array( $action, [ 'new-topic', 'edit-header', 'edit-post', 'edit-title', 'edit-topic-summary',
+				'reply' ] )
+		) {
+			return;
+		}
+
 		if ( !$wgDiscordNotificationsActions['flow'] || !ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
 			return;
 		}
