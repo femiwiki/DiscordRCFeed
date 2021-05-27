@@ -208,11 +208,17 @@ class Core {
 	}
 
 	/**
-	 * @param string $uuid
-	 * @return string
+	 * @param string|UUID $uuid
+	 * @return string Text of the title for given UUID. If not found, empty string will be returned.
 	 */
-	public static function flowUUIDToTitleText( string $uuid ) {
-		$uuid = UUID::create( $uuid );
+	public static function flowUUIDToTitleText( $uuid ) {
+		if ( is_string( $uuid ) ) {
+			$uuid = strtolower( $uuid );
+			$uuid = UUID::create( $uuid );
+		}
+		if ( !( $uuid instanceof UUID ) ) {
+			return '';
+		}
 		$collection = \Flow\Collection\PostCollection::newFromId( $uuid );
 		$revision = $collection->getLastRevision();
 		return $revision->getContent( 'topic-title-plaintext' );

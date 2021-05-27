@@ -15,6 +15,7 @@
     "DiscordNotifications": ["i18n"]
   },
   "Hooks": {
+    "AbuseFilterShouldFilterAction": "main",
     "AfterImportPage": "main",
     "APIFlowAfterExecute": "MediaWiki\\Extension\\DiscordNotifications\\Hooks::onAPIFlowAfterExecute",
     "ArticleDeleteComplete": "main",

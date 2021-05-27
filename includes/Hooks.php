@@ -6,12 +6,17 @@ use APIBase;
 use Config;
 use Exception;
 use ExtensionRegistry;
+use Flow\Conversion\Utils;
+use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
+use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\MediaWikiServices;
 use SpecialPage;
 use Title;
+use User;
 
 class Hooks implements
 	\MediaWiki\Auth\Hook\LocalUserCreatedHook,
+	\MediaWiki\Extension\AbuseFilter\Hooks\AbuseFilterShouldFilterActionHook,
 	\MediaWiki\Hook\AfterImportPageHook,
 	\MediaWiki\Hook\BlockIpCompleteHook,
 	\MediaWiki\Hook\PageMoveCompleteHook,
@@ -35,9 +40,7 @@ class Hooks implements
 	/**
 	 * @param Config $config
 	 */
-	public function __construct(
-		Config $config
-	) {
+	public function __construct( Config $config ) {
 		$this->config = $config;
 		$this->core = new Core();
 	}
@@ -338,6 +341,14 @@ class Hooks implements
 			return;
 		}
 
+		# self::APIFlowAfterExecute() is used instead of this if available.
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'Abuse Filter' )
+			&& in_array( $action, [ 'new-topic', 'edit-header', 'edit-post', 'edit-title', 'edit-topic-summary',
+				'reply' ] )
+		) {
+			return;
+		}
+
 		global $wgUser;
 		switch ( $action ) {
 			case 'edit-header':
@@ -421,6 +432,107 @@ class Hooks implements
 		}
 		$core = new Core();
 		$core->pushDiscordNotify( $message, $wgUser, 'flow' );
+	}
+
+	/**
+	 * self::APIFlowAfterExecute() is not triggered if the browser of the user does not support JavaScript.
+	 * To avoid that cases, we use this AbuseFilter hook if the extension is loaded.
+	 * @param VariableHolder $vars
+	 * @param Title $title Title object target of the action
+	 * @param User $user User object performer of the action
+	 * @param array &$skipReasons Array of reasons why the action should be skipped
+	 * @return bool|void True or no return value to continue or false to abort
+	 */
+	public function onAbuseFilterShouldFilterAction(
+		VariableHolder $vars,
+		Title $title,
+		User $user,
+		array &$skipReasons
+	) {
+		global $wgDiscordNotificationsActions;
+
+		if ( !$wgDiscordNotificationsActions['flow'] || !ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
+			return;
+		}
+
+		if ( Core::titleIsExcluded( $title ) ) {
+			return;
+		}
+
+		// Avoid AbuseFilterConsequences test failures
+		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
+			return;
+		}
+
+		$userLink = LinkRenderer::getDiscordUserText( $user );
+		$action = $vars->getComputedVariable( 'action' )->data;
+		$pageTitleText = $vars->getComputedVariable( 'page_title' )->data;
+		$boardPrefixedTitleText = $vars->getComputedVariable( 'board_prefixedtitle' )->data;
+		$pagePrefixedTitleText = $vars->getComputedVariable( 'page_prefixedtitle' )->data;
+		$boardTitle = Title::newFromText( $boardPrefixedTitleText );
+		$pageTitle = Title::newFromText( $pagePrefixedTitleText );
+
+		// Skip notifications if the reply is the first, in fact non a "re"-ply.
+		// The first reply is a content of the topic.
+		if ( $action == 'reply' && $boardTitle == $pageTitle ) {
+			return;
+		}
+
+		$core = new Core();
+		switch ( $action ) {
+			case 'new-post':
+				$newWikitext = $vars->getVars()['new_wikitext'];
+				$titleText = $newWikitext->getParameters()['revision']->getPostId()->getAlphadecimal();
+				$title = Title::newFromText( $titleText, NS_TOPIC );
+				$varManager = AbuseFilterServices::getVariablesManager();
+				$topicText = $varManager->getVar( $vars, 'new_wikitext' )->toString();
+				$topicText = Utils::convert( 'topic-title-wikitext', 'topic-title-plaintext', $topicText, $title );
+
+				$msg = Core::msg( 'discordnotifications-flow-new-topic',
+					$userLink,
+					LinkRenderer::makeLink( $title->getFullUrl(), $topicText ),
+					LinkRenderer::makeLink( $boardTitle->getFullUrl(), $boardPrefixedTitleText )
+				);
+				break;
+			case 'edit-post':
+				$msg = Core::msg( 'discordnotifications-flow-edit-post',
+					$userLink,
+					LinkRenderer::makeLink( $pageTitle->getFullUrl(),
+						Core::flowUUIDToTitleText( $pageTitleText ) )
+					# TODO use LinkRenderer::makeLink( $boardTitle->getFullUrl(), $boardPrefixedTitleText )
+				);
+				break;
+			case 'reply':
+				$msg = Core::msg( 'discordnotifications-flow-reply',
+					$userLink,
+					LinkRenderer::makeLink( $pageTitle->getFullUrl(),
+						Core::flowUUIDToTitleText( $pageTitleText ) )
+					# TODO use LinkRenderer::makeLink( $boardTitle->getFullUrl(), $boardPrefixedTitleText )
+				);
+				break;
+			case 'edit-title':
+				$varManager = AbuseFilterServices::getVariablesManager();
+				$newWikitext = $varManager->getVar( $vars, 'new_wikitext' )->toString();
+				$msg = Core::msg( 'discordnotifications-flow-edit-title',
+					$userLink,
+					# TODO use $oldWikitext
+					LinkRenderer::makeLink( $boardTitle->getFullUrl(), $boardPrefixedTitleText ),
+					LinkRenderer::makeLink( $pageTitle->getFullUrl(), $newWikitext )
+				);
+				break;
+			case 'create-topic-summary':
+			case 'edit-topic-summary':
+				$msg = Core::msg( 'discordnotifications-flow-edit-header',
+					$userLink,
+					LinkRenderer::makeLink( $pageTitle->getFullUrl(),
+						Core::flowUUIDToTitleText( $pageTitleText ) )
+					# TODO use LinkRenderer::makeLink( $boardTitle->getFullUrl(), $boardPrefixedTitleText )
+				);
+				break;
+			default:
+				return;
+		}
+		$core->pushDiscordNotify( $msg, $user, 'flow' );
 	}
 
 	/**
