@@ -449,14 +449,19 @@ class Hooks implements
 		User $user,
 		array &$skipReasons
 	) {
-		global $wgDiscordNotificationsActions;
+		// Avoid AbuseFilterConsequences test failures
+		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
+			return;
+		}
 
+		$action = $vars->getComputedVariable( 'action' )->data;
 		if ( !in_array( $action, [ 'new-topic', 'edit-header', 'edit-post', 'edit-title', 'edit-topic-summary',
 				'reply' ] )
 		) {
 			return;
 		}
 
+		global $wgDiscordNotificationsActions;
 		if ( !$wgDiscordNotificationsActions['flow'] || !ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
 			return;
 		}
@@ -465,13 +470,7 @@ class Hooks implements
 			return;
 		}
 
-		// Avoid AbuseFilterConsequences test failures
-		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
-			return;
-		}
-
 		$userLink = LinkRenderer::getDiscordUserText( $user );
-		$action = $vars->getComputedVariable( 'action' )->data;
 		$pageTitleText = $vars->getComputedVariable( 'page_title' )->data;
 		$boardPrefixedTitleText = $vars->getComputedVariable( 'board_prefixedtitle' )->data;
 		$pagePrefixedTitleText = $vars->getComputedVariable( 'page_prefixedtitle' )->data;
