@@ -343,8 +343,8 @@ class Hooks implements
 
 		# self::APIFlowAfterExecute() is used instead of this if available.
 		if ( ExtensionRegistry::getInstance()->isLoaded( 'Abuse Filter' )
-			&& in_array( $action, [ 'new-topic', 'edit-header', 'edit-post', 'edit-title', 'edit-topic-summary',
-				'reply' ] )
+			&& in_array( $action, [ 'new-post', 'new-topic', 'edit-header', 'edit-post', 'edit-title',
+				'edit-topic-summary', 'reply' ] )
 		) {
 			return;
 		}
@@ -455,8 +455,8 @@ class Hooks implements
 		}
 
 		$action = $vars->getComputedVariable( 'action' )->data;
-		if ( !in_array( $action, [ 'new-topic', 'edit-header', 'edit-post', 'edit-title', 'edit-topic-summary',
-				'reply' ] )
+		if ( !in_array( $action, [ 'new-post', 'new-topic', 'edit-header', 'edit-post', 'edit-title',
+				'edit-topic-summary', 'reply' ] )
 		) {
 			return;
 		}
