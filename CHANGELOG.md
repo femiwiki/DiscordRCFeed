@@ -2,28 +2,7 @@
 
 Versions and bullets are arranged chronologically from latest to oldest.
 
-## Unreleased
+## Previous Releases
 
-- Avoid throwing an exception even if the extension is not configured. (https://github.com/femiwiki/DiscordNotifications/issues/4)
-
-## 1.0.1-femiwiki
-
-- Fix oddly parsed summary when an article is created.
-- Move from deprecated AddNewAccount hook to new LocalUserCreated hook. (https://github.com/femiwiki/DiscordNotifications/issues/2)
-- Localisation updates from https://translatewiki.net.
-
-## 1.0.0-femiwiki
-
-### Breaking changes
-
-- Configuration changes. See [README.md] for details.
-- Drop support for MW version earlier than 1.35.
-
-### Others
-
-- Support regular expression for denylisting pages.
-- ~~Treat passed user input as plaintext. (https://github.com/kulttuuri/DiscordNotifications/issues/73)~~
-- Format with Prettier.
-- Set up Codecov.
-
-[readme.md]: https://github.com/femiwiki/DiscordNotifications/blob/main/README.md
+- [REL1_36](https://github.com/femiwiki/DiscordNotifications/blob/REL1_36/CHANGELOG.md)
+- [REL1_35](https://github.com/femiwiki/DiscordNotifications/blob/REL1_35/CHANGELOG.md)
