@@ -551,7 +551,7 @@ class Hooks implements
 			return;
 		}
 
-		$message = Core::msg( 'discordnotifications - import - complete',
+		$message = Core::msg( 'discordnotifications-import-complete',
 			LinkRenderer::getDiscordArticleText( $title ) );
 		$this->core->pushDiscordNotify( $message, null, 'import_complete' );
 		return true;
