@@ -3,8 +3,8 @@
   "scripts": {
     "test": "npm -s run lint",
     "lint": "npm -s run lint:prettier",
-    "lint:prettier": "prettier '**/*.{js,json,md,yml,xml}' --check",
-    "fix": "prettier '**/*.{js,json,md,yml,xml}' --write"
+    "lint:prettier": "prettier . --check",
+    "fix": "prettier . --write"
   },
   "devDependencies": {
     "@prettier/plugin-xml": "^0.13.1",
