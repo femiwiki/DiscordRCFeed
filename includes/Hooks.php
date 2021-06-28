@@ -212,12 +212,16 @@ class Hooks implements
 		if ( !$wgDiscordNotificationsActions['block-user'] ) {
 			return;
 		}
+		$target = $block->getTargetUserIdentity();
+		if ( !$target ) {
+			return;
+		}
 
 		$mReason = $block->getReasonComment()->text;
 
 		$message = Core::msg( 'discordnotifications-block-user',
 			LinkRenderer::getDiscordUserText( $user ),
-			LinkRenderer::getDiscordUserText( $block->getTarget() ),
+			LinkRenderer::getDiscordUserText( $target ),
 			$mReason == '' ? '' : Core::msg( 'discordnotifications-block-user-reason' ) . " '" . $mReason . "'.",
 			$block->mExpiry,
 			LinkRenderer::makeLink( SpecialPage::getTitleFor( 'Block' )->getFullURL(),
@@ -235,7 +239,10 @@ class Hooks implements
 			return;
 		}
 
-		$user = $uploadBase->getLocalFile()->getUser( 'object' );
+		$user = $uploadBase->getLocalFile()->getUploader();
+		if ( !$user ) {
+			return;
+		}
 		$localFile = $uploadBase->getLocalFile();
 
 		# Use bytes, KiB, and MiB, rounded to two decimal places.
