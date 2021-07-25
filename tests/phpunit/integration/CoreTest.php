@@ -21,7 +21,7 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 	/** @var TestingAccessWrapper */
 	private $wrapper;
 
-	protected function setUp() : void {
+	protected function setUp(): void {
 		parent::setUp();
 		$this->core = new Core();
 		$this->wrapper = TestingAccessWrapper::newFromObject( $this->core );

@@ -14,7 +14,7 @@ class LinkRenderer {
 	 * @param string $url
 	 * @return string
 	 */
-	public static function parseUrl( string $url ) : string {
+	public static function parseUrl( string $url ): string {
 		foreach ( [
 			' ' => '%20',
 			'(' => '%28',
@@ -30,7 +30,7 @@ class LinkRenderer {
 	 * @param string $text
 	 * @return string
 	 */
-	public static function makeLink( string $target, $text ) : string {
+	public static function makeLink( string $target, $text ): string {
 		$target = self::parseUrl( $target );
 		return "[$text]($target)";
 	}
