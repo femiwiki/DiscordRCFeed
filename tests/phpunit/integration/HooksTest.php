@@ -29,7 +29,7 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 			->expects( $this->any() )
 			->method( 'pushDiscordNotify' )
 			->with( $eMessage, $eUser, $eAction );
-		$hooks = new Hooks( new HashConfig() );
+		$hooks = new Hooks( new HashConfig(), $this->getServiceContainer()->getUserFactory() );
 		$hooks->setCore( $coreMock );
 		return $hooks;
 	}

@@ -30,7 +30,7 @@
   "HookHandlers": {
     "main": {
       "class": "MediaWiki\\Extension\\DiscordNotifications\\Hooks",
-      "services": ["MainConfig"]
+      "services": ["MainConfig", "UserFactory"]
     }
   },
   "config": {

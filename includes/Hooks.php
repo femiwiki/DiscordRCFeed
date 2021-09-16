@@ -10,6 +10,7 @@ use Flow\Conversion\Utils;
 use MediaWiki\Extension\AbuseFilter\AbuseFilterServices;
 use MediaWiki\Extension\AbuseFilter\Variables\VariableHolder;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\User\UserFactory;
 use SpecialPage;
 use Title;
 use User;
@@ -33,15 +34,22 @@ class Hooks implements
 	private $config;
 
 	/**
+	 * @var UserFactory
+	 */
+	private $userFactory;
+
+	/**
 	 * @var Core
 	 */
 	private $core;
 
 	/**
 	 * @param Config $config
+	 * @param UserFactory $userFactory
 	 */
-	public function __construct( Config $config ) {
+	public function __construct( Config $config, UserFactory $userFactory ) {
 		$this->config = $config;
+		$this->userFactory = $userFactory;
 		$this->core = new Core();
 	}
 
@@ -63,6 +71,8 @@ class Hooks implements
 		if ( Core::titleIsExcluded( $wikiPage->getTitle() ) ) {
 			return true;
 		}
+
+		$user = $this->userFactory->newFromUserIdentity( $user );
 
 		if ( $summary != '' ) {
 			$summary = wfMessage( 'discordnotifications-summary', $summary )->inContentLanguage()->plain();
@@ -154,6 +164,10 @@ class Hooks implements
 		if ( !( $old instanceof Title ) || !( $new instanceof Title ) ) {
 			return;
 		}
+		$user = $this->userFactory->newFromUserIdentity( $user );
+		if ( $user->getId() == 0 ) {
+			return;
+		}
 		global $wgDiscordNotificationsActions;
 		if ( !$wgDiscordNotificationsActions['move-page'] ) {
 			return;
@@ -216,6 +230,10 @@ class Hooks implements
 		if ( !$target ) {
 			return;
 		}
+		$target = $this->userFactory->newFromUserIdentity( $target );
+		if ( $target->getId() == 0 ) {
+			return;
+		}
 
 		$mReason = $block->getReasonComment()->text;
 
@@ -241,6 +259,10 @@ class Hooks implements
 
 		$user = $uploadBase->getLocalFile()->getUploader();
 		if ( !$user ) {
+			return;
+		}
+		$user = $this->userFactory->newFromUserIdentity( $user );
+		if ( $user->getId() == 0 ) {
 			return;
 		}
 		$localFile = $uploadBase->getLocalFile();

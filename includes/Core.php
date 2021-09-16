@@ -4,7 +4,6 @@ namespace MediaWiki\Extension\DiscordNotifications;
 
 use Flow\Model\UUID;
 use MediaWiki\Logger\LoggerFactory;
-use MediaWiki\User\UserIdentity;
 use MessageSpecifier;
 use Psr\Log\LoggerInterface;
 use Title;
@@ -58,7 +57,7 @@ class Core {
 	/**
 	 * Sends the message into Discord room.
 	 * @param string $message to be sent.
-	 * @param User|UserIdentity|null $user
+	 * @param User|null $user
 	 * @param string $action
 	 * @see https://discordapp.com/developers/docs/resources/webhook#execute-webhook
 	 */
@@ -174,7 +173,7 @@ class Core {
 			curl_setopt( $h, $option, $value );
 		}
 		// ... And execute the curl script!
-		curl_exec( $h );
+		$_ = curl_exec( $h );
 		curl_close( $h );
 	}
 

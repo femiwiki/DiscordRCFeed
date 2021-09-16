@@ -1,7 +1,6 @@
 <?php
 namespace MediaWiki\Extension\DiscordNotifications;
 
-use MediaWiki\User\UserIdentity;
 use SpecialPage;
 use Title;
 use User;
@@ -61,7 +60,7 @@ class LinkRenderer {
 	/**
 	 * Gets nice HTML text for user containing the link to user page
 	 * and also links to user site, groups editing, talk and contribs pages.
-	 * @param User|UserIdentity $user
+	 * @param User $user
 	 * @return string
 	 */
 	public static function getDiscordUserText( $user ) {
