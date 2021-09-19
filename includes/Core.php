@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\DiscordNotifications;
 
 use Flow\Model\UUID;
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MediaWikiServices;
 use MessageSpecifier;
 use Psr\Log\LoggerInterface;
 use Title;
@@ -55,53 +56,80 @@ class Core {
 	}
 
 	/**
+	 * Returns whether the given user should be excluded
+	 * @param User $user
+	 * @return bool
+	 */
+	public static function userIsExcluded( User $user ) {
+		global $wgDiscordNotificationsExclude;
+
+		$permissions = $wgDiscordNotificationsExclude['permissions'];
+		if ( !is_array( $permissions ) ) {
+			$permissions = [ $permissions ];
+		}
+		foreach ( $permissions as $p ) {
+			if ( $user->isAllowed( $p ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Sends the message into Discord room.
 	 * @param string $message to be sent.
 	 * @param User|null $user
 	 * @param string $action
+	 * @return void|bool returns false if there is no output.
 	 * @see https://discordapp.com/developers/docs/resources/webhook#execute-webhook
 	 */
 	public function pushDiscordNotify( string $message, $user, string $action ) {
-		global $wgDiscordNotificationsIncomingWebhookUrl, $wgDiscordNotificationsSendMethod,
-			$wgDiscordNotificationsExclude;
-
-		// Users with the permission suppress notifications
-		if ( $user && $user instanceof User ) {
-			$permissions = $wgDiscordNotificationsExclude['permissions'];
-			if ( !is_array( $permissions ) ) {
-				$permissions = [ $permissions ];
-			}
-			foreach ( $permissions as $p ) {
-				if ( $user->isAllowed( $p ) ) {
-					return;
-				}
-			}
-		}
+		global $wgDiscordNotificationsIncomingWebhookUrl, $wgDiscordNotificationsSendMethod;
 
 		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
 			self::$lastMessage = $message;
-			return;
 		}
 
-		$post = $this->makePost( $message, $action );
+		if ( !in_array( $wgDiscordNotificationsSendMethod, [ 'MWHttpRequest', 'file_get_contents', 'curl' ] ) ) {
+			self::getLogger()->warning( "Unknown send method: $wgDiscordNotificationsSendMethod" );
+			return false;
+		}
 
 		$hooks = $wgDiscordNotificationsIncomingWebhookUrl;
 		if ( !$hooks ) {
 			self::getLogger()->warning( '$wgDiscordNotificationsIncomingWebhookUrl is not set' );
-			return;
+			return false;
 		} elseif ( is_string( $hooks ) ) {
 			$hooks = [ $hooks ];
 		}
 
+		// Users with the permission suppress notifications
+		if ( $user && $user instanceof User && self::userIsExcluded( $user ) ) {
+			return false;
+		}
+
+		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
+			return;
+		}
+
+		$post = $this->makePost( $message, $action );
 		foreach ( $hooks as $hook ) {
-			if ( $wgDiscordNotificationsSendMethod == 'file_get_contents' ) {
-				// Use file_get_contents to send the data. Note that you will need to have allow_url_fopen
-				// enabled in php.ini for this to work.
-				self::sendHttpRequest( $hook, $post );
-			} else {
-				// Call the Discord API through cURL (default way). Note that you will need to have cURL
-				// enabled for this to work.
-				self::sendCurlRequest( $hook, $post );
+			switch ( $wgDiscordNotificationsSendMethod ) {
+				case 'MWHttpRequest':
+					return self::sendMWHttpRequest( $hook, $post );
+				case 'file_get_contents':
+					self::getLogger()->warning(
+						'\'file_get_contents\' for \$wgDiscordNotificationsSendMethod is deprecated' );
+					// Use file_get_contents to send the data. Note that you will need to have allow_url_fopen
+					// enabled in php.ini for this to work.
+					self::sendHttpRequest( $hook, $post );
+					break;
+				case 'curl':
+					self::getLogger()->warning( '\'curl\' for \$wgDiscordNotificationsSendMethod is deprecated' );
+					// Call the Discord API through cURL (default way). Note that you will need to have cURL
+					// enabled for this to work.
+					self::sendCurlRequest( $hook, $post );
+					break;
 			}
 		}
 	}
@@ -175,6 +203,30 @@ class Core {
 		// ... And execute the curl script!
 		$_ = curl_exec( $h );
 		curl_close( $h );
+	}
+
+	/**
+	 * @param string $url
+	 * @param string $postData
+	 * @return void|bool
+	 */
+	private static function sendMWHttpRequest( $url, $postData ) {
+		$httpRequestFactory = MediaWikiServices::getInstance()->getHttpRequestFactory();
+		$req = $httpRequestFactory->create(
+			$url,
+			[
+				'method' => 'POST',
+				'postData' => $postData
+			],
+			__METHOD__
+		);
+		$req->setHeader( 'Content-Type', 'application/json' );
+
+		$status = $req->execute();
+		if ( !$status->isOK() ) {
+			self::getLogger()->warning( $status->getMessage() );
+			return false;
+		}
 	}
 
 	/**

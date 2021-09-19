@@ -33,6 +33,7 @@ This is a fork of [kulttuuri/DiscordNotifications] which is an extension for [Me
 wfLoadExtension( 'DiscordNotifications' );
 // Required. Your Discord webhook URL. Read more from here: https://support.discord.com/hc/articles/228383668
 $wgDiscordNotificationsIncomingWebhookUrl = 'https://discord.com/api/webhooks/xx/xxxx';
+$wgDiscordNotificationsSendMethod = 'MWHttpRequest';
 ```
 
 5. Enjoy the notifications in your Discord room!
@@ -42,7 +43,7 @@ $wgDiscordNotificationsIncomingWebhookUrl = 'https://discord.com/api/webhooks/xx
 These options can be set after including your plugin in your `localSettings.php` file.
 
 - `$wgDiscordNotificationsIncomingWebhookUrl` - (Required) Your Discord webhook URL. You can add multiple webhook urls that you want to send notifications to by adding them in this array: `[ 'https://yourUrlOne.com', 'https://yourUrlTwo...' ]`. Defaults to `false`.
-- `$wgDiscordNotificationsSendMethod` - Can be `'file_get_contents'` or `'curl'`. If you use [VisualEditor] and get unknown errors, do not have curl enabled on your server or notice other problems, the recommended solution is to change method to `'file_get_contents'`. Defaults to `'curl'`.
+- `$wgDiscordNotificationsSendMethod` - Can be `'MWHttpRequest'`, <s>`'file_get_contents'`</s>(deprecated) or <s>`'curl'`</s>(deprecated). Defaults to `'curl'`.
 - `$wgDiscordNotificationsShowSuppressed` - By default we do not show non-public article deletion notifications. You can change this using the parameter below. Defaults to `true`.
 - `$wgDiscordNotificationsActions` - An associative array for actions to notify. See [Disabling Each Notification Individually](#disabling-each-notification-individually) below for details.
 - `$wgDiscordNotificationsDisplay` - An associative array for tweaks the display of notification. See [Change Display Options for Notification](#change-display-options-for-notification) below for details.

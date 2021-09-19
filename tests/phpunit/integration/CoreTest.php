@@ -56,24 +56,24 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 
 	public static function providerPermissions() {
 		return [
-			[ 'not-exist', true ],
-			[ 'read', false ],
-			[ [ 'not-exist' ], true ],
-			[ [ 'read' ], false ],
+			[ 'non-exist-permission', false ],
+			[ 'read', true ],
+			[ [ 'non-exist-permission' ], false ],
+			[ [ 'read' ], true ],
 		];
 	}
 
 	/**
 	 * @dataProvider providerPermissions
+	 * @covers \MediaWiki\Extension\DiscordNotifications\Core::userIsExcluded
 	 */
-	public function testExcludedPermission( $excluded, $expected ) {
+	public function testUserIsExcluded( $permission, $excluded ) {
 		global $wgDiscordNotificationsExclude;
-		$excluded = array_merge( $wgDiscordNotificationsExclude, [ 'permissions' => $excluded ] );
-		$this->setMwGlobals( 'wgDiscordNotificationsExclude', $excluded );
+		$permission = array_merge( $wgDiscordNotificationsExclude, [ 'permissions' => $permission ] );
+		$this->setMwGlobals( 'wgDiscordNotificationsExclude', $permission );
+
 		$user = $this->getTestUser()->getUser();
-		$arbitrary = 'test' . time() . rand();
-		$this->core->pushDiscordNotify( $arbitrary, $user, 'article_saved' );
-		$this->assertSame( $expected, Core::$lastMessage === $arbitrary );
+		$this->assertSame( $excluded, Core::userIsExcluded( $user ) );
 	}
 
 	/**
@@ -105,6 +105,20 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 				'article_saved'
 			)
 		);
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\DiscordNotifications\Core::pushDiscordNotify
+	 */
+	public function testPushDiscordNotify() {
+		$core = $this->core;
+		$this->assertFalse( $core->pushDiscordNotify( '', null, 'article_saved' ) );
+
+		$this->setMwGlobals( 'wgDiscordNotificationsIncomingWebhookUrl', 'http://127.0.0.1/webhook' );
+		$this->assertNull( $core->pushDiscordNotify( '', null, 'article_saved' ) );
+
+		$this->setMwGlobals( 'wgDiscordNotificationsSendMethod', 'random' );
+		$this->assertFalse( $core->pushDiscordNotify( '', null, 'article_saved' ) );
 	}
 
 	public function testDiscordNotifications() {
