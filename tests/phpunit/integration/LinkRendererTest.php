@@ -104,4 +104,21 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 		$title = $page->getTitle();
 		$this->assertSame( $expected, LinkRenderer::getDiscordArticleText( $page ) );
 	}
+
+	public static function providerTools() {
+		return [
+			[ 'edit', '(edit)' ],
+			[ [ 'edit', 'block' ], '(edit | block)' ],
+		];
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::makeNiceTools
+	 * @param string|array $tools
+	 * @param string $expected
+	 * @dataProvider providerTools
+	 */
+	public function testMakeNiceTools( $tools, $expected ) {
+		$this->assertSame( $expected, LinkRenderer::makeNiceTools( $tools ) );
+	}
 }

@@ -36,23 +36,6 @@ class LinkRendererTest extends MediaWikiUnitTestCase {
 		);
 	}
 
-	public static function providerTools() {
-		return [
-			[ 'edit', '(edit)' ],
-			[ [ 'edit', 'block' ], '(edit | block)' ],
-		];
-	}
-
-	/**
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::makeNiceTools
-	 * @param string|array $tools
-	 * @param string $expected
-	 * @dataProvider providerTools
-	 */
-	public function testMakeNiceTools( $tools, $expected ) {
-		$this->assertSame( $expected, LinkRenderer::makeNiceTools( $tools ) );
-	}
-
 	public static function providerWikitextWithLinks() {
 		return [
 			[ 'A edited [[B]]', 'A edited [B]()' ],
