@@ -43,7 +43,7 @@ You can set the following keys of the associative array:
 - `'omit_user'` - `true` or `false` whether to skip registered users. Same as described on [Manual:$wgRCFeeds].
 - `'omit_minor'` - `true` or `false` whether to skip minor edits. Same as described on [Manual:$wgRCFeeds].
 - `'omit_patrolled'` - `true` or `false` whether to skip patrolled edits. Same as described on [Manual:$wgRCFeeds].
-- `'omit_namespaces'`, `''` and `''` - Lists for filtering notifications. See [Filtering Notifications](#filtering-notifications) below for details.
+- `'omit_namespaces'`, `'omit_types'`, `'omit_log_types'` and `'omit_log_actions'` - Lists for filtering notifications. See [Filtering Notifications](#filtering-notifications) below for details.
 - `'user_tools'` and `'page_tools'` - Associative arrays for Controlling the display of tools shown with notification. See [Controlling Page Tools And User Tools](#controlling-page-tools-and-user-tools) below for details.
 - `'request_override'` - An array used to override the post data of the webhook request. See [Webhook Request Overriding](#webhook-request-overriding) below for details. Defaults to `[]`.
 
