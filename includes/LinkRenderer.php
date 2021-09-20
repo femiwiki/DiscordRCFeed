@@ -119,7 +119,7 @@ class LinkRenderer {
 			}
 			if ( $newId ) {
 				$tools[] = self::makeLink( $title->getFullURL( "diff=prev&oldid=$newId" ),
-					Core::msg( 'discordrcfeed-diff' ) );
+					Core::msg( 'diff' ) );
 			}
 			$tools = self::makeNiceTools( $tools );
 			$link .= " $tools";
