@@ -39,7 +39,6 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 		}
 
 		$linkRenderer = new LinkRenderer( $feed['user_tools'], $feed['page_tools'] );
-
 		$user = $rc->getPerformer();
 
 		if ( $attribs['rc_type'] == RC_LOG ) {
@@ -48,7 +47,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			$comment = $linkRenderer->makeLinksClickable( $comment, $titleObj );
 			$action = $attribs['rc_log_type'];
 			$title = $linkRenderer->getDiscordArticleText( $titleObj );
-			if ( in_array( $title->getNamespace(), $feed['omit_namespaces'] ) ) {
+			if ( in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] ) ) {
 				return null;
 			}
 
