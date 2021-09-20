@@ -3,29 +3,20 @@
 **⚠️ Work-in-progress**
 
 - [ ] Remove all TODOs
+- [ ] Add filter for namespaces
+- [ ] Fancy output for new user event
 
-This is a fork of [kulttuuri/DiscordRCFeed] which is an extension for [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) that sends notifications of actions in your Wiki like editing, adding or removing a page into [Discord](https://discordapp.com/) channel.
-
-## Supported MediaWiki operations to send notifications
-
-- Article is added, removed, moved or edited.
-- Article protection settings are changed.
-- Article is imported.
-- New user is added.
-- User is blocked.
-- User groups are changed.
-- File is uploaded.
-- ... and each notification can be individually enabled or disabled :)
+This is a fork of [kulttuuri/DiscordNotifications] which is an extension for [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) that sends notifications of actions in your wiki like editing, adding or removing a page into [Discord](https://discordapp.com/) channel.
 
 ## Requirements
 
-- [cURL](http://curl.haxx.se/) or ability to use PHP function `file_get_contents()` for sending the data. Defaults to cURL. See the configuration parameter `$wgDiscordRCFeedSendMethod` below to switch between cURL and file_get_contents.
-- MediaWiki 1.35+
+- Setting a feed requires the [sockets PHP extension]. If the extension is not enabled, actions like edits, moves, etc may work, but the action may not get logged in recent changes at all. See [[Manual:$wgRCFeeds]] for details.
+- MediaWiki 1.36+
 - Apache should have NE (NoEscape) flag on to prevent issues in URLs. By default you should have this enabled.
 
 ## How to install
 
-1. Create a new Discord Webhook for your channel. You can create and manage webhooks for your channel by clicking the settings icon next to channel name in the Discord app. Read more from here: https://support.discordapp.com/hc/en-us/articles/228383668
+1. Create a new Discord Webhook for your channel. You can create and manage webhooks for your channel by clicking the settings icon next to channel name in the Discord app. Read more from here: https://support.discord.com/hc/articles/228383668
 
 2. After setting up the Webhook you will get a Webhook URL. Copy that URL as you will need it in step 4.
 
@@ -35,49 +26,50 @@ This is a fork of [kulttuuri/DiscordRCFeed] which is an extension for [MediaWiki
 
 ```php
 wfLoadExtension( 'DiscordRCFeed' );
-// Required. Your Discord webhook URL. Read more from here: https://support.discord.com/hc/articles/228383668
-$wgDiscordRCFeedIncomingWebhookUrl = 'https://discord.com/api/webhooks/xx/xxxx';
-$wgDiscordRCFeedSendMethod = 'MWHttpRequest';
+$wgRCFeeds['discord'] = [
+	// Required. Your Discord webhook URL. Read more from here: https://support.discord.com/hc/articles/228383668
+	'url' => 'https://discord.com/api/webhooks/xx/xxxx';
+];
 ```
 
 5. Enjoy the notifications in your Discord room!
 
 ## Additional options
 
-These options can be set after including your plugin in your `localSettings.php` file.
+You can set the following keys of the associative array:
 
-- `$wgDiscordRCFeedIncomingWebhookUrl` - (Required) Your Discord webhook URL. You can add multiple webhook urls that you want to send notifications to by adding them in this array: `[ 'https://yourUrlOne.com', 'https://yourUrlTwo...' ]`. Defaults to `false`.
-- `$wgDiscordRCFeedSendMethod` - Can be `'MWHttpRequest'`, <s>`'file_get_contents'`</s>(deprecated) or <s>`'curl'`</s>(deprecated). Defaults to `'curl'`.
-- `$wgDiscordRCFeedShowSuppressed` - By default we do not show non-public article deletion notifications. You can change this using the parameter below. Defaults to `true`.
-- `$wgDiscordRCFeedActions` - An associative array for actions to notify. See [Disabling Each Notification Individually](#disabling-each-notification-individually) below for details.
-- `$wgDiscordRCFeedDisplay` - An associative array for tweaks the display of notification. See [Change Display Options for Notification](#change-display-options-for-notification) below for details.
-- `$wgDiscordRCFeedExclude` - An associative array to disable notifications related to certain pages or users. See [Denylisting Notifications](#denylisting-notifications) below for details.
-- `$wgDiscordRCFeedRequestOverride` - An array used to override the post data of the webhook request. See [Webhook Request Overriding](#webhook-request-overriding) below for details. Defaults to `[]`.
+- `'omit_bots'` - `true` or `false` whether to skip bot edits. Same as described on [Manual:$wgRCFeeds].
+- `'omit_anon'` - `true` or `false` whether to skip anon edits. Same as described on [Manual:$wgRCFeeds].
+- `'omit_user'` - `true` or `false` whether to skip registered users. Same as described on [Manual:$wgRCFeeds].
+- `'omit_minor'` - `true` or `false` whether to skip minor edits. Same as described on [Manual:$wgRCFeeds].
+- `'omit_patrolled'` - `true` or `false` whether to skip patrolled edits. Same as described on [Manual:$wgRCFeeds].
+- `'omit_namespaces'`, `''` and `''` - Lists for filtering notifications. See [Filtering Notifications](#filtering-notifications) below for details.
+- `'user_tools'` and `'page_tools'` - Associative arrays for Controlling the display of tools shown with notification. See [Controlling Page Tools And User Tools](#controlling-page-tools-and-user-tools) below for details.
+- `'request_override'` - An array used to override the post data of the webhook request. See [Webhook Request Overriding](#webhook-request-overriding) below for details. Defaults to `[]`.
 
 ### Webhook Request Overriding
 
-`$wgDiscordRCFeedRequestOverride` is an associative array used to override the post data of the webhook request. You can set username or avatar using this instead of setting in Discord.
+`$$wgRCFeeds['discord']['request_override']` is an associative array used to override the post data of the webhook request. You can set username or avatar using this instead of setting in Discord.
 See https://discord.com/developers/docs/resources/webhook#execute-webhook-jsonform-params for all available parameters.
 
 ```php
-$wgDiscordRCFeedRequestOverride = [
+$wgRCFeeds['discord']['request_override'] = [
   'username' => 'Captain Hook',
   'avatar_url' => '',
 ];
 ```
 
-### Disabling Each Notification Individually
+### Filtering Notifications
 
-`$wgDiscordRCFeedActions` is an associative array to disable notification. You can disable notification indivisually.
+`'omit_namespace'` is an list that contains namespaces should be omit.
 
 ```php
-// Disable an action
-$wgDiscordRCFeedActions = [ 'new-user' => false ];
+$wgRCFeeds['discord']['omit_namespace'] = [ NS_TALK ];
 
-// Disable multiple actions at once
-$wgDiscordRCFeedActions = [
-  'add-page' => false,
-  'remove-page' => false,
+$wgRCFeeds['discord']['omit_namespace'] = [
+  NS_PROJECT,
+  NS_PROJECT_TALK,
+  NS_TALK,
 ];
 ```
 
@@ -100,7 +92,7 @@ $wgDiscordRCFeedActions = [
 ];
 ```
 
-### Denylisting Notifications
+### Omitting Specific Notifications
 
 `wgDiscordRCFeedExclude` is an associative array to disable notifications related to certain pages or users. This config has below keys:
 
@@ -117,34 +109,54 @@ $wgDiscordRCFeedExclude = [
 ];
 ```
 
-### Change Display Options for Notification
+### Controlling Page Tools And User Tools
+
+Page tools And user tools are tools shown after page or user link.
 
 | Option         | Default value | Description                                                                                                             |
 | -------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `'user-tools'` | array         | If this is false, users will not get additional links in the notification message (block \| groups \| talk \| contribs) |
-| `'page-tools'` | array         | If this is false, pages will not get additional links in the notification message (edit \| delete \| history).          |
-| `'diff'`       | `true`        | show size of the edit                                                                                                   |
-| `'full-name'`  | `false`       | If this is true, newly created user full name is added to notification.                                                 |
+| `'user_tools'` | array         | If this is false, users will not get additional links in the notification message (block \| groups \| talk \| contribs) |
+| `'page_tools'` | array         | If this is false, pages will not get additional links in the notification message (edit \| delete \| history).          |
 
 ```php
 // Remove page tools
-$wgDiscordRCFeedDisplay = [
-  'page-tools' => false
-];
+$wgRCFeeds['discord']['page_tools'] = false;
 
 // Override user tools
-$wgDiscordRCFeedDisplay = [
-  'user-tools' => [
-    [
-      'target' => 'special',
-      'special' => 'Block',
-      'text' => 'IP Block'
-    ],
-    [
-      'target' => 'talk',
-      'text' => 'Discussion'
-    ],
-  ]
+$wgRCFeeds['discord']['user_tools'] = [
+	[
+		'target' => 'special',
+		'special' => 'Block',
+		'text' => 'IP Block'
+	],
+	[
+		'target' => 'talk',
+		'text' => 'Discussion'
+	],
+	[
+		'target' => 'special',
+		'special' => 'Contributions',
+		// message would be shown if 'msg' is given.
+		'msg' => 'contribslink'
+	],
+];
+```
+
+## Registering Multiple Webhooks
+
+You can register multiple webhooks with separate settings. The key should start with `'discord'`.
+
+```php
+wfLoadExtension( 'DiscordRCFeed' );
+$wgRCFeeds[] = [
+	'discord' => [
+		'url' => 'https://discord.com/api/webhooks/aa/xxxx',
+		'omit_user' = true,
+	],
+	'discord_anon' => [
+		'url' => 'https://discord.com/api/webhooks/bb/xxxx',
+		'omit_anon' = true,
+	],
 ];
 ```
 
@@ -157,4 +169,5 @@ $wgDiscordRCFeedDisplay = [
 [codecov.io status]: https://badgen.net/codecov/c/github/femiwiki/DiscordRCFeed
 [codecov.io link]: https://codecov.io/gh/femiwiki/DiscordRCFeed
 [kulttuuri/discordnotifications]: https://github.com/kulttuuri/DiscordRCFeed
-[visualeditor]: https://www.mediawiki.org/wiki/Special:MyLanguage/Extension:VisualEditor
+[sockets php extension]: https://www.php.net/sockets
+[manual:$wgrcfeeds]: https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:$wgRCFeeds
