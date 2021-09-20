@@ -7,18 +7,11 @@
 			"Ihojose"
 		]
 	},
+	"discordrcfeed-summary": "Resumen",
 	"discordrcfeed-line-edit-minor": "📝 $1 hizo una edición menor en el artículo $3",
 	"discordrcfeed-line-edit": "📝 $1 editó el artículo $3",
-	"discordrcfeed-line-new": "📄 $1 creó el artículo $3",
-	"discordrcfeed-line-delete-delete": "❌ $1 borró el artículo $3",
-	"discordrcfeed-line-move-move": "➡ $1 movió el artículo $3.",
-	"discordrcfeed-line-protect-unprotect": "🔒 $1 quitó la protección de el artículo $3.",
+	"discordrcfeed-line-new": "📄 $1 creó el artículo $3",	"discordrcfeed-summary": "Resumen",	"discordrcfeed-flow-edit-header": "💬 $1 ha editado una tabla de descripción $2",
 	"discordrcfeed-line-newusers-create": "👥 Se creó la nueva cuenta de usuario $1",
-	"discordrcfeed-line-upload-upload": "📤 $1 subió el archivo $3",
-	"discordrcfeed-line-block-block": "🚫 $1 bloqueó a $2 $3 Expiración del bloqueo: $4. $5",
-	"discordrcfeed-summary": "Resumen",
-	"discordrcfeed-line-rights-rights": "$1 cambió los grupos a los que pertenece el usuario por $3. Grupos antiguos: $3. Nuevos grupos: $4",
-	"discordrcfeed-flow-edit-header": "💬 $1 ha editado una tabla de descripción $2",
 	"discordrcfeed-flow-edit-post": "💬 $1 ha editado una publicación en $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 ha cambiado el título del tema a $2 en $3",
 	"discordrcfeed-flow-lock-topic-lock": "resuelto",
@@ -27,6 +20,4 @@
 	"discordrcfeed-flow-moderate-topic": "💬 $1 ha $2 el tema $3",
 	"discordrcfeed-flow-moderate-hide": "oculto",
 	"discordrcfeed-flow-moderate-delete": "eliminado",
-	"discordrcfeed-flow-moderate-undelete": "restaurado",
-	"discordrcfeed-line-import-upload": "⤵️ Se importó el artículo $1."
-}
+	"discordrcfeed-flow-moderate-undelete": "restaurado",}

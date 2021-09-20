@@ -47,17 +47,6 @@ class LinkRenderer {
 		return wfMessage( 'parentheses', $tools )->inContentLanguage()->text();
 	}
 
-	/**
-	 * @param User|WikiPage|Title $target
-	 * @return string
-	 */
-	public static function getDiscordText( $target ) {
-		if ( $target instanceof User ) {
-			return self::getDiscordUserText( $target );
-		}
-		return self::getDiscordArticleText( $target );
-	}
-
 	/** @var array */
 	private $userTools;
 
@@ -103,10 +92,11 @@ class LinkRenderer {
 	 * Gets nice HTML text for article containing the link to article page
 	 * and also into edit, delete and article history pages.
 	 * @param WikiPage|Title $title
-	 * @param int|bool $newId
+	 * @param int|bool $thisOldId
+	 * @param int|bool $lastOldId
 	 * @return string
 	 */
-	public function getDiscordArticleText( $title, $newId = false ) {
+	public function getDiscordArticleText( $title, $thisOldId = false, $lastOldId = false ) {
 		if ( $title instanceof WikiPage ) {
 			$title = $title->getTitle();
 		}
@@ -117,13 +107,57 @@ class LinkRenderer {
 				$tools[] = self::makeLink( $title->getFullURL( $tool['query'] ),
 					Core::msg( $tool['msg'] ) );
 			}
-			if ( $newId ) {
-				$tools[] = self::makeLink( $title->getFullURL( "diff=prev&oldid=$newId" ),
+			if ( $thisOldId && $lastOldId ) {
+				$tools[] = self::makeLink( $title->getFullURL( "diff=$thisOldId&oldid=$lastOldId" ),
 					Core::msg( 'diff' ) );
 			}
 			$tools = self::makeNiceTools( $tools );
 			$link .= " $tools";
 		}
 		return $link;
+	}
+
+	/**
+	 * @param string $wt wikitext to parse.
+	 * @param Title|null $target
+	 * @param bool $pageTools
+	 * @return string text with Discord syntax.
+	 */
+	public function makeLinksClickable( $wt, $target = null, $pageTools = true ) {
+		if ( $target ) {
+			$targetText = $target->getPrefixedText();
+			if ( $target->getNamespace() == NS_USER ) {
+				$replacement = $this->getDiscordUserText( User::newFromName( $targetText ) );
+			} else {
+				$replacement = $this->getDiscordArticleText( $target );
+			}
+			$wt = preg_replace(
+				"/(?:\[\[)?$targetText(?:\]\])?/",
+				$replacement,
+				$wt
+			);
+		}
+		if ( !preg_match_all( '/\[\[([^]]+)\]\]/', $wt, $matches ) ) {
+			return $wt;
+		}
+		foreach ( $matches[0] as $i => $match ) {
+			$titleText = $matches[1][$i];
+			$titleObj = Title::newFromText( $titleText );
+			if ( !$titleObj ) {
+				continue;
+			}
+			if ( $pageTools ) {
+				if ( $titleObj->getNamespace() == NS_USER ) {
+					$replacement = $this->getDiscordUserText( User::newFromName( $titleObj ) );
+				} else {
+					$replacement = $this->getDiscordArticleText( $titleObj );
+				}
+			} else {
+				$replacement = self::makeLink( $titleObj->getFullURL(), $titleText );
+			}
+			$wt = str_replace( $match, $replacement, $wt );
+		}
+
+		return $wt;
 	}
 }

@@ -11,16 +11,8 @@
 	},
 	"discordrcfeed-line-edit-minor": "📝 $1 a fait une modification mineure de l’article « $3 ».",
 	"discordrcfeed-line-edit": "📝 $1 a modifié l’article « $3 ».",
-	"discordrcfeed-line-new": "📄 $1 a créé l’article « $3 ».",
-	"discordrcfeed-line-delete-delete": "❌ $1 a supprimé l’article « $3 ».",
-	"discordrcfeed-line-move-move": "➡ $1 a déplacé l’article « $3 ».",
-	"discordrcfeed-line-protect-unprotect": "🔒 $1 a supprimé la protection de l’article « $3 ».",
+	"discordrcfeed-line-new": "📄 $1 a créé l’article « $3 ».",	"discordrcfeed-summary": "Résumé",	"discordrcfeed-flow-edit-header": "💬 $1 a modifié une description de panneau $2",
 	"discordrcfeed-line-newusers-create": "👥 Le nouveau compte utilisateur « $1 » vient d’être créé",
-	"discordrcfeed-line-upload-upload": "📤 $1 a téléversé le fichier $3",
-	"discordrcfeed-line-block-block": "🚫 $1 a bloqué « $2 ». $3. Expiration du blocage : $4. $5",
-	"discordrcfeed-summary": "Résumé",
-	"discordrcfeed-line-rights-rights": "$1 a changé les groupes d’utilisateurs pour $3. Anciens groupes : $3. Nouveaux groupes : $4",
-	"discordrcfeed-flow-edit-header": "💬 $1 a modifié une description de panneau $2",
 	"discordrcfeed-flow-edit-post": "💬 $1 a modifié un billet sur $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 a changé le titre du sujet en « $2 » sur $3",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 a modifié le résumé du sujet sur $2",
@@ -36,6 +28,4 @@
 	"discordrcfeed-flow-moderate-delete": "supprimé",
 	"discordrcfeed-flow-moderate-undelete": "restauré",
 	"discordrcfeed-flow-new-topic": "💬 $1 a créé le sujet $2 sur $3",
-	"discordrcfeed-flow-reply": "💬 $1 a répondu dans $2",
-	"discordrcfeed-line-import-upload": "⤵️ l'article $1 a été importé."
-}
+	"discordrcfeed-flow-reply": "💬 $1 a répondu dans $2",}

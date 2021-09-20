@@ -6,17 +6,11 @@
 			"Uncitoyen"
 		]
 	},
+	"discordrcfeed-summary": "Özet",
 	"discordrcfeed-line-edit-minor": "📝 $1 kullanıcısı $3 maddesi küçük düzenleme yapıldı",
 	"discordrcfeed-line-edit": "📝 $1 kullanıcısı $3 maddesi düzenlendi",
-	"discordrcfeed-line-new": "📄 $1 kullanıcısı $3 maddesini oluşturdu",
-	"discordrcfeed-line-delete-delete": "❌ $1 kullanıcısı $3 maddesini sildi.",
-	"discordrcfeed-line-protect-unprotect": "🔒 $1 kullanıcısı $3 maddesini korumayı kaldırıldı.",
+	"discordrcfeed-line-new": "📄 $1 kullanıcısı $3 maddesini oluşturdu",	"discordrcfeed-summary": "Özet",	"discordrcfeed-flow-edit-header": "💬 $1 kullanıcısı $2 pano açıklaması düzenledi",
 	"discordrcfeed-line-newusers-create": "👥 Yeni $1 kullanıcı hesabı oluşturuldu",
-	"discordrcfeed-line-upload-upload": "📤 $1 kullanıcısı $3 dosyayı yükledi (biçim: $4, boyut: $5 $6, özet: $7)",
-	"discordrcfeed-line-block-block": "🚫 $1 kullanıcısı $2 kullanıcısını engelledi $3 Engel bitmesine: $4. $5",
-	"discordrcfeed-summary": "Özet",
-	"discordrcfeed-line-rights-rights": "$1 kullanıcısı $3 için kullanıcı gruplarını değiştirdi. Eski gruplar: $3. Yeni gruplar: $4",
-	"discordrcfeed-flow-edit-header": "💬 $1 kullanıcısı $2 pano açıklaması düzenledi",
 	"discordrcfeed-flow-edit-post": "💬 $1 kullanıcısı $2 bağlantısında bir gönderiyi düzenledi",
 	"discordrcfeed-flow-edit-title": "💬 $1 kullanıcısı $2 konu başlığını $3 tartışma sayfasında değiştirdi",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 kullanıcısı $2 tartışmada konu özetini düzenledi",
@@ -32,6 +26,4 @@
 	"discordrcfeed-flow-moderate-delete": "silindi",
 	"discordrcfeed-flow-moderate-undelete": "silinmesi geri alındı",
 	"discordrcfeed-flow-new-topic": "💬 $1 kullanıcısı $2 konuyu $3 tartışma sayfası oluşturdu",
-	"discordrcfeed-flow-reply": "💬 $1 kullanıcısı $2 konusuna yanıt verdi",
-	"discordrcfeed-line-import-upload": "⤵️ $1 maddesi aktarıldı."
-}
+	"discordrcfeed-flow-reply": "💬 $1 kullanıcısı $2 konusuna yanıt verdi",}

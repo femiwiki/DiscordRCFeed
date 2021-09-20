@@ -4,18 +4,11 @@
 			"Jon Harald Søby"
 		]
 	},
+	"discordrcfeed-summary": "Sammendrag",
 	"discordrcfeed-line-edit-minor": "📝 $1 har gjort en mindre redigering i artikkelen $3",
 	"discordrcfeed-line-edit": "📝 $1 har redigert artikkelen $3",
-	"discordrcfeed-line-new": "📄 $1 har opprettet artikkelen $3",
-	"discordrcfeed-line-delete-delete": "❌ $1 har slettet artikkelen $3.",
-	"discordrcfeed-line-move-move": "➡ $1 har flyttet artikkelen $3.",
-	"discordrcfeed-line-protect-unprotect": "🔒 $1 har fjernet beskyttelsen av artikkelen $3.",
+	"discordrcfeed-line-new": "📄 $1 har opprettet artikkelen $3",	"discordrcfeed-summary": "Sammendrag",	"discordrcfeed-flow-edit-header": "💬 $1 har redigert en tavlebeskrivelse $2",
 	"discordrcfeed-line-newusers-create": "👥 Ny brukerkonto $1 ble nettopp opprettet",
-	"discordrcfeed-line-upload-upload": "📤 $1 har lastet opp fila $3",
-	"discordrcfeed-line-block-block": "🚫 $1 har blokkert $2 $3 Blokkeringen løper ut: $4. $5",
-	"discordrcfeed-summary": "Sammendrag",
-	"discordrcfeed-line-rights-rights": "$1 har endret brukergrupper for $3. Gamle grupper: $3. Nye grupper: $4",
-	"discordrcfeed-flow-edit-header": "💬 $1 har redigert en tavlebeskrivelse $2",
 	"discordrcfeed-flow-edit-post": "💬 $1 har redigert et innlegg på $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 har endret emnets tittel til $2 på $3",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 har redigert emnets sammendrag på $2",
@@ -31,6 +24,4 @@
 	"discordrcfeed-flow-moderate-delete": "slettet",
 	"discordrcfeed-flow-moderate-undelete": "gjenopprettet",
 	"discordrcfeed-flow-new-topic": "💬 $1 har opprettet emnet $2 på $3",
-	"discordrcfeed-flow-reply": "💬 $1 har svart i $2",
-	"discordrcfeed-line-import-upload": "⤵️ Artikkelen $1 har blitt importert."
-}
+	"discordrcfeed-flow-reply": "💬 $1 har svart i $2",}

@@ -5,18 +5,11 @@
 			"WikiPhoenix"
 		]
 	},
+	"discordrcfeed-summary": "Sammanfattning",
 	"discordrcfeed-line-edit-minor": "📝 $1 har gjort en mindre redigering på artikeln $3",
 	"discordrcfeed-line-edit": "📝 $1 har redigerat artikeln $3",
-	"discordrcfeed-line-new": "📄 $1 skapade artikeln $3",
-	"discordrcfeed-line-delete-delete": "❌ $1 raderade artikeln $3",
-	"discordrcfeed-line-move-move": "➡ $1 flyttade artikeln $3.",
-	"discordrcfeed-line-protect-unprotect": "🔒 $1 har tagit bort skyddet för artikeln $3.",
+	"discordrcfeed-line-new": "📄 $1 skapade artikeln $3",	"discordrcfeed-summary": "Sammanfattning",	"discordrcfeed-flow-edit-header": "💬 $1 redigerade beskrivningen för ett underforum $2",
 	"discordrcfeed-line-newusers-create": "👥 Det nya användarkontot $1 skapades precis",
-	"discordrcfeed-line-upload-upload": "📤 $1 laddade upp filen $3 (format: $4, storlek: $5 $6, sammanfattning: $7)",
-	"discordrcfeed-line-block-block": "🚫 $1 blockerade $2 $3 Blockeringens varaktighet: $4. $5",
-	"discordrcfeed-summary": "Sammanfattning",
-	"discordrcfeed-line-rights-rights": "$1 ändrade användargrupper för $3. Gamla grupper: $3. Nya grupper: $4",
-	"discordrcfeed-flow-edit-header": "💬 $1 redigerade beskrivningen för ett underforum $2",
 	"discordrcfeed-flow-edit-post": "💬 $1 redigerade ett inlägg på $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 ändrade ämnets titel till $2 på $3",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 redigerade ämnets sammanfattning på $2",
@@ -32,6 +25,4 @@
 	"discordrcfeed-flow-moderate-delete": "raderat",
 	"discordrcfeed-flow-moderate-undelete": "återskapat",
 	"discordrcfeed-flow-new-topic": "💬 $1 skapade ämnet $2 på $3",
-	"discordrcfeed-flow-reply": "💬 $1 svarade på $2",
-	"discordrcfeed-line-import-upload": "⤵️ Artikeln $1 har importerats."
-}
+	"discordrcfeed-flow-reply": "💬 $1 svarade på $2",}

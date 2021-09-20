@@ -5,18 +5,11 @@
 			"Xiplus"
 		]
 	},
+	"discordrcfeed-summary": "摘要",
 	"discordrcfeed-line-edit-minor": "📝 $1已進行了小編輯條目$3",
 	"discordrcfeed-line-edit": "📝 $1已已編輯條目$3",
-	"discordrcfeed-line-new": "📝 $1已建立條目$3",
-	"discordrcfeed-line-delete-delete": "❌ $1已刪除條目$3。",
-	"discordrcfeed-line-move-move": "➡ $1已移動條目$3。",
-	"discordrcfeed-line-protect-unprotect": "🔒 $1已移除保護條目$3。",
+	"discordrcfeed-line-new": "📝 $1已建立條目$3",	"discordrcfeed-summary": "摘要",	"discordrcfeed-flow-edit-header": "💬 $1已修改討論版描述 $2",
 	"discordrcfeed-line-newusers-create": "👥 新使用者帳戶$1被建立",
-	"discordrcfeed-line-upload-upload": "📤 $1已上傳檔案$3（格式：$4，大小：$5 $6，摘要：$7）",
-	"discordrcfeed-line-block-block": "🚫 $1已封鎖$2 $3 封鎖期限：$4。$5",
-	"discordrcfeed-summary": "摘要",
-	"discordrcfeed-line-rights-rights": "$1已修改$3的使用者群組，舊群組：$3，新群組：$4",
-	"discordrcfeed-flow-edit-header": "💬 $1已修改討論版描述 $2",
 	"discordrcfeed-flow-edit-post": "💬 $1已修改貼文 $2",
 	"discordrcfeed-flow-edit-title": "💬 $1已修改$3上的話題標題為$2",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1已修改$2上的話題摘要",
@@ -32,6 +25,4 @@
 	"discordrcfeed-flow-moderate-delete": "已刪除",
 	"discordrcfeed-flow-moderate-undelete": "已取消刪除",
 	"discordrcfeed-flow-new-topic": "💬 $1已在$3上建立話題$2",
-	"discordrcfeed-flow-reply": "💬 $1已回應$2",
-	"discordrcfeed-line-import-upload": "⤵️ 條目$1已匯入。"
-}
+	"discordrcfeed-flow-reply": "💬 $1已回應$2",}

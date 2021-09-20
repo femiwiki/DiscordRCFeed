@@ -12,11 +12,5 @@
 	"discordrcfeed-line-edit-minor": "📝 $1 hat den Artikel $3 klein bearbeitet",
 	"discordrcfeed-line-edit": "📝 $1 hat den Artikel $3 bearbeitet",
 	"discordrcfeed-line-new": "📄 $1 hat den Artikel $3 erstellt.",
-	"discordrcfeed-line-delete-delete": "❌ $1 hat den Artikel $3 gelöscht.",
-	"discordrcfeed-line-protect-unprotect": "🔒 $1 hat den Schutz von Artikel $3 entfernt.",
-	"discordrcfeed-line-newusers-create": "👥 Benutzerkonto $1 wurde erstellt",
-	"discordrcfeed-line-upload-upload": "📤 $1 hat die Datei $3 hochgeladen",
-	"discordrcfeed-line-block-block": "🚫 $1 sperrte $2 $3 Sperrung läuft aus: $4. $5",
-	"discordrcfeed-line-rights-rights": "$1 hat die Benutzergruppen von $3 geändert. Alte Gruppen: $3. Neue Gruppen: $4",
-	"discordrcfeed-line-import-upload": "⤵️ Artikel $1 wurde importiert."
+	"discordrcfeed-line-newusers-create": "👥 Benutzerkonto $1 wurde erstellt"
 }

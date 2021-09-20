@@ -8,9 +8,5 @@
 	"discordrcfeed-line-edit-minor": "📝 $1 wykonał(a) drobną edycję w artykuł $3 ()",
 	"discordrcfeed-line-edit": "📝 $1 edytował(a) artykuł $3 ()",
 	"discordrcfeed-line-new": "$1 stworzył(a) artykuł $3 ()",
-	"discordrcfeed-line-delete-delete": "❌ $1 usunął artykuł $3.",
-	"discordrcfeed-line-move-move": "➡ $1 przeniósł artykuł $3.",
-	"discordrcfeed-line-protect-unprotect": "🔒 $1 usunął zabezpieczenie artykułu $3.",
-	"discordrcfeed-line-newusers-create": "👥 Konto użytkownika $1 zostało utworzone",
-	"discordrcfeed-line-block-block": "$1 zablokował $2 $3 Wygasa: $4. $5",
+	"discordrcfeed-line-newusers-create": "👥 Konto użytkownika $1 zostało utworzone"
 }

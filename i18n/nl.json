@@ -4,15 +4,10 @@
 			"Mainframe98"
 		]
 	},
+	"discordrcfeed-summary": "Samenvatting",
 	"discordrcfeed-line-edit-minor": "📝 $1 heeft pagina $3 een kleine bewerking gemaakt",
 	"discordrcfeed-line-edit": "📝 $1 heeft pagina $3 bewerkt",
-	"discordrcfeed-line-new": "📄 $1 heeft pagina $3 aangemaakt",
-	"discordrcfeed-line-delete-delete": "❌ $1 heeft pagina $3 verwijderd.",
-	"discordrcfeed-line-move-move": "➡ $1 heeft $3 hernoemt.",
-	"discordrcfeed-line-protect-unprotect": "🔒 $1 heeft de beveiliging van verwijderd $3.",
-	"discordrcfeed-line-upload-upload": "📤 $1 heeft het bestand $3 geupload",
-	"discordrcfeed-line-block-block": "🚫 $1 heeft $2 geblokkeerd. $3. Veloopt op: $4. $5",
-	"discordrcfeed-summary": "Samenvatting",
+	"discordrcfeed-line-new": "📄 $1 heeft pagina $3 aangemaakt",	"discordrcfeed-summary": "Samenvatting",
 	"discordrcfeed-flow-lock-topic-lock": "opgelost",
 	"discordrcfeed-flow-lock-topic-unlock": "heropend",
 	"discordrcfeed-flow-moderate-hide": "verborgen",

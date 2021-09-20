@@ -5,12 +5,7 @@
 		]
 	},
 	"discordrcfeed-line-edit": "📝 $1 ha modificato la voce $3",
-	"discordrcfeed-line-new": "📄 $1 ha creato la voce $3",
-	"discordrcfeed-line-delete-delete": "❌ $1 ha cancellato la voce $3",
-	"discordrcfeed-line-move-move": "➡ $1 ha spostato la voce $3.",
-	"discordrcfeed-article-protected": "🔒 $1 ha $2 la voce $3.",
-	"discordrcfeed-line-rights-rights": "$1 ha modificato i gruppi utente per $3. Vecchi gruppi: $3. Nuovi gruppi: $4",
-	"discordrcfeed-flow-lock-topic-lock": "risolto",
+	"discordrcfeed-line-new": "📄 $1 ha creato la voce $3",	"discordrcfeed-article-protected": "🔒 $1 ha $2 la voce $3.",	"discordrcfeed-flow-lock-topic-lock": "risolto",
 	"discordrcfeed-flow-moderate-topic": "💬 $1 ha $2 l'argomento $3",
 	"discordrcfeed-flow-moderate-hide": "nascosto",
 	"discordrcfeed-flow-moderate-delete": "cancellato"

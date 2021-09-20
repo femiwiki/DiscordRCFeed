@@ -5,18 +5,11 @@
 			"Eduardoaddad"
 		]
 	},
+	"discordrcfeed-summary": "Resumo",
 	"discordrcfeed-line-edit-minor": "📝 $1 fez edição menor para o artigo $3",
 	"discordrcfeed-line-edit": "📝 $1 editado o artigo $3",
-	"discordrcfeed-line-new": "📄 $1 criou o artigo $3",
-	"discordrcfeed-line-delete-delete": "❌ $1 excluiu o artigo $3",
-	"discordrcfeed-line-move-move": "➡ $1 mudou o artigo $3.",
-	"discordrcfeed-line-protect-unprotect": "🔒 $1 proteção removida de artigo $3.",
+	"discordrcfeed-line-new": "📄 $1 criou o artigo $3",	"discordrcfeed-summary": "Resumo",	"discordrcfeed-flow-edit-header": "💬 $1 editou a descrição do quadro $2",
 	"discordrcfeed-line-newusers-create": "👥 A nova conta de usuário $1 acabou de ser criada",
-	"discordrcfeed-line-upload-upload": "📤 $1 carregou o arquivo $3",
-	"discordrcfeed-line-block-block": "🚫 $1 bloqueou o $2 $3 Expiração do bloqueio: $4. $5",
-	"discordrcfeed-summary": "Resumo",
-	"discordrcfeed-line-rights-rights": "$1 alterou os grupos de usuários por $3. Grupos antigos: $3. Novos grupos: $4",
-	"discordrcfeed-flow-edit-header": "💬 $1 editou a descrição do quadro $2",
 	"discordrcfeed-flow-edit-post": "💬 $1 editou uma publicação em $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 alterou o título do tópico para $2 em $3",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 editou o resumo do tópico em $2",
@@ -32,6 +25,4 @@
 	"discordrcfeed-flow-moderate-delete": "excluído",
 	"discordrcfeed-flow-moderate-undelete": "restaurado",
 	"discordrcfeed-flow-new-topic": "💬 $1 criou o tópico $2 em $3",
-	"discordrcfeed-flow-reply": "💬 $1 respondeu em $2",
-	"discordrcfeed-line-import-upload": "⤵️ O artigo $1 foi importado."
-}
+	"discordrcfeed-flow-reply": "💬 $1 respondeu em $2",}
