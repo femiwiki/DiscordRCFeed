@@ -2,6 +2,8 @@
 
 **⚠️ Work-in-progress**
 
+- [ ] Remove all TODOs
+
 This is a fork of [kulttuuri/DiscordRCFeed] which is an extension for [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) that sends notifications of actions in your Wiki like editing, adding or removing a page into [Discord](https://discordapp.com/) channel.
 
 ## Supported MediaWiki operations to send notifications
@@ -103,7 +105,6 @@ $wgDiscordRCFeedActions = [
 `wgDiscordRCFeedExclude` is an associative array to disable notifications related to certain pages or users. This config has below keys:
 
 - `'page'` - Actions (add, edit, modify) won't be notified to Discord room from articles matching with these names.
-- `'permissions'` - If this is set, actions by users with this permission won't cause alerts. Defaults to `''`. Can be string or an array of strings.
 
 Defaults to:
 
@@ -113,7 +114,6 @@ $wgDiscordRCFeedExclude = [
     'list' => [],
     'pattern' => [],
   ],
-  'permissions' => [],
 ];
 ```
 
