@@ -9,7 +9,7 @@
     "discordrcfeed-line-edit-minor": "📝 $1 {{GENDER:$2|has made}} minor edit to article $3",
     "discordrcfeed-line-edit": "📝 $1 {{GENDER:$2|has edited}} article $3",
     "discordrcfeed-line-new": "📄 $1 {{GENDER:$2|has created}} article $3",
-    "discordrcfeed-line-newusers-create": "👥 New user account $1 {{GENDER:$2|was}} just created",
+    "discordrcfeed-line-newusers-create": "👤 New user account $1 {{GENDER:$2|was}} just created",
     "discordrcfeed-line-log": "$1 {{GENDER:$2|has performed}} the following action:",
 
     "discordrcfeed-emoji-delete": "❌",

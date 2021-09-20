@@ -11,7 +11,7 @@
 	"discordrcfeed-line-edit": "📝 $1 님이 $3 문서를 {{GENDER:$2|편집했습니다.}}",
 	"discordrcfeed-line-new": "📄 $1 님이 $3 문서를 새로 {{GENDER:$2|만들었습니다.}}",
 	"discordrcfeed-line-log": "$1 님이 다음을 {{GENDER:$2|수행했습니다.}}",
-	"discordrcfeed-line-newusers-create": "👥 새 사용자 $1 님이 가입했습니다",
+	"discordrcfeed-line-newusers-create": "👤 새 사용자 $1 님이 가입했습니다",
 
 	"discordrcfeed-flow-edit-header": "💬 $1 님이 $2의 설명을 편집했습니다",
 	"discordrcfeed-flow-edit-post": "💬 $1 님이 $2의 게시글을 편집했습니다",
