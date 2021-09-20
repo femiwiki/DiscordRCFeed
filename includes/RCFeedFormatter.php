@@ -10,24 +10,6 @@ use User;
 
 class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 
-	private const ACTION_COLOR_MAP = [
-		'new'      => '3580392',
-		'edit'     => '2993970',
-
-		// Logs
-		'delete'   => '15217973',
-		'move'     => '14038504',
-		'protect'  => '3493864',
-		'upload'   => '3580392',
-		'newusers' => '3580392',
-		'rights'   => '2993970',
-		'block'    => '15217973',
-		'import'   => '2993970',
-
-		// Etc
-		'flow'     => '2993970',
-	];
-
 	/**
 	 * @inheritDoc
 	 */
@@ -146,8 +128,8 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 		global $wgSitename;
 
 		$color = '11777212';
-		if ( isset( self::ACTION_COLOR_MAP[$action] ) ) {
-			$color = self::ACTION_COLOR_MAP[$action];
+		if ( isset( Constants::ACTION_COLOR_MAP[$action] ) ) {
+			$color = Constants::ACTION_COLOR_MAP[$action];
 		}
 
 		$embed = [

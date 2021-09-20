@@ -3,36 +3,6 @@
 namespace MediaWiki\Extension\DiscordRCFeed;
 
 class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
-	private const DEFAULT_PARAMS = [
-		'formatter' => RCFeedFormatter::class,
-		'class' => RCFeedEngine::class,
-		'user_tools' => [
-			[
-				'target' => 'talk',
-				'msg' => 'talkpagelinktext'
-			],
-			[
-				'target' => 'special',
-				'special' => 'Block',
-				'msg' => 'blocklink'
-			],
-			[
-				'target' => 'special',
-				'special' => 'Contributions',
-				'msg' => 'contribslink'
-			],
-		],
-		'page_tools' => [
-			[
-				'query' => 'action=edit',
-				'msg' => 'edit'
-			],
-			[
-				'query' => 'action=history',
-				'msg' => 'hist'
-			],
-		],
-	];
 
 	/**
 	 * Modifies RC Feeds with keys start with 'discord'.
@@ -69,7 +39,7 @@ class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
 				}
 			}
 
-			foreach ( self::DEFAULT_PARAMS as $paramKey => $param ) {
+			foreach ( Constants::DEFAULT_PARAMS as $paramKey => $param ) {
 				if ( !isset( $wgRCFeeds[$feedKey][$paramKey] ) ) {
 					$wgRCFeeds[$feedKey][$paramKey] = $param;
 				}
