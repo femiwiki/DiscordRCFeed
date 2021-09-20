@@ -4,17 +4,15 @@
 			"沈澄心"
 		]
 	},
-	"discordnotifications-block": "封禁",
-	"discordnotifications-talk": "讨论",
-	"discordnotifications-contribs": "贡献",
-	"discordnotifications-edit": "编辑",
-	"discordnotifications-delete": "删除",
-	"discordnotifications-history": "历史",
-	"discordnotifications-diff": "差异",
-	"discordnotifications-article-saved-edit": "已编辑",
-	"discordnotifications-file-namespace": "文件",
-	"discordnotifications-flow-lock-topic-lock": "已解决",
-	"discordnotifications-flow-moderate-hide": "已隐藏",
-	"discordnotifications-flow-moderate-delete": "已删除",
-	"discordnotifications-flow-moderate-undelete": "已还原"
+	"discordrcfeed-block": "封禁",
+	"discordrcfeed-talk": "讨论",
+	"discordrcfeed-contribs": "贡献",
+	"discordrcfeed-edit": "编辑",
+	"discordrcfeed-delete": "删除",
+	"discordrcfeed-history": "历史",
+	"discordrcfeed-diff": "差异",
+	"discordrcfeed-flow-lock-topic-lock": "已解决",
+	"discordrcfeed-flow-moderate-hide": "已隐藏",
+	"discordrcfeed-flow-moderate-delete": "已删除",
+	"discordrcfeed-flow-moderate-undelete": "已还原"
 }

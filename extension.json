@@ -1,113 +1,30 @@
 {
-  "name": "DiscordNotifications",
-  "version": "1.0.1-femiwiki",
+  "name": "DiscordRCFeed",
+  "version": "0.1.0",
   "author": "Aleksi Postari",
-  "url": "https://github.com/femiwiki/DiscordNotifications",
+  "url": "https://github.com/femiwiki/DiscordRCFeed",
   "descriptionmsg": "discordnotifications-desc",
   "type": "other",
   "requires": {
     "MediaWiki": ">= 1.36.0"
   },
   "AutoloadNamespaces": {
-    "MediaWiki\\Extension\\DiscordNotifications\\": "includes/"
+    "MediaWiki\\Extension\\DiscordRCFeed\\": "includes/"
   },
   "MessagesDirs": {
-    "DiscordNotifications": ["i18n"]
+    "DiscordRCFeed": ["i18n"]
   },
   "Hooks": {
-    "AbuseFilterShouldFilterAction": "main",
-    "AfterImportPage": "main",
-    "APIFlowAfterExecute": "MediaWiki\\Extension\\DiscordNotifications\\Hooks::onAPIFlowAfterExecute",
-    "ArticleDeleteComplete": "main",
-    "ArticleProtectComplete": "main",
-    "BlockIpComplete": "main",
-    "LocalUserCreated": "main",
-    "PageMoveComplete": "main",
-    "PageSaveComplete": "main",
-    "UploadComplete": "main",
-    "UserGroupsChanged": "main"
+    "MediaWikiServices": "MediaWikiServices"
   },
   "HookHandlers": {
-    "main": {
-      "class": "MediaWiki\\Extension\\DiscordNotifications\\Hooks",
-      "services": ["MainConfig", "UserFactory"]
+    "MediaWikiServices": {
+      "class": "MediaWiki\\Extension\\DiscordRCFeed\\MediaWikiServices"
     }
   },
-  "config": {
-    "DiscordNotificationsIncomingWebhookUrl": { "value": false },
-    "DiscordNotificationsSendMethod": { "value": "curl" },
-    "DiscordNotificationsShowSuppressed": { "value": true },
-    "DiscordNotificationsDisplay": {
-      "value": {
-        "user-tools": [
-          {
-            "target": "special",
-            "special": "Block",
-            "msg": "discordnotifications-block"
-          },
-          {
-            "target": "special",
-            "special": "Userrights",
-            "msg": "discordnotifications-groups"
-          },
-          {
-            "target": "talk",
-            "msg": "discordnotifications-talk"
-          },
-          {
-            "target": "special",
-            "special": "Contributions",
-            "msg": "discordnotifications-contribs"
-          }
-        ],
-        "page-tools": [
-          {
-            "query": "action=edit",
-            "msg": "discordnotifications-edit"
-          },
-          {
-            "query": "action=delete",
-            "msg": "discordnotifications-delete"
-          },
-          {
-            "query": "action=history",
-            "msg": "discordnotifications-history"
-          }
-        ],
-        "diff": true,
-        "full-name": false
-      }
-    },
-    "DiscordNotificationsActions": {
-      "value": {
-        "new-user": true,
-        "block-user": true,
-        "add-page": true,
-        "remove-page": true,
-        "move-page": true,
-        "edit-page": true,
-        "minor-edit-page": true,
-        "upload-file": true,
-        "protect-page": true,
-        "change-user-groups": true,
-        "flow": true,
-        "import-page": true
-      }
-    },
-    "DiscordNotificationsExclude": {
-      "value": {
-        "page": {
-          "list": [],
-          "patterns": []
-        },
-        "permissions": []
-      }
-    },
-    "DiscordNotificationsRequestOverride": { "value": [] }
-  },
   "TestAutoloadNamespaces": {
-    "MediaWiki\\Extension\\DiscordNotifications\\Tests\\Integration\\": "tests/phpunit/integration/",
-    "MediaWiki\\Extension\\DiscordNotifications\\Tests\\Unit\\": "tests/phpunit/unit/"
+    "MediaWiki\\Extension\\DiscordRCFeed\\Tests\\Integration\\": "tests/phpunit/integration/",
+    "MediaWiki\\Extension\\DiscordRCFeed\\Tests\\Unit\\": "tests/phpunit/unit/"
   },
   "manifest_version": 2
 }

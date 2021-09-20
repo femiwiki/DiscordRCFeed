@@ -1,26 +1,26 @@
 <?php
 
-namespace MediaWiki\Extension\DiscordNotifications\Tests\Integration;
+namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
-use MediaWiki\Extension\DiscordNotifications\LinkRenderer;
+use MediaWiki\Extension\DiscordRCFeed\LinkRenderer;
 use MediaWikiIntegrationTestCase;
 use User;
 
 /**
- * @group DiscordNotifications
+ * @group DiscordRCFeed
  * @group Database
  *
- * @covers \MediaWiki\Extension\DiscordNotifications\LinkRenderer
+ * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer
  */
 class LinkRendererTest extends MediaWikiIntegrationTestCase {
 
 	public static function providerDiscordUserText() {
-		global $wgDiscordNotificationsDisplay;
-		$d = $wgDiscordNotificationsDisplay;
+		global $wgDiscordRCFeedDisplay;
+		$d = $wgDiscordRCFeedDisplay;
 		return [
 			[
 				[
-					'wgDiscordNotificationsDisplay' => array_merge( $d, [ 'user-tools' => false ] ),
+					'wgDiscordRCFeedDisplay' => array_merge( $d, [ 'user-tools' => false ] ),
 					'wgServer' => 'https://foo.bar'
 				],
 				'Foo',
@@ -28,7 +28,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 			],
 			[
 				[
-					'wgDiscordNotificationsDisplay' => array_merge( $d, [ 'user-tools' => false ] ),
+					'wgDiscordRCFeedDisplay' => array_merge( $d, [ 'user-tools' => false ] ),
 					'wgServer' => 'https://foo.bar'
 				],
 				'Foo&bar',
@@ -36,7 +36,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 			],
 			[
 				[
-					'wgDiscordNotificationsDisplay' => array_merge( $d, [ 'user-tools' => [
+					'wgDiscordRCFeedDisplay' => array_merge( $d, [ 'user-tools' => [
 						[
 							'target' => 'special',
 							'special' => 'Block',
@@ -63,7 +63,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerDiscordUserText
-	 * @covers \MediaWiki\Extension\DiscordNotifications\LinkRenderer::getDiscordUserText
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::getDiscordUserText
 	 */
 	public function testGetDiscordUserText( array $globals, string $name, string $regex, string $message = '' ) {
 		$this->setMwGlobals( $globals );
@@ -78,10 +78,10 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\DiscordNotifications\LinkRenderer::getDiscordArticleText
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::getDiscordArticleText
 	 */
 	public function testGetDiscordArticleText() {
-		global $wgDiscordNotificationsDisplay;
+		global $wgDiscordRCFeedDisplay;
 		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
 		$page = $this->getExistingTestPage( 'foo' );
 		$title = $page->getTitle();
@@ -95,8 +95,8 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 		$expected = '[Foo](https://foo.bar/index.php/Foo) ([edit](https://foo.bar/index.php?title=Foo&action=edit) | [delete](https://foo.bar/index.php?title=Foo&action=delete) | [history](https://foo.bar/index.php?title=Foo&action=history))';
 		$this->assertSame( $expected, LinkRenderer::getDiscordArticleText( $page ) );
 
-		$this->setMwGlobals( 'wgDiscordNotificationsDisplay',
-			array_merge( $wgDiscordNotificationsDisplay, [ 'page-tools' => false ] ) );
+		$this->setMwGlobals( 'wgDiscordRCFeedDisplay',
+			array_merge( $wgDiscordRCFeedDisplay, [ 'page-tools' => false ] ) );
 		$expected = '[Foo](https://foo.bar/index.php/Foo)';
 		$this->assertSame( $expected, LinkRenderer::getDiscordArticleText( $page ) );
 		$expected = '[Foo&bar](https://foo.bar/index.php/Foo%26bar)';

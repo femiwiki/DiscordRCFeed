@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\DiscordNotifications;
+namespace MediaWiki\Extension\DiscordRCFeed;
 
 use Flow\Model\UUID;
 use MediaWiki\Logger\LoggerFactory;
@@ -28,8 +28,8 @@ class Core {
 	 * @todo Check case-sensitively when $wgCapitalLinks is false. Case-sensitive only now.
 	 */
 	public static function titleIsExcluded( Title $title ) {
-		global $wgDiscordNotificationsExclude;
-		$exclude = $wgDiscordNotificationsExclude['page'];
+		global $wgDiscordRCFeedExclude;
+		$exclude = $wgDiscordRCFeedExclude['page'];
 		if ( isset( $exclude['list'] ) ) {
 			$list = $exclude['list'];
 			if ( !is_array( $list ) ) {
@@ -61,9 +61,9 @@ class Core {
 	 * @return bool
 	 */
 	public static function userIsExcluded( User $user ) {
-		global $wgDiscordNotificationsExclude;
+		global $wgDiscordRCFeedExclude;
 
-		$permissions = $wgDiscordNotificationsExclude['permissions'];
+		$permissions = $wgDiscordRCFeedExclude['permissions'];
 		if ( !is_array( $permissions ) ) {
 			$permissions = [ $permissions ];
 		}
@@ -84,20 +84,20 @@ class Core {
 	 * @see https://discordapp.com/developers/docs/resources/webhook#execute-webhook
 	 */
 	public function pushDiscordNotify( string $message, $user, string $action ) {
-		global $wgDiscordNotificationsIncomingWebhookUrl, $wgDiscordNotificationsSendMethod;
+		global $wgDiscordRCFeedIncomingWebhookUrl, $wgDiscordRCFeedSendMethod;
 
 		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
 			self::$lastMessage = $message;
 		}
 
-		if ( !in_array( $wgDiscordNotificationsSendMethod, [ 'MWHttpRequest', 'file_get_contents', 'curl' ] ) ) {
-			self::getLogger()->warning( "Unknown send method: $wgDiscordNotificationsSendMethod" );
+		if ( !in_array( $wgDiscordRCFeedSendMethod, [ 'MWHttpRequest', 'file_get_contents', 'curl' ] ) ) {
+			self::getLogger()->warning( "Unknown send method: $wgDiscordRCFeedSendMethod" );
 			return false;
 		}
 
-		$hooks = $wgDiscordNotificationsIncomingWebhookUrl;
+		$hooks = $wgDiscordRCFeedIncomingWebhookUrl;
 		if ( !$hooks ) {
-			self::getLogger()->warning( '$wgDiscordNotificationsIncomingWebhookUrl is not set' );
+			self::getLogger()->warning( '$wgDiscordRCFeedIncomingWebhookUrl is not set' );
 			return false;
 		} elseif ( is_string( $hooks ) ) {
 			$hooks = [ $hooks ];
@@ -114,18 +114,18 @@ class Core {
 
 		$post = $this->makePost( $message, $action );
 		foreach ( $hooks as $hook ) {
-			switch ( $wgDiscordNotificationsSendMethod ) {
+			switch ( $wgDiscordRCFeedSendMethod ) {
 				case 'MWHttpRequest':
 					return self::sendMWHttpRequest( $hook, $post );
 				case 'file_get_contents':
 					self::getLogger()->warning(
-						'\'file_get_contents\' for \$wgDiscordNotificationsSendMethod is deprecated' );
+						'\'file_get_contents\' for \$wgDiscordRCFeedSendMethod is deprecated' );
 					// Use file_get_contents to send the data. Note that you will need to have allow_url_fopen
 					// enabled in php.ini for this to work.
 					self::sendHttpRequest( $hook, $post );
 					break;
 				case 'curl':
-					self::getLogger()->warning( '\'curl\' for \$wgDiscordNotificationsSendMethod is deprecated' );
+					self::getLogger()->warning( '\'curl\' for \$wgDiscordRCFeedSendMethod is deprecated' );
 					// Call the Discord API through cURL (default way). Note that you will need to have cURL
 					// enabled for this to work.
 					self::sendCurlRequest( $hook, $post );
@@ -154,7 +154,7 @@ class Core {
 	 * @return string
 	 */
 	private function makePost( $message, $action ) {
-		global $wgDiscordNotificationsRequestOverride, $wgSitename;
+		global $wgDiscordRCFeedRequestOverride, $wgSitename;
 
 		$colour = 11777212;
 		if ( isset( self::ACTION_COLOR_MAP[$action] ) ) {
@@ -170,7 +170,7 @@ class Core {
 			],
 			'username' => $wgSitename
 		];
-		$post = array_replace_recursive( $post, $wgDiscordNotificationsRequestOverride );
+		$post = array_replace_recursive( $post, $wgDiscordRCFeedRequestOverride );
 		return json_encode( $post );
 	}
 
@@ -280,7 +280,7 @@ class Core {
 	 */
 	private static function getLogger(): LoggerInterface {
 		if ( !self::$logger ) {
-			self::$logger = LoggerFactory::getInstance( 'DiscordNotifications' );
+			self::$logger = LoggerFactory::getInstance( 'DiscordRCFeed' );
 		}
 		return self::$logger;
 	}

@@ -1,10 +1,10 @@
 <?php
 
-namespace MediaWiki\Extension\DiscordNotifications\Tests\Unit;
+namespace MediaWiki\Extension\DiscordRCFeed\Tests\Unit;
 
 use HashConfig;
-use MediaWiki\Extension\DiscordNotifications\Core;
-use MediaWiki\Extension\DiscordNotifications\Hooks;
+use MediaWiki\Extension\DiscordRCFeed\Core;
+use MediaWiki\Extension\DiscordRCFeed\Hooks;
 use MediaWiki\Revision\RevisionRecord;
 use MediaWikiIntegrationTestCase;
 use Title;
@@ -12,9 +12,9 @@ use User;
 use WikiPage;
 
 /**
- * @group DiscordNotifications
+ * @group DiscordRCFeed
  *
- * @covers \MediaWiki\Extension\DiscordNotifications\Hooks
+ * @covers \MediaWiki\Extension\DiscordRCFeed\Hooks
  */
 class HooksTest extends MediaWikiIntegrationTestCase {
 	/**
@@ -47,12 +47,12 @@ class HooksTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\DiscordNotifications\Hooks::onPageSaveComplete
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\Hooks::onPageSaveComplete
 	 */
 	public function testOnPageSaveComplete() {
 		$this->setMwGlobals( [
 			'wgServer' => '',
-			'wgDiscordNotificationsDisplay' => [ 'user-tools' => [] ]
+			'wgDiscordRCFeedDisplay' => [ 'user-tools' => [] ]
 		] );
 
 		$hooks = $this->expectPushDiscordNotification(

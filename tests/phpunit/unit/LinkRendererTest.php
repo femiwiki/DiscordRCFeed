@@ -1,19 +1,19 @@
 <?php
 
-namespace MediaWiki\Extension\DiscordNotifications\Tests\Unit;
+namespace MediaWiki\Extension\DiscordRCFeed\Tests\Unit;
 
-use MediaWiki\Extension\DiscordNotifications\LinkRenderer;
+use MediaWiki\Extension\DiscordRCFeed\LinkRenderer;
 use MediaWikiUnitTestCase;
 
 /**
- * @group DiscordNotifications
+ * @group DiscordRCFeed
  *
- * @covers \MediaWiki\Extension\DiscordNotifications\LinkRenderer
+ * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer
  */
 class LinkRendererTest extends MediaWikiUnitTestCase {
 
 	/**
-	 * @covers \MediaWiki\Extension\DiscordNotifications\LinkRenderer::parseUrl
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::parseUrl
 	 */
 	public function testParseUrl() {
 		$this->assertSame(
@@ -23,7 +23,7 @@ class LinkRendererTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\DiscordNotifications\LinkRenderer::makeLink
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::makeLink
 	 */
 	public function testMakeLink() {
 		$this->assertSame(
@@ -44,7 +44,7 @@ class LinkRendererTest extends MediaWikiUnitTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\DiscordNotifications\LinkRenderer::makeNiceTools
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::makeNiceTools
 	 * @param string|array $tools
 	 * @param string $expected
 	 * @dataProvider providerTools

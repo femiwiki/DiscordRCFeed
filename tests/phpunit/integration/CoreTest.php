@@ -1,17 +1,17 @@
 <?php
 
-namespace MediaWiki\Extension\DiscordNotifications\Tests\Integration;
+namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
-use MediaWiki\Extension\DiscordNotifications\Core;
+use MediaWiki\Extension\DiscordRCFeed\Core;
 use MediaWikiIntegrationTestCase;
 use User;
 use Wikimedia\TestingAccessWrapper;
 
 /**
- * @group DiscordNotifications
+ * @group DiscordRCFeed
  * @group Database
  *
- * @covers \MediaWiki\Extension\DiscordNotifications\Core
+ * @covers \MediaWiki\Extension\DiscordRCFeed\Core
  */
 class CoreTest extends MediaWikiIntegrationTestCase {
 
@@ -44,12 +44,12 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerTitleIsExcluded
-	 * @covers \MediaWiki\Extension\DiscordNotifications\Core::titleIsExcluded
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\Core::titleIsExcluded
 	 */
 	public function testTitleIsExcluded( $excluded, string $titleText, bool $expected ) {
-		global $wgDiscordNotificationsExclude;
-		$excluded = array_merge( $wgDiscordNotificationsExclude, [ 'page' => $excluded ] );
-		$this->setMwGlobals( 'wgDiscordNotificationsExclude', $excluded );
+		global $wgDiscordRCFeedExclude;
+		$excluded = array_merge( $wgDiscordRCFeedExclude, [ 'page' => $excluded ] );
+		$this->setMwGlobals( 'wgDiscordRCFeedExclude', $excluded );
 		$title = $this->getExistingTestPage( $titleText )->getTitle();
 		$this->assertSame( $expected, Core::titleIsExcluded( $title ) );
 	}
@@ -65,19 +65,19 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerPermissions
-	 * @covers \MediaWiki\Extension\DiscordNotifications\Core::userIsExcluded
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\Core::userIsExcluded
 	 */
 	public function testUserIsExcluded( $permission, $excluded ) {
-		global $wgDiscordNotificationsExclude;
-		$permission = array_merge( $wgDiscordNotificationsExclude, [ 'permissions' => $permission ] );
-		$this->setMwGlobals( 'wgDiscordNotificationsExclude', $permission );
+		global $wgDiscordRCFeedExclude;
+		$permission = array_merge( $wgDiscordRCFeedExclude, [ 'permissions' => $permission ] );
+		$this->setMwGlobals( 'wgDiscordRCFeedExclude', $permission );
 
 		$user = $this->getTestUser()->getUser();
 		$this->assertSame( $excluded, Core::userIsExcluded( $user ) );
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\DiscordNotifications\Core::makePost
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\Core::makePost
 	 */
 	public function testMakePost() {
 		$this->assertJsonStringEqualsJsonString(
@@ -97,7 +97,7 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 			)
 		);
 
-		$this->setMwGlobals( 'wgDiscordNotificationsRequestOverride', [ 'username' => 'DummyBot' ] );
+		$this->setMwGlobals( 'wgDiscordRCFeedRequestOverride', [ 'username' => 'DummyBot' ] );
 		$this->assertJsonStringEqualsJsonString(
 			'{"embeds": [ { "color" : "2993970" ,"description" : "message"} ], "username": "DummyBot"}',
 			$this->wrapper->makePost(
@@ -108,22 +108,22 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\DiscordNotifications\Core::pushDiscordNotify
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\Core::pushDiscordNotify
 	 */
 	public function testPushDiscordNotify() {
 		$core = $this->core;
 		$this->assertFalse( $core->pushDiscordNotify( '', null, 'article_saved' ) );
 
-		$this->setMwGlobals( 'wgDiscordNotificationsIncomingWebhookUrl', 'http://127.0.0.1/webhook' );
+		$this->setMwGlobals( 'wgDiscordRCFeedIncomingWebhookUrl', 'http://127.0.0.1/webhook' );
 		$this->assertNull( $core->pushDiscordNotify( '', null, 'article_saved' ) );
 
-		$this->setMwGlobals( 'wgDiscordNotificationsSendMethod', 'random' );
+		$this->setMwGlobals( 'wgDiscordRCFeedSendMethod', 'random' );
 		$this->assertFalse( $core->pushDiscordNotify( '', null, 'article_saved' ) );
 	}
 
-	public function testDiscordNotifications() {
+	public function testDiscordRCFeed() {
 		$this->setMwGlobals( [
-			'wgDiscordNotificationsIncomingWebhookUrl' => 'https:// webhook',
+			'wgDiscordRCFeedIncomingWebhookUrl' => 'https:// webhook',
 			'wgServer' => 'https://foo.bar'
 		] );
 		$ct = 1;

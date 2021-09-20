@@ -1,5 +1,5 @@
 <?php
-namespace MediaWiki\Extension\DiscordNotifications;
+namespace MediaWiki\Extension\DiscordRCFeed;
 
 use SpecialPage;
 use Title;
@@ -57,22 +57,33 @@ class LinkRenderer {
 		return self::getDiscordArticleText( $target );
 	}
 
+	/** @var array */
+	private $userTools;
+
+	/** @var array */
+	private $pageTools;
+
+	/**
+	 * @inheritDoc
+	 */
+	public function __construct( $userTools = [], $pageTools = [] ) {
+		$this->userTools = $userTools;
+		$this->pageTools = $pageTools;
+	}
+
 	/**
 	 * Gets nice HTML text for user containing the link to user page
 	 * and also links to user site, groups editing, talk and contribs pages.
 	 * @param User $user
 	 * @return string
 	 */
-	public static function getDiscordUserText( $user ) {
-		global $wgDiscordNotificationsDisplay;
-
+	public function getDiscordUserText( $user ) {
 		$name = $user->getName();
-		$userTools = $wgDiscordNotificationsDisplay['user-tools'] ?? [];
 
 		$rt = self::makeLink( $user->getUserPage()->getFullURL(), $name );
-		if ( $userTools && $user instanceof User ) {
+		if ( $this->userTools && $user instanceof User ) {
 			$tools = [];
-			foreach ( $userTools as $tool ) {
+			foreach ( $this->userTools as $tool ) {
 				if ( $tool['target'] == 'talk' ) {
 					$link = $user->getTalkPage()->getFullURL();
 				} else {
@@ -94,23 +105,20 @@ class LinkRenderer {
 	 * @param int|bool $newId
 	 * @return string
 	 */
-	public static function getDiscordArticleText( $title, $newId = false ) {
-		global $wgDiscordNotificationsDisplay;
-		$pageTools = $wgDiscordNotificationsDisplay['page-tools'] ?? [];
-
+	public function getDiscordArticleText( $title, $newId = false ) {
 		if ( $title instanceof WikiPage ) {
 			$title = $title->getTitle();
 		}
 		$link = self::makeLink( $title->getFullURL(), $title->getFullText() );
-		if ( $pageTools ) {
+		if ( $this->pageTools ) {
 			$tools = [];
-			foreach ( $pageTools as $tool ) {
+			foreach ( $this->pageTools as $tool ) {
 				$tools[] = self::makeLink( $title->getFullURL( $tool['query'] ),
 					Core::msg( $tool['msg'] ) );
 			}
 			if ( $newId ) {
 				$tools[] = self::makeLink( $title->getFullURL( "diff=prev&oldid=$newId" ),
-					Core::msg( 'discordnotifications-diff' ) );
+					Core::msg( 'discordrcfeed-diff' ) );
 			}
 			$tools = self::makeNiceTools( $tools );
 			$link .= " $tools";
