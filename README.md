@@ -4,6 +4,7 @@
 
 - [ ] Remove all TODOs
 - [ ] Fancy output for new user event
+- [ ] Fix ci test
 
 This is a fork of [kulttuuri/DiscordNotifications] which is an extension for [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) that sends notifications of actions in your wiki like editing, adding or removing a page into [Discord](https://discordapp.com/) channel.
 
