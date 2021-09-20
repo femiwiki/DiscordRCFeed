@@ -13,7 +13,7 @@ use Wikimedia\TestingAccessWrapper;
  *
  * @covers \MediaWiki\Extension\DiscordRCFeed\Core
  */
-class CoreTest extends MediaWikiIntegrationTestCase {
+class RCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 
 	/** @var Core */
 	private $core;
@@ -25,33 +25,6 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 		parent::setUp();
 		$this->core = new Core();
 		$this->wrapper = TestingAccessWrapper::newFromObject( $this->core );
-	}
-
-	public static function providerTitleIsExcluded() {
-		return [
-			[ [], 'test', false ],
-			[ [ 'list' => [ 'Test' ] ], 'Test', true ],
-			[ [ 'list' => [ 'Text' ] ], 'Test', false ],
-			[ [ 'list' => [ 'Foo', 'Bar' ] ], 'Test', false ],
-			[ [ 'list' => [ 'Foo', 'Bar' ] ], 'Foo', true ],
-			[ [ 'list' => [ 'Foo', 'Bar' ] ], 'Bar', true ],
-			[ [ 'patterns' => [ '/Foo/' ] ], 'Foo', true ],
-			[ [ 'patterns' => [ '/^Foo$/' ] ], 'Foo', true ],
-			[ [ 'patterns' => [ '/^Fo+$/' ] ], 'Foo', true ],
-			[ [ 'patterns' => [ '/^b..$/' ] ], 'Foo', false ],
-		];
-	}
-
-	/**
-	 * @dataProvider providerTitleIsExcluded
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\Core::titleIsExcluded
-	 */
-	public function testTitleIsExcluded( $excluded, string $titleText, bool $expected ) {
-		global $wgDiscordRCFeedExclude;
-		$excluded = array_merge( $wgDiscordRCFeedExclude, [ 'page' => $excluded ] );
-		$this->setMwGlobals( 'wgDiscordRCFeedExclude', $excluded );
-		$title = $this->getExistingTestPage( $titleText )->getTitle();
-		$this->assertSame( $expected, Core::titleIsExcluded( $title ) );
 	}
 
 	/**
