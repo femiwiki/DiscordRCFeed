@@ -54,28 +54,6 @@ class CoreTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame( $expected, Core::titleIsExcluded( $title ) );
 	}
 
-	public static function providerPermissions() {
-		return [
-			[ 'non-exist-permission', false ],
-			[ 'read', true ],
-			[ [ 'non-exist-permission' ], false ],
-			[ [ 'read' ], true ],
-		];
-	}
-
-	/**
-	 * @dataProvider providerPermissions
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\Core::userIsExcluded
-	 */
-	public function testUserIsExcluded( $permission, $excluded ) {
-		global $wgDiscordRCFeedExclude;
-		$permission = array_merge( $wgDiscordRCFeedExclude, [ 'permissions' => $permission ] );
-		$this->setMwGlobals( 'wgDiscordRCFeedExclude', $permission );
-
-		$user = $this->getTestUser()->getUser();
-		$this->assertSame( $excluded, Core::userIsExcluded( $user ) );
-	}
-
 	/**
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\Core::makePost
 	 */

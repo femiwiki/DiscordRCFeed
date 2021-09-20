@@ -56,26 +56,6 @@ class Core {
 	}
 
 	/**
-	 * Returns whether the given user should be excluded
-	 * @param User $user
-	 * @return bool
-	 */
-	public static function userIsExcluded( User $user ) {
-		global $wgDiscordRCFeedExclude;
-
-		$permissions = $wgDiscordRCFeedExclude['permissions'];
-		if ( !is_array( $permissions ) ) {
-			$permissions = [ $permissions ];
-		}
-		foreach ( $permissions as $p ) {
-			if ( $user->isAllowed( $p ) ) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
 	 * Sends the message into Discord room.
 	 * @param string $message to be sent.
 	 * @param User|null $user
@@ -101,11 +81,6 @@ class Core {
 			return false;
 		} elseif ( is_string( $hooks ) ) {
 			$hooks = [ $hooks ];
-		}
-
-		// Users with the permission suppress notifications
-		if ( $user && $user instanceof User && self::userIsExcluded( $user ) ) {
-			return false;
 		}
 
 		if ( defined( 'MW_PHPUNIT_TEST' ) ) {
