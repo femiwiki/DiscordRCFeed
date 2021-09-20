@@ -7,7 +7,7 @@
 - [ ] Fix ci test
 - [ ] Add support for Flow
 
-This is a fork of [kulttuuri/DiscordNotifications] which is an extension for [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) that sends notifications of actions in your wiki like editing, adding or removing a page into [Discord](https://discordapp.com/) channel.
+This is a fork of [kulttuuri/DiscordNotifications] which is an extension for [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) that sends notifications of actions in your wiki like editing, deleting or moving a page into [Discord](https://discordapp.com/) channel.
 
 ## Requirements
 
@@ -48,76 +48,28 @@ You can set the following keys of the associative array:
 - `'user_tools'` and `'page_tools'` - Associative arrays for Controlling the display of tools shown with notification. See [Controlling Page Tools And User Tools](#controlling-page-tools-and-user-tools) below for details.
 - `'request_override'` - An array used to override the post data of the webhook request. See [Webhook Request Overriding](#webhook-request-overriding) below for details. Defaults to `[]`.
 
-### Webhook Request Overriding
-
-`$$wgRCFeeds['discord']['request_override']` is an associative array used to override the post data of the webhook request. You can set username or avatar using this instead of setting in Discord.
-See https://discord.com/developers/docs/resources/webhook#execute-webhook-jsonform-params for all available parameters.
-
-```php
-$wgRCFeeds['discord']['request_override'] = [
-  'username' => 'Captain Hook',
-  'avatar_url' => '',
-];
-```
-
 ### Filtering Notifications
 
-`'omit_namespace'` is an list that contains namespaces should be omit.
+`'omit_namespaces'` is an list that contains namespaces should be omit.
 
 ```php
-$wgRCFeeds['discord']['omit_namespace'] = [ NS_TALK ];
+$wgRCFeeds['discord']['omit_namespaces'] = [ NS_TALK ];
 
-$wgRCFeeds['discord']['omit_namespace'] = [
+$wgRCFeeds['discord']['omit_namespaces'] = [
   NS_PROJECT,
   NS_PROJECT_TALK,
   NS_TALK,
 ];
 ```
 
-Defaults to:
-
-```php
-$wgDiscordRCFeedActions = [
-  'new-user' => true,
-  'block-user' => true,
-  'add-page' => true,
-  'remove-page' => true,
-  'move-page' => true,
-  'edit-page' => true,
-  'minor-edit-page' => true,
-  'upload-file' => true,
-  'protect-page' => true,
-  'change-user-groups' => true,
-  'flow' => true,
-  'import-page' => true,
-];
-```
-
-### Omitting Specific Notifications
-
-`wgDiscordRCFeedExclude` is an associative array to disable notifications related to certain pages or users. This config has below keys:
-
-- `'page'` - Actions (add, edit, modify) won't be notified to Discord room from articles matching with these names.
-
-Defaults to:
-
-```php
-$wgDiscordRCFeedExclude = [
-  'pages' => [
-    'list' => [],
-    'pattern' => [],
-  ],
-];
-```
-
 ### Controlling Page Tools And User Tools
 
-Page tools And user tools are tools shown after page or user link.
+Page tools and user tools are tools shown after page or user link.
 
-| Option         | Default value | Description                                                                                                             |
-| -------------- | ------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `'user_tools'` | array         | If this is false, users will not get additional links in the notification message (block \| groups \| talk \| contribs) |
-| `'page_tools'` | array         | If this is false, pages will not get additional links in the notification message (edit \| delete \| history).          |
+| Option         | Description                                                                        | Output Example               |
+| -------------- | ---------------------------------------------------------------------------------- | ---------------------------- |
+| `'user_tools'` | If this is false, users will not get additional links in the notification message. | (talk \| block \| contribs ) |
+| `'page_tools'` | If this is false, pages will not get additional links in the notification message. | (edit \| history).           |
 
 ```php
 // Remove page tools
@@ -140,6 +92,20 @@ $wgRCFeeds['discord']['user_tools'] = [
 		// message would be shown if 'msg' is given.
 		'msg' => 'contribslink'
 	],
+];
+```
+
+Default values are defined in [includes/MediaWikiServices.php].
+
+### Webhook Request Overriding
+
+`$wgRCFeeds['discord']['request_override']` is an associative array used to override the post data of the webhook request. You can set username or avatar using this instead of setting in Discord.
+See https://discord.com/developers/docs/resources/webhook#execute-webhook-jsonform-params for all available parameters.
+
+```php
+$wgRCFeeds['discord']['request_override'] = [
+  'username' => 'Captain Hook',
+  'avatar_url' => '',
 ];
 ```
 
@@ -169,6 +135,7 @@ $wgRCFeeds[] = [
 [github checks link]: https://github.com/femiwiki/DiscordRCFeed/actions
 [codecov.io status]: https://badgen.net/codecov/c/github/femiwiki/DiscordRCFeed
 [codecov.io link]: https://codecov.io/gh/femiwiki/DiscordRCFeed
-[kulttuuri/discordnotifications]: https://github.com/kulttuuri/DiscordRCFeed
+[kulttuuri/discordnotifications]: https://github.com/kulttuuri/DiscordNotifications
 [sockets php extension]: https://www.php.net/sockets
 [manual:$wgrcfeeds]: https://www.mediawiki.org/wiki/Special:MyLanguage/Manual:$wgRCFeeds
+[includes/mediawikiservices.php]: https://github.com/femiwiki/DiscordRCFeed/blob/main/includes/MediaWikiServices.php
