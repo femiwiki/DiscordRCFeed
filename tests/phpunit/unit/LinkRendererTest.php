@@ -35,23 +35,4 @@ class LinkRendererTest extends MediaWikiUnitTestCase {
 			LinkRenderer::makeLink( 'Foo Bar', 'Foo' )
 		);
 	}
-
-	public static function providerWikitextWithLinks() {
-		return [
-			[ 'A edited [[B]]', 'A edited [B]()' ],
-			[ 'A moved [[B]] to [[C]]', 'A moved [B]() to [C]()' ],
-		];
-	}
-
-	/**
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::makeLinksClickable
-	 * @param string $wt
-	 * @param string $expected
-	 * @dataProvider providerWikitextWithLinks
-	 */
-	public function testMakeLinksClickable( $wt, $expected ) {
-		$renderer = new LinkRenderer();
-		$actual = $renderer->makeLinksClickable( $wt );
-		$this->assertSame( $expected, $actual );
-	}
 }
