@@ -20,8 +20,11 @@ class RCFeedEngine extends MediaWikiRCFeedEngine {
 	 * @inheritDoc
 	 */
 	public function __construct( array $params ) {
-		parent::__construct( $params );
+		if ( !isset( $params['url'] ) || !isset( $params['uri'] ) ) {
+			throw new Exception( "RCFeed for Discord must have a 'url' set." );
+		}
 		$this->httpRequestFactory = MediaWikiServices::getInstance()->getHttpRequestFactory();
+		parent::__construct( $params );
 	}
 
 	/**
