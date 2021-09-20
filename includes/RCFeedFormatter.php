@@ -48,10 +48,16 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			$comment = $linkRenderer->makeLinksClickable( $comment, $titleObj );
 			$action = $attribs['rc_log_type'];
 			$title = $linkRenderer->getDiscordArticleText( $titleObj );
+			if ( in_array( $title->getNamespace(), $feed['omit_namespaces'] ) ) {
+				return null;
+			}
 
 			$emoji = self::getEmojiForLog( $attribs['rc_log_type'], $attribs['rc_log_action'] );
 		} else {
 			$titleObj =& $rc->getTitle();
+			if ( in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] ) ) {
+				return null;
+			}
 			$store = MediaWikiServices::getInstance()->getCommentStore();
 			$comment = self::cleanupForDiscord(
 				$store->getComment( 'rc_comment', $attribs )->text

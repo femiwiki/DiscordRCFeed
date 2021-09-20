@@ -35,7 +35,7 @@ class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
 	];
 
 	/**
-	 * Make it possible to omit some options for the RC Feeds with keys start with 'discord'.
+	 * Modifies RC Feeds with keys start with 'discord'.
 	 * @inheritDoc
 	 */
 	public function onMediaWikiServices( $services ) {
@@ -50,6 +50,23 @@ class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
 			}
 			if ( !isset( $wgRCFeeds[$feedKey]['url'] ) && !isset( $wgRCFeeds[$feedKey]['uri'] ) ) {
 				continue;
+			}
+			// Makes sure always being array.
+			$mustBeArray = [
+				'omit_namespaces',
+				// not yet implemented
+				// 'omit_types',
+				// 'omit_log_types',
+				// 'omit_log_actions',
+			];
+			foreach ( $mustBeArray as $param ) {
+				if ( isset( $wgRCFeeds[$feedKey][$param] ) ) {
+					if ( !is_array( $wgRCFeeds[$feedKey][$param] ) ) {
+						$wgRCFeeds[$feedKey][$param] = [ $wgRCFeeds[$feedKey][$param] ];
+					}
+				} else {
+					$wgRCFeeds[$feedKey][$param] = [];
+				}
 			}
 
 			foreach ( self::DEFAULT_PARAMS as $paramKey => $param ) {
