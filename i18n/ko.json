@@ -6,18 +6,11 @@
 			"렌즈"
 		]
 	},
-	"discordrcfeed-block": "차단",
-	"discordrcfeed-groups": "권한",
-	"discordrcfeed-talk": "토론",
-	"discordrcfeed-contribs": "기여",
-	"discordrcfeed-edit": "편집",
-	"discordrcfeed-delete": "삭제",
-	"discordrcfeed-history": "역사",
-	"discordrcfeed-diff": "차이",
 	"discordrcfeed-summary": "요약",
 	"discordrcfeed-line-edit-minor": "📝 $1 님이 $3 문서를 사소하게 편집했습니다.",
 	"discordrcfeed-line-edit": "📝 $1 님이 $3 문서를 편집했습니다.",
 	"discordrcfeed-line-new": "📄 $1 님이 $3 문서를 새로 만들었습니다.",
+
 	"discordrcfeed-line-delete-delete": "❌ $1 님이 $3 문서를 삭제했습니다.",
 	"discordrcfeed-line-delete-delete_redir": "❌ $1 님이 덮어쓰기를 통해 $3 문서를 삭제했습니다.",
 	"discordrcfeed-line-delete-restore": "❌ $1 님이 $3 문서를 복구했습니다.",
@@ -33,6 +26,7 @@
 	"discordrcfeed-line-block-reblock": "🚫 $1 님이 $3 님의 차단 설정을 바꿨습니다",
 	"discordrcfeed-line-rights-rights": "$1 님이 $3 님의 사용자 그룹을 변경했습니다.",
 	"discordrcfeed-line-import-upload": "⤵️ $1 님이 $3 문서를 가져왔습니다.",
+
 	"discordrcfeed-flow-edit-header": "💬 $1 님이 $2의 설명을 편집했습니다",
 	"discordrcfeed-flow-edit-post": "💬 $1 님이 $2의 게시글을 편집했습니다",
 	"discordrcfeed-flow-edit-title": "💬 $1 님이 주제 \"$3\"의 제목을 바꿨습니다 ($2)",

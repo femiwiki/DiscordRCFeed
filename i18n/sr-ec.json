@@ -4,14 +4,6 @@
 			"BadDog"
 		]
 	},
-	"discordrcfeed-block": "блокирај",
-	"discordrcfeed-groups": "групе",
-	"discordrcfeed-talk": "разговор",
-	"discordrcfeed-contribs": "доприноси",
-	"discordrcfeed-edit": "уреди",
-	"discordrcfeed-delete": "избриши",
-	"discordrcfeed-history": "историја",
-	"discordrcfeed-diff": "разл",
 	"discordrcfeed-line-edit-minor": "📝 $1 је направио/ла мању измену на чланку *$3*",
 	"discordrcfeed-line-edit": "📝 $1 је направио/ла измену на чланку *$3*",
 	"discordrcfeed-line-new": "📄 $1 је израдио/ла чланак *$3*",

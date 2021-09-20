@@ -4,14 +4,6 @@
 			"ديفيد"
 		]
 	},
-	"discordrcfeed-block": "منع",
-	"discordrcfeed-groups": "المجموعات",
-	"discordrcfeed-talk": "نقاش",
-	"discordrcfeed-contribs": "مساهمات",
-	"discordrcfeed-edit": "تعديل",
-	"discordrcfeed-delete": "حذف",
-	"discordrcfeed-history": "تاريخ",
-	"discordrcfeed-diff": "فرق",
 	"discordrcfeed-summary": "الملخص",
 	"discordrcfeed-line-edit-minor": "📝 $1 قد قام بتعديل طفيف ل مقالة $3",
 	"discordrcfeed-line-edit": "📝 $1 قد معدل مقالة $3",

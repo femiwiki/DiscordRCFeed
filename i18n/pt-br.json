@@ -5,14 +5,6 @@
 			"Eduardoaddad"
 		]
 	},
-	"discordrcfeed-block": "bloquear",
-	"discordrcfeed-groups": "grupos",
-	"discordrcfeed-talk": "discussão",
-	"discordrcfeed-contribs": "contribuições",
-	"discordrcfeed-edit": "editar",
-	"discordrcfeed-delete": "excluir",
-	"discordrcfeed-history": "histórico",
-	"discordrcfeed-diff": "dif",
 	"discordrcfeed-line-edit-minor": "📝 $1 fez edição menor para o artigo $3",
 	"discordrcfeed-line-edit": "📝 $1 editado o artigo $3",
 	"discordrcfeed-line-new": "📄 $1 criou o artigo $3",

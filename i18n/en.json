@@ -5,14 +5,6 @@
         ]
     },
     "discordrcfeed-desc": "Provides RCFeedEngine and RCFeedFormatter for Discord.",
-    "discordrcfeed-block": "block",
-    "discordrcfeed-groups": "groups",
-    "discordrcfeed-talk": "talk",
-    "discordrcfeed-contribs": "contribs",
-    "discordrcfeed-edit": "edit",
-    "discordrcfeed-delete": "delete",
-    "discordrcfeed-history": "history",
-    "discordrcfeed-diff": "diff",
     "discordrcfeed-summary": "Summary",
     "discordrcfeed-line-edit-minor": "📝 $1 {{GENDER:$2|has made}} minor edit to article $3",
     "discordrcfeed-line-edit": "📝 $1 {{GENDER:$2|has edited}} article $3",
@@ -33,6 +25,7 @@
     "discordrcfeed-line-block-unblock": "🚫 $1 {{GENDER:$2|has changed}} block settings for $3",
     "discordrcfeed-line-rights-rights": "$1 has changed user groups for $3.",
     "discordrcfeed-line-import-upload": "⤵️ $1 has imported article $3.",
+
     "discordrcfeed-flow-edit-header": "💬 $1 has edited a board description $2",
     "discordrcfeed-flow-edit-post": "💬 $1 has edited a post on $2",
     "discordrcfeed-flow-edit-title": "💬 $1 has changed the topic title to $2 on $3",

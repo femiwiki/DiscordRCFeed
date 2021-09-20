@@ -5,14 +5,6 @@
 			"Rail"
 		]
 	},
-	"discordrcfeed-block": "zablokuj",
-	"discordrcfeed-groups": "grupy",
-	"discordrcfeed-talk": "dyskusja",
-	"discordrcfeed-contribs": "wkład",
-	"discordrcfeed-edit": "edytuj",
-	"discordrcfeed-delete": "usuń",
-	"discordrcfeed-history": "historia",
-	"discordrcfeed-diff": "różn.",
 	"discordrcfeed-line-edit-minor": "📝 $1 wykonał(a) drobną edycję w artykuł $3 ()",
 	"discordrcfeed-line-edit": "📝 $1 edytował(a) artykuł $3 ()",
 	"discordrcfeed-line-new": "$1 stworzył(a) artykuł $3 ()",

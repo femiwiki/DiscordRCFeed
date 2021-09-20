@@ -6,14 +6,6 @@
 			"Uncitoyen"
 		]
 	},
-	"discordrcfeed-block": "engelle",
-	"discordrcfeed-groups": "gruplar",
-	"discordrcfeed-talk": "mesaj",
-	"discordrcfeed-contribs": "katkılar",
-	"discordrcfeed-edit": "düzenle",
-	"discordrcfeed-delete": "sil",
-	"discordrcfeed-history": "geçmiş",
-	"discordrcfeed-diff": "fark",
 	"discordrcfeed-line-edit-minor": "📝 $1 kullanıcısı $3 maddesi küçük düzenleme yapıldı",
 	"discordrcfeed-line-edit": "📝 $1 kullanıcısı $3 maddesi düzenlendi",
 	"discordrcfeed-line-new": "📄 $1 kullanıcısı $3 maddesini oluşturdu",

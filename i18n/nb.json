@@ -4,14 +4,6 @@
 			"Jon Harald Søby"
 		]
 	},
-	"discordrcfeed-block": "blokker",
-	"discordrcfeed-groups": "grupper",
-	"discordrcfeed-talk": "diskusjon",
-	"discordrcfeed-contribs": "bidrag",
-	"discordrcfeed-edit": "rediger",
-	"discordrcfeed-delete": "slett",
-	"discordrcfeed-history": "historikk",
-	"discordrcfeed-diff": "diff",
 	"discordrcfeed-line-edit-minor": "📝 $1 har gjort en mindre redigering i artikkelen $3",
 	"discordrcfeed-line-edit": "📝 $1 har redigert artikkelen $3",
 	"discordrcfeed-line-new": "📄 $1 har opprettet artikkelen $3",

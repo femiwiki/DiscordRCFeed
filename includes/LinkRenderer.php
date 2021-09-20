@@ -42,8 +42,9 @@ class LinkRenderer {
 		if ( is_string( $tools ) ) {
 			$tools = [ $tools ];
 		}
-		$tools = implode( ' | ', $tools );
-		return "($tools)";
+		$sep = wfMessage( 'pipe-separator' )->inContentLanguage()->text();
+		$tools = implode( $sep, $tools );
+		return wfMessage( 'parentheses', $tools )->inContentLanguage()->text();
 	}
 
 	/**

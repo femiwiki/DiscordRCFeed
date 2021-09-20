@@ -9,14 +9,6 @@
 			"Wladek92"
 		]
 	},
-	"discordrcfeed-block": "blocage",
-	"discordrcfeed-groups": "groupes",
-	"discordrcfeed-talk": "discussion",
-	"discordrcfeed-contribs": "contributions",
-	"discordrcfeed-edit": "modification",
-	"discordrcfeed-delete": "suppression",
-	"discordrcfeed-history": "historique",
-	"discordrcfeed-diff": "diff",
 	"discordrcfeed-line-edit-minor": "📝 $1 a fait une modification mineure de l’article « $3 ».",
 	"discordrcfeed-line-edit": "📝 $1 a modifié l’article « $3 ».",
 	"discordrcfeed-line-new": "📄 $1 a créé l’article « $3 ».",

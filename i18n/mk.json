@@ -4,14 +4,6 @@
 			"Bjankuloski06"
 		]
 	},
-	"discordrcfeed-block": "блокирај",
-	"discordrcfeed-groups": "групи",
-	"discordrcfeed-talk": "разговор",
-	"discordrcfeed-contribs": "придонеси",
-	"discordrcfeed-edit": "уреди",
-	"discordrcfeed-delete": "избриши",
-	"discordrcfeed-history": "историја",
-	"discordrcfeed-diff": "разл.",
 	"discordrcfeed-line-edit-minor": "📝 $1 ја направи ситно уредување на статијата $3",
 	"discordrcfeed-line-edit": "📝 $1 ја уреди статијата $3",
 	"discordrcfeed-line-new": "📄 $1 ја создаде статијата $3",

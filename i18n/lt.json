@@ -4,12 +4,6 @@
 			"Eitvys200"
 		]
 	},
-	"discordrcfeed-block": "blokuoti",
-	"discordrcfeed-groups": "grupės",
-	"discordrcfeed-talk": "aptarimas",
-	"discordrcfeed-edit": "redaguoti",
-	"discordrcfeed-delete": "ištrinti",
-	"discordrcfeed-history": "istorija",
 	"discordrcfeed-line-new": "📄 $1 sukūrė straipsnį $3",
 	"discordrcfeed-line-delete-delete": "❌ $1 ištryne straipsnį $3",
 	"discordrcfeed-line-move-move": "➡ $1 perkėlė straipsnį $3.",

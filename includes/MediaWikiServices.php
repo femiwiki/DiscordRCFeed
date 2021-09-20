@@ -8,37 +8,28 @@ class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
 		'class' => RCFeedEngine::class,
 		'user_tools' => [
 			[
+				'target' => 'talk',
+				'msg' => 'talkpagelinktext'
+			],
+			[
 				'target' => 'special',
 				'special' => 'Block',
-				'msg' => 'discordrcfeed-block'
-			],
-			[
-				'target' => 'special',
-				'special' => 'Userrights',
-				'msg' => 'discordrcfeed-groups'
-			],
-			[
-				'target' => 'talk',
-				'msg' => 'discordrcfeed-talk'
+				'msg' => 'blocklink'
 			],
 			[
 				'target' => 'special',
 				'special' => 'Contributions',
-				'msg' => 'discordrcfeed-contribs'
+				'msg' => 'contribslink'
 			],
 		],
 		'page_tools' => [
 			[
 				'query' => 'action=edit',
-				'msg' => 'discordrcfeed-edit'
-			],
-			[
-				'query' => 'action=delete',
-				'msg' => 'discordrcfeed-delete'
+				'msg' => 'edit'
 			],
 			[
 				'query' => 'action=history',
-				'msg' => 'discordrcfeed-history'
+				'msg' => 'hist'
 			],
 		],
 	];

@@ -4,12 +4,6 @@
 			"Beta16"
 		]
 	},
-	"discordrcfeed-block": "blocca",
-	"discordrcfeed-groups": "gruppi",
-	"discordrcfeed-contribs": "contributi",
-	"discordrcfeed-edit": "modifica",
-	"discordrcfeed-delete": "cancella",
-	"discordrcfeed-history": "cronologia",
 	"discordrcfeed-line-edit": "📝 $1 ha modificato la voce $3",
 	"discordrcfeed-line-new": "📄 $1 ha creato la voce $3",
 	"discordrcfeed-line-delete-delete": "❌ $1 ha cancellato la voce $3",

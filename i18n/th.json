@@ -5,14 +5,6 @@
 			"Patsagorn Y."
 		]
 	},
-	"discordrcfeed-block": "บล็อก",
-	"discordrcfeed-groups": "กลุ่มผู้ใช้",
-	"discordrcfeed-talk": "คุย",
-	"discordrcfeed-contribs": "ส่วนร่วม",
-	"discordrcfeed-edit": "แก้ไข",
-	"discordrcfeed-delete": "ลบ",
-	"discordrcfeed-history": "ประวัติ",
-	"discordrcfeed-diff": "ต่าง",
 	"discordrcfeed-line-edit-minor": "📝 $1 แก้ไขเล็กน้อยในหน้า $3 ()",
 	"discordrcfeed-line-edit": "📝 $1 แก้ไขหน้า $3 ()",
 	"discordrcfeed-line-new": "📄 $1 สร้างหน้า $3 ()",

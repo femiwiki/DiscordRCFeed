@@ -8,14 +8,6 @@
 			"Wolfdo"
 		]
 	},
-	"discordrcfeed-block": "Sperren",
-	"discordrcfeed-groups": "Benutzergruppen",
-	"discordrcfeed-talk": "Diskussion",
-	"discordrcfeed-contribs": "Beiträge",
-	"discordrcfeed-edit": "Bearbeiten",
-	"discordrcfeed-delete": "Löschen",
-	"discordrcfeed-history": "Versionen",
-	"discordrcfeed-diff": "Änderungen",
 	"discordrcfeed-summary": "Zusammenfassung",
 	"discordrcfeed-line-edit-minor": "📝 $1 hat den Artikel $3 klein bearbeitet",
 	"discordrcfeed-line-edit": "📝 $1 hat den Artikel $3 bearbeitet",

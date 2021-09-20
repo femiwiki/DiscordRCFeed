@@ -4,14 +4,6 @@
 			"Mainframe98"
 		]
 	},
-	"discordrcfeed-block": "blokkeren",
-	"discordrcfeed-groups": "groepen",
-	"discordrcfeed-talk": "overleg",
-	"discordrcfeed-contribs": "bijdragen",
-	"discordrcfeed-edit": "bewerken",
-	"discordrcfeed-delete": "verwijderen",
-	"discordrcfeed-history": "geschiedenis",
-	"discordrcfeed-diff": "wijz",
 	"discordrcfeed-line-edit-minor": "📝 $1 heeft pagina $3 een kleine bewerking gemaakt",
 	"discordrcfeed-line-edit": "📝 $1 heeft pagina $3 bewerkt",
 	"discordrcfeed-line-new": "📄 $1 heeft pagina $3 aangemaakt",
