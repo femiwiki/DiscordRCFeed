@@ -132,7 +132,7 @@ class LinkRenderer {
 				$replacement = $this->getDiscordArticleText( $target );
 			}
 			$wt = preg_replace(
-				"/(?:\[\[)?$targetText(?:\]\])?/",
+				"/\[\[$targetText\]\]/",
 				$replacement,
 				$wt
 			);
