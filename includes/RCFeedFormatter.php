@@ -82,7 +82,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			}
 
 			$messageKey = $attribs['rc_type'] == RC_LOG ? 'discordrcfeed-line-log'
-				: 'discordrcfeed-line-' . implode( '-', $flags ?? [] );
+				: 'discordrcfeed-line-' . implode( '-', $flags );
 			$message = wfMessage( $messageKey );
 			$params = [
 				// $1: username
@@ -133,7 +133,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	/**
 	 * @param array $feed
 	 * @param string $description message to be sent.
-	 * @param string $color
+	 * @param int $color
 	 * @param string|null $summary An edit summary.
 	 * @return string
 	 */

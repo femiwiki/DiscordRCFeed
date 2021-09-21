@@ -1,6 +1,7 @@
 <?php
 namespace MediaWiki\Extension\DiscordRCFeed;
 
+use MessageSpecifier;
 use SpecialPage;
 use Title;
 use User;
