@@ -9,7 +9,6 @@
 	"discordrcfeed-line-edit-minor": "📝 $1 teki pienen muutoksen artikkelia $3",
 	"discordrcfeed-line-edit": "📝 $1 muokkasi artikkelia $3",
 	"discordrcfeed-line-new": "📄 $1 loi artikkelin $3",	"discordrcfeed-summary": "Yhteenveto",	"discordrcfeed-flow-edit-header": "💬 $1 vaihtoi laudan kuvausta $2",
-	"discordrcfeed-line-newusers-create": "👥 Uusi tunnus $1 luotiin juuri",
 	"discordrcfeed-flow-edit-post": "💬 $1 muokkasi kirjoitusta sijainnissa $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 on muuttanut otsikoksi $2 sijainnissa $3",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 on muuttanut otsikon kuvausta sijainnissa $2",

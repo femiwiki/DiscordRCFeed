@@ -7,9 +7,6 @@
 	"discordrcfeed-line-edit-minor": "A notification text for when a user edits a page\n\nParameters:\n* $1 - user's name (not suitable for GENDER).\n* $2 - user's name for use in GENDER.\n* $3 - article",
 	"discordrcfeed-line-edit": "A notification text for when a user edits a page\n\nParameters:\n* $1 - user's name (not suitable for GENDER).\n* $2 - user's name for use in GENDER.\n* $3 - article",
 	"discordrcfeed-line-new": "A notification text for when a user creates a page\n\nParameters:\n* $1 - user's name (not suitable for GENDER).\n* $2 - user's name for use in GENDER.\n* $3 - article",
-	"discordrcfeed-line-newusers-create": "A notification text for when a user account is created\n\nParameters:\n* $1 - user's name (not suitable for GENDER).\n* $2 - user's name for use in GENDER.",
-	"discordrcfeed-line-log": "\n\nParameters:\n* $1 - user's name (not suitable for GENDER).\n* $2 - user's name for use in GENDER.\n* $3 - article",
-
 	"discordrcfeed-flow-edit-header": "A notification text for when a user edits the header of a flow board\n\nParameters:\n* $1 - the username\n* $2 - link",
 	"discordrcfeed-flow-edit-post": "A notification text for when a user edits a flow topic\n\nParameters:\n* $1 - the username\n* $2 - link",
 	"discordrcfeed-flow-edit-title": "A notification text for when a user edits the title of a flow topic\n\nParameters:\n* $1 - the username\n* $2 - new topic title\n* $3 - talk page",

@@ -14,7 +14,6 @@
 	"discordrcfeed-line-new": "📄 $1 a créé l’article « $3 ».",
 	"discordrcfeed-summary": "Résumé",
 	"discordrcfeed-flow-edit-header": "💬 $1 a modifié une description de panneau $2",
-	"discordrcfeed-line-newusers-create": "👥 Le nouveau compte utilisateur « $1 » vient d’être créé",
 	"discordrcfeed-flow-edit-post": "💬 $1 a modifié un billet sur $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 a changé le titre du sujet en « $2 » sur $3",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 a modifié le résumé du sujet sur $2",

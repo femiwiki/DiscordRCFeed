@@ -9,7 +9,6 @@
 	"discordrcfeed-line-edit-minor": "📝 $1 fez edição menor para o artigo $3",
 	"discordrcfeed-line-edit": "📝 $1 editado o artigo $3",
 	"discordrcfeed-line-new": "📄 $1 criou o artigo $3",	"discordrcfeed-summary": "Resumo",	"discordrcfeed-flow-edit-header": "💬 $1 editou a descrição do quadro $2",
-	"discordrcfeed-line-newusers-create": "👥 A nova conta de usuário $1 acabou de ser criada",
 	"discordrcfeed-flow-edit-post": "💬 $1 editou uma publicação em $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 alterou o título do tópico para $2 em $3",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 editou o resumo do tópico em $2",

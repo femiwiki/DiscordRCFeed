@@ -10,7 +10,6 @@
 	"discordrcfeed-line-edit-minor": "📝 $1 kullanıcısı $3 maddesi küçük düzenleme yapıldı",
 	"discordrcfeed-line-edit": "📝 $1 kullanıcısı $3 maddesi düzenlendi",
 	"discordrcfeed-line-new": "📄 $1 kullanıcısı $3 maddesini oluşturdu",	"discordrcfeed-summary": "Özet",	"discordrcfeed-flow-edit-header": "💬 $1 kullanıcısı $2 pano açıklaması düzenledi",
-	"discordrcfeed-line-newusers-create": "👥 Yeni $1 kullanıcı hesabı oluşturuldu",
 	"discordrcfeed-flow-edit-post": "💬 $1 kullanıcısı $2 bağlantısında bir gönderiyi düzenledi",
 	"discordrcfeed-flow-edit-title": "💬 $1 kullanıcısı $2 konu başlığını $3 tartışma sayfasında değiştirdi",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 kullanıcısı $2 tartışmada konu özetini düzenledi",

@@ -9,7 +9,6 @@
 	"discordrcfeed-line-edit-minor": "📝 $1 har gjort en mindre redigering på artikeln $3",
 	"discordrcfeed-line-edit": "📝 $1 har redigerat artikeln $3",
 	"discordrcfeed-line-new": "📄 $1 skapade artikeln $3",	"discordrcfeed-summary": "Sammanfattning",	"discordrcfeed-flow-edit-header": "💬 $1 redigerade beskrivningen för ett underforum $2",
-	"discordrcfeed-line-newusers-create": "👥 Det nya användarkontot $1 skapades precis",
 	"discordrcfeed-flow-edit-post": "💬 $1 redigerade ett inlägg på $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 ändrade ämnets titel till $2 på $3",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 redigerade ämnets sammanfattning på $2",

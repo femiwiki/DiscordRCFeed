@@ -25,15 +25,19 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 
 		if ( $attribs['rc_type'] == RC_LOG ) {
 			$titleObj = $rc->getTitle();
-			$comment = self::cleanupForDiscord( $actionComment );
-			$comment = $linkRenderer->makeLinksClickable( $comment );
-			$action = $attribs['rc_log_type'];
-			$title = $linkRenderer->getDiscordArticleText( $titleObj );
 			if ( in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] ) ) {
 				return null;
 			}
 
+			$comment = self::cleanupForDiscord( $actionComment );
+			$comment = $linkRenderer->makeLinksClickable( $comment );
+			$action = $attribs['rc_log_type'];
+
 			$emoji = self::getEmojiForLog( $attribs['rc_log_type'], $attribs['rc_log_action'] );
+			$user = $linkRenderer->getDiscordUserText( $user );
+
+			$fullString = implode( ' ', [ $emoji, $user, $comment ] );
+			return $this->makePostData( $feed, $fullString, $action );
 		} else {
 			$titleObj =& $rc->getTitle();
 			if ( in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] ) ) {
@@ -59,43 +63,37 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			}
 			$title = $linkRenderer->getDiscordArticleText( $titleObj, $attribs['rc_this_oldid'],
 				$attribs['rc_last_oldid'] ?? false );
+
+			if ( $attribs['rc_old_len'] !== null && $attribs['rc_new_len'] !== null ) {
+				$szdiff = $attribs['rc_new_len'] - $attribs['rc_old_len'];
+				$szdiff = wfMessage( 'historysize' )->numParams( $szdiff )->inContentLanguage()->text();
+			} else {
+				$szdiff = '';
+			}
+
+			$messageKey = $attribs['rc_type'] == RC_LOG ? 'discordrcfeed-line-log'
+				: 'discordrcfeed-line-' . implode( '-', $flags ?? [] );
+			$message = wfMessage( $messageKey );
+			$params = [
+				// $1: username
+				$linkRenderer->getDiscordUserText( $user ),
+				// $2: username for GENDER
+				$user->getName(),
+			];
+			if ( $titleObj->getNamespace() == NS_USER ) {
+				$targetUser = User::newFromName( $titleObj->getText() );
+				// username
+				$params[] = $linkRenderer->getDiscordUserText( $targetUser );
+				// username for GENDER
+				$params[] = $targetUser->getName();
+			} else {
+				$params[] = $title;
+			}
+			$message = $message->params( ...$params )->inContentLanguage()->text();
+
+			$fullString = implode( ' ', [ $message, $szdiff ] );
+			return $this->makePostData( $feed, $fullString, $action ?? null, $comment );
 		}
-
-		if ( $attribs['rc_old_len'] !== null && $attribs['rc_new_len'] !== null ) {
-			$szdiff = $attribs['rc_new_len'] - $attribs['rc_old_len'];
-			$szdiff = wfMessage( 'historysize' )->numParams( $szdiff )->inContentLanguage()->text();
-		} else {
-			$szdiff = '';
-		}
-
-		$messageKey = $attribs['rc_type'] == RC_LOG ? 'discordrcfeed-line-log'
-			: 'discordrcfeed-line-' . implode( '-', $flags ?? [] );
-		$message = wfMessage( $messageKey );
-		$params = [
-			// $1: username
-			$linkRenderer->getDiscordUserText( $user ),
-			// $2: username for GENDER
-			$user->getName(),
-		];
-		if ( $titleObj->getNamespace() == NS_USER ) {
-			$targetUser = User::newFromName( $titleObj->getText() );
-			// username
-			$params[] = $linkRenderer->getDiscordUserText( $targetUser );
-			// username for GENDER
-			$params[] = $targetUser->getName();
-		} else {
-			$params[] = $title;
-		}
-		$message = $message->params( ...$params )->inContentLanguage()->text();
-		$fullString = implode( ' ', array_filter( [ $emoji ?? null, $message, $szdiff ] ) );
-
-		// TODO: Remove this before commit.
-		// $fullString .= " $messageKey";
-		// $fullString .= ' / $flags: ' . implode( '-', $flags ?? [] );
-		// $fullString .= ' / rc_log_type: ' . $attribs['rc_log_type'];
-		// $fullString .= ' / rc_log_action: ' . $attribs['rc_log_action'];
-
-		return $this->makePostData( $feed, $fullString, $action ?? null, $comment );
 	}
 
 	/**

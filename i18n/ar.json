@@ -8,7 +8,6 @@
 	"discordrcfeed-line-edit-minor": "📝 $1 قد قام بتعديل طفيف ل مقالة $3",
 	"discordrcfeed-line-edit": "📝 $1 قد معدل مقالة $3",
 	"discordrcfeed-line-new": "📄 $1 قد أنشأ مقالة $3",	"discordrcfeed-flow-edit-header": "💬 $1 قد عدل وصف لوحة $2",
-	"discordrcfeed-line-newusers-create": "👥 تم إنشاء حساب المستخدم الجديد $1 للتو",
 	"discordrcfeed-flow-edit-post": "💬 $1 قد عدل منشورا في $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 قد عدل عنوان الموضوع إلى $2 في $3",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 قد عدل ملخص الموضوع في $2",
