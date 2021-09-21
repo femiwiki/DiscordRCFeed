@@ -15,7 +15,6 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	 */
 	public function getLine( array $feed, RecentChange $rc, $actionComment ) {
 		$attribs = $rc->getAttributes();
-		$feed['omit_types'][] = RC_CATEGORIZE;
 		if ( in_array( $attribs['rc_type'], $feed['omit_types'] ) ) {
 			return null;
 		}

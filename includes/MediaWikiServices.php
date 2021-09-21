@@ -21,13 +21,20 @@ class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
 			if ( !isset( $wgRCFeeds[$feedKey]['url'] ) && !isset( $wgRCFeeds[$feedKey]['uri'] ) ) {
 				continue;
 			}
+
+			// Don't send RC_CATEGORIZE events (same as T127360)
+			if ( !isset( $wgRCFeeds[$feedKey]['omit_types'] ) ) {
+				$wgRCFeeds[$feedKey]['omit_types'] = [ RC_CATEGORIZE ];
+			} else {
+				$wgRCFeeds[$feedKey]['omit_types'][] = RC_CATEGORIZE;
+			}
+
 			// Makes sure always being array.
 			$mustBeArray = [
 				'omit_namespaces',
-				// not yet implemented
-				// 'omit_types',
-				// 'omit_log_types',
-				// 'omit_log_actions',
+				'omit_types',
+				'omit_log_types',
+				'omit_log_actions',
 			];
 			foreach ( $mustBeArray as $param ) {
 				if ( isset( $wgRCFeeds[$feedKey][$param] ) ) {
