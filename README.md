@@ -6,7 +6,6 @@
 - [ ] Fix ci test
 - [ ] Add support for Flow
 - [ ] Cleanup en.json and qqq.json
-- [ ] Implement `'omit_types'`, `'omit_log_types'` and `'omit_log_actions'`
 
 This is a fork of [kulttuuri/DiscordNotifications] which is an extension for [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) that sends notifications of actions in your wiki like editing, deleting or moving a page into [Discord](https://discordapp.com/) channel.
 
@@ -45,21 +44,43 @@ You can set the following keys of the associative array:
 - `'omit_user'` - `true` or `false` whether to skip registered users. Same as described on [Manual:$wgRCFeeds].
 - `'omit_minor'` - `true` or `false` whether to skip minor edits. Same as described on [Manual:$wgRCFeeds].
 - `'omit_patrolled'` - `true` or `false` whether to skip patrolled edits. Same as described on [Manual:$wgRCFeeds].
-- `'omit_namespaces'`, `'omit_types'`, `'omit_log_types'` and `'omit_log_actions'` - Lists for filtering notifications. See [Filtering Notifications](#filtering-notifications) below for details.
-- `'user_tools'` and `'page_tools'` - Associative arrays for Controlling the display of tools shown with notification. See [Controlling Page Tools And User Tools](#controlling-page-tools-and-user-tools) below for details.
+- `'omit_namespaces'`, `'omit_types'`, `'omit_log_types'` and `'omit_log_actions'` - Lists for filtering notifications. See [Filtering Notifications](#filtering-notifications) below for details. Defaults to `[]`.
+- `'user_tools'` and `'page_tools'` - Associative arrays for Controlling the display of tools shown with notification. See [Controlling Page Tools And User Tools](#controlling-page-tools-and-user-tools) below for details. Defaults to `[]`.
 - `'request_override'` - An array used to override the post data of the webhook request. See [Webhook Request Overriding](#webhook-request-overriding) below for details. Defaults to `[]`.
 
 ### Filtering Notifications
 
-`'omit_namespaces'` is an list that contains namespaces should be omit.
+`'omit_namespaces'` is a list that contains namespaces should be omit.
 
 ```php
-$wgRCFeeds['discord']['omit_namespaces'] = [ NS_TALK ];
+// Disabling notifications from user talk page
+$wgRCFeeds['discord']['omit_namespaces'] = [ NS_USER_TALK ];
 
+// Disabling notifications from talk pages.
 $wgRCFeeds['discord']['omit_namespaces'] = [
-  NS_PROJECT,
-  NS_PROJECT_TALK,
-  NS_TALK,
+	NS_TALK,
+	NS_USER_TALK,
+	NS_PROJECT_TALK,
+	NS_FILE_TALK,
+	NS_MEDIAWIKI_TALK,
+	NS_TEMPLATE_TALK,
+	NS_HELP_TALK,
+	NS_CATEGORY_TALK,
+	NS_MODULE_TALK,
+];
+```
+
+`'omit_types'`, `'omit_log_types'` and `'omit_log_actions'` are similar.
+
+- `'omit_types'` can contain `RC_EDIT`, `RC_NEW`, `RC_LOG` and `RC_EXTERNAL`. (Note that `RC_CATEGORIZE` is always omitted for readability)
+- `'omit_log_types'` can contain `'move'`, `'protect'`, `'delete'`, `'block'`, `'upload'` ...
+- `'omit_log_actions'` can contain `'move/move-noredirect'`, `'block/block'`, `'block/unblock'` ...
+
+The next example shows disabling new user notifications.
+
+```php
+$wgRCFeeds['discord']['omit_log_types'] = [
+	'newusers',
 ];
 ```
 

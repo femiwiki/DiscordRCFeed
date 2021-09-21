@@ -15,8 +15,8 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	 */
 	public function getLine( array $feed, RecentChange $rc, $actionComment ) {
 		$attribs = $rc->getAttributes();
-		if ( $attribs['rc_type'] == RC_CATEGORIZE ) {
-			// Same as IRCColourfulRCFeedFormatter
+		$feed['omit_types'][] = RC_CATEGORIZE;
+		if ( in_array( $attribs['rc_type'], $feed['omit_types'] ) ) {
 			return null;
 		}
 
@@ -24,6 +24,13 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 		$user = $rc->getPerformer();
 
 		if ( $attribs['rc_type'] == RC_LOG ) {
+			$logType = $attribs['rc_log_type'];
+			$logAction = $attribs['rc_log_action'];
+			if ( in_array( $logType, $feed['omit_log_types'] )
+				|| in_array( "$logType/$logAction", $feed['omit_log_actions'] )
+			) {
+				return null;
+			}
 			$titleObj = $rc->getTitle();
 			if ( in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] ) ) {
 				return null;
@@ -31,13 +38,13 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 
 			$comment = self::cleanupForDiscord( $actionComment );
 			$comment = $linkRenderer->makeLinksClickable( $comment );
-			if ( isset( Constants::COLOR_MAP_LOG[$attribs['rc_log_type']] ) ) {
-				$color = Constants::COLOR_MAP_LOG[$attribs['rc_log_type']];
+			if ( isset( Constants::COLOR_MAP_LOG[$logType] ) ) {
+				$color = Constants::COLOR_MAP_LOG[$logType];
 			} else {
 				$color = Constants::COLOR_MAP_ACTION[RC_LOG];
 			}
 
-			$emoji = self::getEmojiForLog( $attribs['rc_log_type'], $attribs['rc_log_action'] );
+			$emoji = self::getEmojiForLog( $logType, $logAction );
 			$user = $linkRenderer->getDiscordUserText( $user );
 
 			$fullString = implode( ' ', [ $emoji, $user, $comment ] );
