@@ -133,11 +133,11 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	/**
 	 * @param array $feed
 	 * @param string $description message to be sent.
-	 * @param int $color
+	 * @param int|null $color
 	 * @param string|null $summary An edit summary.
 	 * @return string
 	 */
-	private function makePostData( $feed, $description, $color, $summary = null ) {
+	private function makePostData( $feed, $description, $color = Constants::COLOR_DEFAULT, $summary = null ) {
 		global $wgSitename;
 
 		$embed = [
