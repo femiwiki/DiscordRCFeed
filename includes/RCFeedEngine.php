@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed;
 
+use Exception;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
@@ -20,7 +21,7 @@ class RCFeedEngine extends MediaWikiRCFeedEngine {
 	 * @inheritDoc
 	 */
 	public function __construct( array $params ) {
-		if ( !isset( $params['url'] ) || !isset( $params['uri'] ) ) {
+		if ( !isset( $params['url'] ) && !isset( $params['uri'] ) ) {
 			throw new Exception( "RCFeed for Discord must have a 'url' set." );
 		}
 		$this->httpRequestFactory = MediaWikiServices::getInstance()->getHttpRequestFactory();
