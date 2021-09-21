@@ -33,21 +33,30 @@ final class Constants {
 		],
 	];
 
-	public const ACTION_COLOR_MAP = [
-		'new'      => '3580392',
-		'edit'     => '2993970',
+	public const COLOR_DEFAULT = 0xb3b4bc;
+	private const COLOR_GREEN = 0x2daf32;
+	private const COLOR_BLUE = 0x36a1e8;
+	private const COLOR_RED = 0xe83535;
+	private const COLOR_MAGENTA = 0xd635e8;
+	private const COLOR_DARK_BLUE = 0x354fe8;
 
-		// Logs
-		'delete'   => '15217973',
-		'move'     => '14038504',
-		'protect'  => '3493864',
-		'upload'   => '3580392',
-		'newusers' => '3580392',
-		'rights'   => '2993970',
-		'block'    => '15217973',
-		'import'   => '2993970',
-
-		// Etc
-		'flow'     => '2993970',
+	public const COLOR_MAP_ACTION = [
+		RC_EDIT   => self::COLOR_GREEN,
+		RC_NEW    => self::COLOR_BLUE,
+		RC_LOG    => self::COLOR_GREEN,
 	];
+
+	public const COLOR_MAP_LOG = [
+		'delete'   => self::COLOR_RED,
+		'move'     => self::COLOR_MAGENTA,
+		'protect'  => self::COLOR_DARK_BLUE,
+		'upload'   => self::COLOR_BLUE,
+		'newusers' => self::COLOR_BLUE,
+		'rights'   => self::COLOR_GREEN,
+		'block'    => self::COLOR_RED,
+		'import'   => self::COLOR_GREEN,
+	];
+
+	// TODO: Add flow color
+	// 'flow'     => COLOR_GREEN,
 }

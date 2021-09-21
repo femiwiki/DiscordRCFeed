@@ -31,13 +31,17 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 
 			$comment = self::cleanupForDiscord( $actionComment );
 			$comment = $linkRenderer->makeLinksClickable( $comment );
-			$action = $attribs['rc_log_type'];
+			if ( isset( Constants::COLOR_MAP_LOG[$attribs['rc_log_type']] ) ) {
+				$color = Constants::COLOR_MAP_LOG[$attribs['rc_log_type']];
+			} else {
+				$color = Constants::COLOR_MAP_ACTION[RC_LOG];
+			}
 
 			$emoji = self::getEmojiForLog( $attribs['rc_log_type'], $attribs['rc_log_action'] );
 			$user = $linkRenderer->getDiscordUserText( $user );
 
 			$fullString = implode( ' ', [ $emoji, $user, $comment ] );
-			return $this->makePostData( $feed, $fullString, $action );
+			return $this->makePostData( $feed, $fullString, $color );
 		} else {
 			$titleObj =& $rc->getTitle();
 			if ( in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] ) ) {
@@ -92,7 +96,12 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			$message = $message->params( ...$params )->inContentLanguage()->text();
 
 			$fullString = implode( ' ', [ $message, $szdiff ] );
-			return $this->makePostData( $feed, $fullString, $action ?? null, $comment );
+			if ( isset( Constants::COLOR_MAP_ACTION[$attribs['rc_type']] ) ) {
+				$color = Constants::COLOR_MAP_ACTION[$attribs['rc_type']];
+			} else {
+				$color = Constants::COLOR_DEFAULT;
+			}
+			return $this->makePostData( $feed, $fullString, $color, $comment );
 		}
 	}
 
@@ -118,17 +127,12 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	/**
 	 * @param array $feed
 	 * @param string $description message to be sent.
-	 * @param string $action
+	 * @param string $color
 	 * @param string|null $summary An edit summary.
 	 * @return string
 	 */
-	private function makePostData( $feed, $description, $action, $summary = null ) {
+	private function makePostData( $feed, $description, $color, $summary = null ) {
 		global $wgSitename;
-
-		$color = '11777212';
-		if ( isset( Constants::ACTION_COLOR_MAP[$action] ) ) {
-			$color = Constants::ACTION_COLOR_MAP[$action];
-		}
 
 		$embed = [
 			'color' => $color,
