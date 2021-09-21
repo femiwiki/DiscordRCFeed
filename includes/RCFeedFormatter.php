@@ -26,7 +26,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 		if ( $attribs['rc_type'] == RC_LOG ) {
 			$titleObj = $rc->getTitle();
 			$comment = self::cleanupForDiscord( $actionComment );
-			$comment = $linkRenderer->makeLinksClickable( $comment, $titleObj );
+			$comment = $linkRenderer->makeLinksClickable( $comment );
 			$action = $attribs['rc_log_type'];
 			$title = $linkRenderer->getDiscordArticleText( $titleObj );
 			if ( in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] ) ) {

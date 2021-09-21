@@ -119,24 +119,10 @@ class LinkRenderer {
 
 	/**
 	 * @param string $wt wikitext to parse.
-	 * @param Title|null $target
-	 * @param bool $pageTools
+	 * @param bool $includingTools
 	 * @return string text with Discord syntax.
 	 */
-	public function makeLinksClickable( $wt, $target = null, $pageTools = true ) {
-		if ( $target ) {
-			$targetText = $target->getPrefixedText();
-			if ( $target->getNamespace() == NS_USER ) {
-				$replacement = $this->getDiscordUserText( User::newFromName( $targetText ) );
-			} else {
-				$replacement = $this->getDiscordArticleText( $target );
-			}
-			$wt = preg_replace(
-				"/\[\[$targetText\]\]/",
-				$replacement,
-				$wt
-			);
-		}
+	public function makeLinksClickable( $wt, $includingTools = true ) {
 		if ( !preg_match_all( '/\[\[([^]]+)\]\]/', $wt, $matches ) ) {
 			return $wt;
 		}
@@ -146,7 +132,7 @@ class LinkRenderer {
 			if ( !$titleObj ) {
 				continue;
 			}
-			if ( $pageTools ) {
+			if ( $includingTools ) {
 				if ( $titleObj->getNamespace() == NS_USER ) {
 					$replacement = $this->getDiscordUserText( User::newFromName( $titleObj ) );
 				} else {
