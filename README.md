@@ -3,7 +3,6 @@
 **⚠️ Work-in-progress**
 
 - [ ] Remove all TODOs
-- [ ] Fancy output for new user event
 - [ ] Fix ci test
 - [ ] Add support for Flow
 - [ ] Cleanup en.json and qqq.json
