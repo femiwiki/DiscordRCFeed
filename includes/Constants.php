@@ -33,7 +33,7 @@ final class Constants {
 		],
 	];
 
-	private const ACTION_COLOR_MAP = [
+	public const ACTION_COLOR_MAP = [
 		'new'      => '3580392',
 		'edit'     => '2993970',
 
