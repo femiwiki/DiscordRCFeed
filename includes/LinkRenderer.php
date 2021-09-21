@@ -79,7 +79,7 @@ class LinkRenderer {
 				} else {
 					$link = SpecialPage::getTitleFor( $tool['special'], $name )->getFullURL();
 				}
-				$text = isset( $tool['msg'] ) ? Core::msg( $tool['msg'] ) : $text = $tool['text'];
+				$text = isset( $tool['msg'] ) ? self::msg( $tool['msg'] ) : $tool['text'];
 				$tools[] = self::makeLink( $link, $text );
 			}
 			$tools = self::MakeNiceTools( $tools );
@@ -105,11 +105,11 @@ class LinkRenderer {
 			$tools = [];
 			foreach ( $this->pageTools as $tool ) {
 				$tools[] = self::makeLink( $title->getFullURL( $tool['query'] ),
-					Core::msg( $tool['msg'] ) );
+					self::msg( $tool['msg'] ) );
 			}
 			if ( $thisOldId && $lastOldId ) {
 				$tools[] = self::makeLink( $title->getFullURL( "diff=$thisOldId&oldid=$lastOldId" ),
-					Core::msg( 'diff' ) );
+					self::msg( 'diff' ) );
 			}
 			$tools = self::makeNiceTools( $tools );
 			$link .= " $tools";
@@ -145,5 +145,18 @@ class LinkRenderer {
 		}
 
 		return $wt;
+	}
+
+	/**
+	 * @param string|string[]|MessageSpecifier $key Message key, or array of keys, or a MessageSpecifier
+	 * @param mixed ...$params Normal message parameters
+	 * @return string
+	 */
+	private static function msg( $key, ...$params ) {
+		if ( $params ) {
+			return wfMessage( $key, ...$params )->inContentLanguage()->text();
+		} else {
+			return wfMessage( $key )->inContentLanguage()->text();
+		}
 	}
 }

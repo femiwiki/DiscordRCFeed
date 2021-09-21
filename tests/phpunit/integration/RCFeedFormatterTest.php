@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
-use MediaWiki\Extension\DiscordRCFeed\Core;
+use MediaWiki\Extension\DiscordRCFeed\RCFeedFormatter;
 use MediaWikiIntegrationTestCase;
 use User;
 use Wikimedia\TestingAccessWrapper;
@@ -11,24 +11,24 @@ use Wikimedia\TestingAccessWrapper;
  * @group DiscordRCFeed
  * @group Database
  *
- * @covers \MediaWiki\Extension\DiscordRCFeed\Core
+ * @covers \MediaWiki\Extension\DiscordRCFeed\RCFeedFormatter
  */
 class RCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 
-	/** @var Core */
-	private $core;
+	/** @var RCFeedFormatter */
+	private $formatter;
 
 	/** @var TestingAccessWrapper */
 	private $wrapper;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->core = new Core();
-		$this->wrapper = TestingAccessWrapper::newFromObject( $this->core );
+		$this->formatter = new RCFeedFormatter();
+		$this->wrapper = TestingAccessWrapper::newFromObject( $this->formatter );
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\Core::makePost
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\RCFeedFormatter::makePost
 	 */
 	public function testMakePost() {
 		$this->assertJsonStringEqualsJsonString(
@@ -59,17 +59,17 @@ class RCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\Core::pushDiscordNotify
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\RCFeedFormatter::pushDiscordNotify
 	 */
 	public function testPushDiscordNotify() {
-		$core = $this->core;
-		$this->assertFalse( $core->pushDiscordNotify( '', null, 'article_saved' ) );
+		$formatter = $this->formatter;
+		$this->assertFalse( $formatter->pushDiscordNotify( '', null, 'article_saved' ) );
 
 		$this->setMwGlobals( 'wgDiscordRCFeedIncomingWebhookUrl', 'http://127.0.0.1/webhook' );
-		$this->assertNull( $core->pushDiscordNotify( '', null, 'article_saved' ) );
+		$this->assertNull( $formatter->pushDiscordNotify( '', null, 'article_saved' ) );
 
 		$this->setMwGlobals( 'wgDiscordRCFeedSendMethod', 'random' );
-		$this->assertFalse( $core->pushDiscordNotify( '', null, 'article_saved' ) );
+		$this->assertFalse( $formatter->pushDiscordNotify( '', null, 'article_saved' ) );
 	}
 
 	public function testDiscordRCFeed() {
@@ -85,6 +85,6 @@ class RCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 
 		// phpcs:ignore Generic.Files.LineLength.TooLong
 		$regex = '~📄 \[EditTest\]\(https://foo\.bar/index\.php/User:EditTest\) \(\[block\]\(https://foo\.bar/index\.php(\?title=|/)Special:Block/EditTest\) \| \[groups\]\(https://foo\.bar/index\.php(\?title=|/)Special(%3A|:)UserRights(&user=|/)EditTest\) \| \[talk\]\(https://foo\.bar/index\.php(\?title=|/)User_talk:EditTest\) \| \[contribs\]\(https://foo\.bar/index\.php(\?title=|/)Special:Contributions/EditTest\)\) has created article \[Edit Test\]\(https://foo\.bar/index\.php(\?title=|/)Edit(%20|_)Test\) \(\[edit\]\(https://foo\.bar/index\.php\?title=Edit(%20|_)Test&action=edit\) \| \[delete\]\(https://foo\.bar/index\.php\?title=Edit(%20|_)Test&action=delete\) \| \[history\]\(https://foo\.bar/index\.php\?title=Edit(%20|_)Test&action=history\)\)  \(5 bytes\)~';
-		$this->assertRegExp( $regex, Core::$lastMessage );
+		$this->assertRegExp( $regex, RCFeedFormatter::$lastMessage );
 	}
 }
