@@ -58,8 +58,12 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			}
 			$store = MediaWikiServices::getInstance()->getCommentStore();
 			$comment = $store->getComment( 'rc_comment', $attribs )->text;
+			if ( $comment ) {
 			$comment = wfMessage( 'parentheses', $comment )->inContentLanguage()->text();
 			$comment = self::cleanupForDiscord( $comment );
+			} else {
+				$comment = '';
+			}
 
 			$flags = [];
 			if ( $rcType == RC_NEW ) {
