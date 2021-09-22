@@ -7,10 +7,10 @@
 			"Ihojose"
 		]
 	},
-	"discordrcfeed-summary": "Resumen",
 	"discordrcfeed-line-edit-minor": "📝 $1 hizo una edición menor en el artículo $3",
 	"discordrcfeed-line-edit": "📝 $1 editó el artículo $3",
-	"discordrcfeed-line-new": "📄 $1 creó el artículo $3",	"discordrcfeed-summary": "Resumen",	"discordrcfeed-flow-edit-header": "💬 $1 ha editado una tabla de descripción $2",
+	"discordrcfeed-line-new": "📄 $1 creó el artículo $3",
+	"discordrcfeed-flow-edit-header": "💬 $1 ha editado una tabla de descripción $2",
 	"discordrcfeed-flow-edit-post": "💬 $1 ha editado una publicación en $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 ha cambiado el título del tema a $2 en $3",
 	"discordrcfeed-flow-lock-topic-lock": "resuelto",

@@ -4,10 +4,10 @@
 			"Bjankuloski06"
 		]
 	},
-	"discordrcfeed-summary": "Опис",
 	"discordrcfeed-line-edit-minor": "📝 $1 ја направи ситно уредување на статијата $3",
 	"discordrcfeed-line-edit": "📝 $1 ја уреди статијата $3",
-	"discordrcfeed-line-new": "📄 $1 ја создаде статијата $3",	"discordrcfeed-summary": "Опис",	"discordrcfeed-flow-edit-header": "💬 $1 уреди опис на разговорница $2",
+	"discordrcfeed-line-new": "📄 $1 ја создаде статијата $3",
+	"discordrcfeed-flow-edit-header": "💬 $1 уреди опис на разговорница $2",
 	"discordrcfeed-flow-edit-post": "💬 $1 уреди објава на $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 го смени насловот на темата во $2 на $3",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 го уреди описот на темата на $2",

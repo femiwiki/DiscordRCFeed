@@ -5,10 +5,10 @@
 			"Xiplus"
 		]
 	},
-	"discordrcfeed-summary": "摘要",
 	"discordrcfeed-line-edit-minor": "📝 $1已進行了小編輯條目$3",
 	"discordrcfeed-line-edit": "📝 $1已已編輯條目$3",
-	"discordrcfeed-line-new": "📝 $1已建立條目$3",	"discordrcfeed-summary": "摘要",	"discordrcfeed-flow-edit-header": "💬 $1已修改討論版描述 $2",
+	"discordrcfeed-line-new": "📝 $1已建立條目$3",
+	"discordrcfeed-flow-edit-header": "💬 $1已修改討論版描述 $2",
 	"discordrcfeed-flow-edit-post": "💬 $1已修改貼文 $2",
 	"discordrcfeed-flow-edit-title": "💬 $1已修改$3上的話題標題為$2",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1已修改$2上的話題摘要",
@@ -24,4 +24,5 @@
 	"discordrcfeed-flow-moderate-delete": "已刪除",
 	"discordrcfeed-flow-moderate-undelete": "已取消刪除",
 	"discordrcfeed-flow-new-topic": "💬 $1已在$3上建立話題$2",
-	"discordrcfeed-flow-reply": "💬 $1已回應$2",}
+	"discordrcfeed-flow-reply": "💬 $1已回應$2"
+}

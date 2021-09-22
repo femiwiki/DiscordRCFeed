@@ -4,10 +4,10 @@
 			"Jon Harald Søby"
 		]
 	},
-	"discordrcfeed-summary": "Sammendrag",
 	"discordrcfeed-line-edit-minor": "📝 $1 har gjort en mindre redigering i artikkelen $3",
 	"discordrcfeed-line-edit": "📝 $1 har redigert artikkelen $3",
-	"discordrcfeed-line-new": "📄 $1 har opprettet artikkelen $3",	"discordrcfeed-summary": "Sammendrag",	"discordrcfeed-flow-edit-header": "💬 $1 har redigert en tavlebeskrivelse $2",
+	"discordrcfeed-line-new": "📄 $1 har opprettet artikkelen $3",
+	"discordrcfeed-flow-edit-header": "💬 $1 har redigert en tavlebeskrivelse $2",
 	"discordrcfeed-flow-edit-post": "💬 $1 har redigert et innlegg på $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 har endret emnets tittel til $2 på $3",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 har redigert emnets sammendrag på $2",

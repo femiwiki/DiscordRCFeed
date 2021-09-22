@@ -38,8 +38,8 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 				return null;
 			}
 
-			$comment = self::cleanupForDiscord( $actionComment );
 			$comment = $linkRenderer->makeLinksClickable( $comment );
+			$comment = self::cleanupForDiscord( $actionComment );
 			if ( isset( Constants::COLOR_MAP_LOG[$logType] ) ) {
 				$color = Constants::COLOR_MAP_LOG[$logType];
 			} else {
@@ -57,9 +57,10 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 				return null;
 			}
 			$store = MediaWikiServices::getInstance()->getCommentStore();
-			$comment = self::cleanupForDiscord(
-				$store->getComment( 'rc_comment', $attribs )->text
-			);
+			$comment = $store->getComment( 'rc_comment', $attribs )->text;
+			$comment = wfMessage( 'parentheses', $comment )->inContentLanguage()->text();
+			$comment = self::cleanupForDiscord( $comment );
+
 			$flags = [];
 			if ( $rcType == RC_NEW ) {
 				$action = 'new';
@@ -104,14 +105,13 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			}
 			$message = $message->params( ...$params )->inContentLanguage()->text();
 
-			$fullString = implode( ' ', [ $message, $szdiff ] );
+			$fullString = implode( ' ', [ $message, $szdiff, $comment ] );
 			if ( isset( Constants::COLOR_MAP_ACTION[$rcType] ) ) {
 				$color = Constants::COLOR_MAP_ACTION[$rcType];
 			} else {
 				$color = Constants::COLOR_DEFAULT;
 			}
-			return self::makePostData( $feed, $fullString, $color, $comment );
-			return $this->makePostData( $feed, $fullString, $color, $comment );
+			return self::makePostData( $feed, $fullString, $color );
 		}
 	}
 
@@ -138,25 +138,15 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	 * @param array $feed
 	 * @param string $description message to be sent.
 	 * @param int|null $color
-	 * @param string|null $summary An edit summary.
 	 * @return string
 	 */
-	private static function makePostData( $feed, $description, $color = Constants::COLOR_DEFAULT, $summary = null ) {
+	private static function makePostData( $feed, $description, $color = Constants::COLOR_DEFAULT ) {
 		global $wgSitename;
 
 		$embed = [
 			'color' => $color,
 			'description' => $description,
 		];
-		if ( $summary ) {
-			$embed['fields'] = [
-				[
-					'name' => wfMessage( 'discordrcfeed-summary' )->inContentLanguage()->text(),
-					'value' => $summary,
-				],
-			];
-		}
-
 		$post = [
 			'embeds' => [ $embed ],
 			'username' => $wgSitename

@@ -4,10 +4,9 @@
 			"Robby"
 		]
 	},
-	"discordrcfeed-summary": "Resumé",
 	"discordrcfeed-line-edit-minor": "📝 $1 huet den Artikel $3 huet eng kleng Ännerung gemaach op",
 	"discordrcfeed-line-edit": "📝 $1 huet den Artikel $3 geännert",
-	"discordrcfeed-line-new": "📄 $1 huet den Artikel $3 ugeluecht.",	"discordrcfeed-summary": "Resumé",
+	"discordrcfeed-line-new": "📄 $1 huet den Artikel $3 ugeluecht.",
 	"discordrcfeed-flow-lock-topic-lock": "geléist",
 	"discordrcfeed-flow-lock-topic-unlock": "nees opgemaach",
 	"discordrcfeed-flow-moderate-hide": "verstoppt",

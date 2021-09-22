@@ -5,10 +5,10 @@
 			"Ата"
 		]
 	},
-	"discordrcfeed-summary": "Підсумок",
 	"discordrcfeed-line-edit-minor": "📝 $1 робить незначне редагування у статтю $3",
 	"discordrcfeed-line-edit": "📝 $1 редагує статтю $3",
-	"discordrcfeed-line-new": "📄 $1 створює статтю $3",	"discordrcfeed-summary": "Підсумок",	"discordrcfeed-flow-edit-header": "💬 $1 редагує опис дошки $2",
+	"discordrcfeed-line-new": "📄 $1 створює статтю $3",
+	"discordrcfeed-flow-edit-header": "💬 $1 редагує опис дошки $2",
 	"discordrcfeed-flow-edit-post": "💬 $1 редагує допис на $2",
 	"discordrcfeed-flow-edit-title": "💬 $1 змінює назву теми на $2 на $3",
 	"discordrcfeed-flow-edit-topic-summary": "💬 $1 редагує опис теми на $2",

@@ -3,7 +3,6 @@
 		"authors": []
 	},
 	"discordrcfeed-desc": "{{desc|name=DiscordRCFeed|url=https://www.mediawiki.org/wiki/Extension:DiscordRCFeed}}",
-	"discordrcfeed-summary": "A header for the summary",
 	"discordrcfeed-line-edit-minor": "A notification text for when a user edits a page\n\nParameters:\n* $1 - user's name (not suitable for GENDER).\n* $2 - user's name for use in GENDER.\n* $3 - article",
 	"discordrcfeed-line-edit": "A notification text for when a user edits a page\n\nParameters:\n* $1 - user's name (not suitable for GENDER).\n* $2 - user's name for use in GENDER.\n* $3 - article",
 	"discordrcfeed-line-new": "A notification text for when a user creates a page\n\nParameters:\n* $1 - user's name (not suitable for GENDER).\n* $2 - user's name for use in GENDER.\n* $3 - article",
