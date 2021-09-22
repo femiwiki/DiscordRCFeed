@@ -61,7 +61,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 				],
 				'Foo',
 				// phpcs:ignore Generic.Files.LineLength.TooLong
-				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)Usuario:Foo\) \(\[bloquear\]\(https://foo\.bar/index\.php(\?title=|/)Especial:Bloquear/Foo\)\)~'
+				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)Usuario:Foo\) \(\[IP Block\]\(https://foo\.bar/index\.php(\?title=|/)Especial:Bloquear/Foo\)\)~'
 			]
 		];
 	}
@@ -102,11 +102,11 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertSame(
 			// phpcs:ignore Generic.Files.LineLength.TooLong
-			'[Foo](https://foo.bar/index.php/Foo) ([edit](https://foo.bar/index.php?title=Foo&action=edit))',
+			'[Foo](https://foo.bar/index.php/Foo) ([Edit](https://foo.bar/index.php?title=Foo&action=edit))',
 			$linkRenderer->getDiscordArticleText( $page, 2 )
 		);
 		// phpcs:ignore Generic.Files.LineLength.TooLong
-		$expected = '[Foo](https://foo.bar/index.php/Foo) ([edit](https://foo.bar/index.php?title=Foo&action=edit))';
+		$expected = '[Foo](https://foo.bar/index.php/Foo) ([Edit](https://foo.bar/index.php?title=Foo&action=edit))';
 		$this->assertSame( $expected, $linkRenderer->getDiscordArticleText( $page ) );
 
 		$linkRenderer = new LinkRenderer();

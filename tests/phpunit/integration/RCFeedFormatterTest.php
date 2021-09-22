@@ -31,29 +31,30 @@ class RCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testMakePostData() {
 		$this->assertJsonStringEqualsJsonString(
-			'{"embeds": [ { "color" : "000" ,"description" : "message"} ], "username": "TestWiki"}',
+			'{"embeds": [ { "color" : "fff" ,"description" : "message"} ], "username": "TestWiki"}',
 			$this->wrapper->makePostData(
 				[],
 				'message',
-				000
+				'fff'
 			)
 		);
 
 		$this->setMwGlobals( 'wgSitename', 'FooWiki' );
 		$this->assertJsonStringEqualsJsonString(
-			'{"embeds": [ { "color" : "000" ,"description" : "message"} ], "username": "FooWiki"}',
+			'{"embeds": [ { "color" : "fff" ,"description" : "message"} ], "username": "FooWiki"}',
 			$this->wrapper->makePostData(
+				[],
 				'message',
-				000
+				'fff'
 			)
 		);
 
-		$this->setMwGlobals( 'wgDiscordRCFeedRequestOverride', [ 'username' => 'DummyBot' ] );
 		$this->assertJsonStringEqualsJsonString(
-			'{"embeds": [ { "color" : "000" ,"description" : "message"} ], "username": "DummyBot"}',
+			'{"embeds": [ { "color" : "fff" ,"description" : "message"} ], "username": "DummyBot"}',
 			$this->wrapper->makePostData(
+				[ 'request_override' => [ 'username' => 'DummyBot' ] ],
 				'message',
-				000
+				'fff'
 			)
 		);
 	}
