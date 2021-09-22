@@ -63,7 +63,8 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider providerDiscordUserText
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::getDiscordUserText
 	 */
-	public function testGetDiscordUserText( array $globals, array $userTools, string $name, string $regex, string $message = '' ) {
+	public function testGetDiscordUserText( array $globals, array $userTools, string $name, string $regex,
+		string $message = '' ) {
 		$this->setMwGlobals( $globals );
 		$linkRenderer = new LinkRenderer( $userTools );
 		$user = new User();
@@ -101,8 +102,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 		$expected = '[Foo](https://foo.bar/index.php/Foo) ([edit](https://foo.bar/index.php?title=Foo&action=edit))';
 		$this->assertSame( $expected, $linkRenderer->getDiscordArticleText( $page ) );
 
-		$this->setMwGlobals( 'wgDiscordRCFeedDisplay',
-			array_merge( $wgDiscordRCFeedDisplay, [ 'page-tools' => false ] ) );
+		$linkRenderer = new LinkRenderer( null, false );
 		$expected = '[Foo](https://foo.bar/index.php/Foo)';
 		$this->assertSame( $expected, $linkRenderer->getDiscordArticleText( $page ) );
 		$expected = '[Foo&bar](https://foo.bar/index.php/Foo%26bar)';
@@ -130,8 +130,8 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 
 	public static function providerWikitextWithLinks() {
 		return [
-			[ 'A edited [[B]]', 'A edited [B](https://foo.bar/index.php/B)' ],
-			[ 'A moved [[B]] to [[C]]', 'A moved [B](https://foo.bar/index.php/B) to [C](https://foo.bar/index.php/C)' ],
+			[ 'edited [[B]]', 'edited [B](https://foo.bar/index.php/B)' ],
+			[ 'moved [[B]] to [[C]]', 'moved [B](https://foo.bar/index.php/B) to [C](https://foo.bar/index.php/C)' ],
 		];
 	}
 
