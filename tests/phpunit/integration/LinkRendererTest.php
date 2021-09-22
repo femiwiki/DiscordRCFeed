@@ -20,7 +20,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 				[
 					'wgServer' => 'https://foo.bar'
 				],
-				false,
+				[],
 				'Foo',
 				'~\[Foo\]\(https://foo\.bar/index\.php/User:Foo\)~'
 			],
@@ -28,7 +28,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 				[
 					'wgServer' => 'https://foo.bar'
 				],
-				false,
+				[],
 				'Foo&bar',
 				'~\[Foo&bar\]\(https://foo\.bar/index\.php/User:Foo%26bar\)~'
 			],
@@ -52,9 +52,16 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 					'wgLanguageCode' => 'es',
 					'wgServer' => 'https://foo.bar'
 				],
+				[
+					[
+						'target' => 'special',
+						'special' => 'Block',
+						'text' => 'IP Block'
+					]
+				],
 				'Foo',
 				// phpcs:ignore Generic.Files.LineLength.TooLong
-				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)Usuario:Foo\) \(\[bloquear\]\(https://foo\.bar/index\.php(\?title=|/)Especial:Bloquear/Foo\) \| \[grupos\]\(https://foo\.bar/index\.php(\?title=|/)Especial(%3A|:)PermisosUsuarios(&user=|/)Foo\) \| \[discusión\]\(https://foo\.bar/index\.php(\?title=|/)Usuario_discusi%C3%B3n:Foo\) \| \[contribuciones\]\(https://foo\.bar/index\.php(\?title=|/)Especial:Contribuciones/Foo\)\)~'
+				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)Usuario:Foo\) \(\[bloquear\]\(https://foo\.bar/index\.php(\?title=|/)Especial:Bloquear/Foo\)\)~'
 			]
 		];
 	}
@@ -102,7 +109,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 		$expected = '[Foo](https://foo.bar/index.php/Foo) ([edit](https://foo.bar/index.php?title=Foo&action=edit))';
 		$this->assertSame( $expected, $linkRenderer->getDiscordArticleText( $page ) );
 
-		$linkRenderer = new LinkRenderer( null, false );
+		$linkRenderer = new LinkRenderer();
 		$expected = '[Foo](https://foo.bar/index.php/Foo)';
 		$this->assertSame( $expected, $linkRenderer->getDiscordArticleText( $page ) );
 		$expected = '[Foo&bar](https://foo.bar/index.php/Foo%26bar)';

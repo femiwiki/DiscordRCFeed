@@ -28,32 +28,33 @@ class RCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\RCFeedFormatter::makePost
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\RCFeedFormatter::makePostData
 	 */
-	public function testMakePost() {
+	public function testMakePostData() {
 		$this->assertJsonStringEqualsJsonString(
-			'{"embeds": [ { "color" : "2993970" ,"description" : "message"} ], "username": "TestWiki"}',
-			$this->wrapper->makePost(
+			'{"embeds": [ { "color" : "000" ,"description" : "message"} ], "username": "TestWiki"}',
+			$this->wrapper->makePostData(
+				[],
 				'message',
-				'article_saved'
+				000
 			)
 		);
 
 		$this->setMwGlobals( 'wgSitename', 'FooWiki' );
 		$this->assertJsonStringEqualsJsonString(
-			'{"embeds": [ { "color" : "2993970" ,"description" : "message"} ], "username": "FooWiki"}',
-			$this->wrapper->makePost(
+			'{"embeds": [ { "color" : "000" ,"description" : "message"} ], "username": "FooWiki"}',
+			$this->wrapper->makePostData(
 				'message',
-				'article_saved'
+				000
 			)
 		);
 
 		$this->setMwGlobals( 'wgDiscordRCFeedRequestOverride', [ 'username' => 'DummyBot' ] );
 		$this->assertJsonStringEqualsJsonString(
-			'{"embeds": [ { "color" : "2993970" ,"description" : "message"} ], "username": "DummyBot"}',
-			$this->wrapper->makePost(
+			'{"embeds": [ { "color" : "000" ,"description" : "message"} ], "username": "DummyBot"}',
+			$this->wrapper->makePostData(
 				'message',
-				'article_saved'
+				000
 			)
 		);
 	}
