@@ -4,7 +4,6 @@ namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
 use MediaWiki\Extension\DiscordRCFeed\RCFeedFormatter;
 use MediaWikiIntegrationTestCase;
-use User;
 use Wikimedia\TestingAccessWrapper;
 
 /**
