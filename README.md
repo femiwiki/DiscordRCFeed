@@ -2,8 +2,6 @@
 
 **⚠️ Work-in-progress**
 
-- [ ] Fix ci test
-
 This is a fork of [kulttuuri/DiscordNotifications] which is an extension for [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) that sends notifications of actions in your wiki like editing, deleting or moving a page into [Discord](https://discordapp.com/) channel.
 
 ## Requirements
