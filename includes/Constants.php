@@ -41,9 +41,9 @@ final class Constants {
 	private const COLOR_DARK_BLUE = 0x354fe8;
 
 	public const COLOR_MAP_ACTION = [
-		RC_EDIT   => self::COLOR_GREEN,
-		RC_NEW    => self::COLOR_BLUE,
-		RC_LOG    => self::COLOR_GREEN,
+		RC_EDIT => self::COLOR_GREEN,
+		RC_NEW  => self::COLOR_BLUE,
+		RC_LOG  => self::COLOR_GREEN,
 	];
 
 	public const COLOR_MAP_LOG = [

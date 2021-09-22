@@ -2,6 +2,8 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed;
 
+use ExtensionRegistry;
+use Flow\Formatter\ChangesListFormatter;
 use IRCColourfulRCFeedFormatter;
 use MediaWiki\MediaWikiServices;
 use RCFeedFormatter as MediaWikiRCFeedFormatter;
@@ -15,14 +17,15 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	 */
 	public function getLine( array $feed, RecentChange $rc, $actionComment ) {
 		$attribs = $rc->getAttributes();
-		if ( in_array( $attribs['rc_type'], $feed['omit_types'] ) ) {
+		$rcType = $attribs['rc_type'];
+		if ( in_array( $rcType, $feed['omit_types'] ) ) {
 			return null;
 		}
 
 		$linkRenderer = new LinkRenderer( $feed['user_tools'], $feed['page_tools'] );
 		$user = $rc->getPerformer();
 
-		if ( $attribs['rc_type'] == RC_LOG ) {
+		if ( $rcType == RC_LOG ) {
 			$logType = $attribs['rc_log_type'];
 			$logAction = $attribs['rc_log_action'];
 			if ( in_array( $logType, $feed['omit_log_types'] )
@@ -48,7 +51,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 
 			$fullString = implode( ' ', [ $emoji, $user, $comment ] );
 			return $this->makePostData( $feed, $fullString, $color );
-		} else {
+		} elseif ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$titleObj =& $rc->getTitle();
 			if ( in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] ) ) {
 				return null;
@@ -58,10 +61,10 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 				$store->getComment( 'rc_comment', $attribs )->text
 			);
 			$flags = [];
-			if ( $attribs['rc_type'] == RC_NEW ) {
+			if ( $rcType == RC_NEW ) {
 				$action = 'new';
 				$flags[] = 'new';
-			} elseif ( $attribs['rc_type'] == RC_EDIT ) {
+			} elseif ( $rcType == RC_EDIT ) {
 				$action = 'edit';
 				$flags[] = 'edit';
 			}
@@ -81,7 +84,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 				$szdiff = '';
 			}
 
-			$messageKey = $attribs['rc_type'] == RC_LOG ? 'discordrcfeed-line-log'
+			$messageKey = $rcType == RC_LOG ? 'discordrcfeed-line-log'
 				: 'discordrcfeed-line-' . implode( '-', $flags );
 			$message = wfMessage( $messageKey );
 			$params = [
@@ -102,8 +105,8 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			$message = $message->params( ...$params )->inContentLanguage()->text();
 
 			$fullString = implode( ' ', [ $message, $szdiff ] );
-			if ( isset( Constants::COLOR_MAP_ACTION[$attribs['rc_type']] ) ) {
-				$color = Constants::COLOR_MAP_ACTION[$attribs['rc_type']];
+			if ( isset( Constants::COLOR_MAP_ACTION[$rcType] ) ) {
+				$color = Constants::COLOR_MAP_ACTION[$rcType];
 			} else {
 				$color = Constants::COLOR_DEFAULT;
 			}
@@ -118,8 +121,8 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	 */
 	private static function getEmojiForLog( $LogType, $LogAction ) {
 		$keys = [
-			"discordrcfeed-emoji-$LogType-$LogAction",
-			"discordrcfeed-emoji-$LogType",
+			"discordrcfeed-emoji-log-$LogType-$LogAction",
+			"discordrcfeed-emoji-log-$LogType",
 		];
 		foreach ( $keys as $key ) {
 			$msg = wfMessage( $key );
