@@ -15,7 +15,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	/**
 	 * @inheritDoc
 	 */
-	public function getLine( array $feed, RecentChange $rc, $actionComment ) {
+	public function getLine( array $feed, RecentChange $rc, $comment ) {
 		$attribs = $rc->getAttributes();
 		$rcType = $attribs['rc_type'];
 		if ( in_array( $rcType, $feed['omit_types'] ) ) {
@@ -39,7 +39,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			}
 
 			$comment = $linkRenderer->makeLinksClickable( $comment );
-			$comment = self::cleanupForDiscord( $actionComment );
+			$comment = self::cleanupForDiscord( $comment );
 			if ( isset( Constants::COLOR_MAP_LOG[$logType] ) ) {
 				$color = Constants::COLOR_MAP_LOG[$logType];
 			} else {
