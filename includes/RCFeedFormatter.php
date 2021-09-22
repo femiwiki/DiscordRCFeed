@@ -50,7 +50,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			$user = $linkRenderer->getDiscordUserText( $user );
 
 			$fullString = implode( ' ', [ $emoji, $user, $comment ] );
-			return $this->makePostData( $feed, $fullString, $color );
+			return self::makePostData( $feed, $fullString, $color );
 		} elseif ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$titleObj =& $rc->getTitle();
 			if ( in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] ) ) {
@@ -110,6 +110,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			} else {
 				$color = Constants::COLOR_DEFAULT;
 			}
+			return self::makePostData( $feed, $fullString, $color, $comment );
 			return $this->makePostData( $feed, $fullString, $color, $comment );
 		}
 	}
@@ -140,7 +141,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	 * @param string|null $summary An edit summary.
 	 * @return string
 	 */
-	private function makePostData( $feed, $description, $color = Constants::COLOR_DEFAULT, $summary = null ) {
+	private static function makePostData( $feed, $description, $color = Constants::COLOR_DEFAULT, $summary = null ) {
 		global $wgSitename;
 
 		$embed = [
