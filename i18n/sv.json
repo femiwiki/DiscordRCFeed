@@ -7,21 +7,5 @@
 	},
 	"discordrcfeed-line-edit-minor": "📝 $1 har gjort en mindre redigering på artikeln $3",
 	"discordrcfeed-line-edit": "📝 $1 har redigerat artikeln $3",
-	"discordrcfeed-line-new": "📄 $1 skapade artikeln $3",
-	"discordrcfeed-flow-edit-header": "💬 $1 redigerade beskrivningen för ett underforum $2",
-	"discordrcfeed-flow-edit-post": "💬 $1 redigerade ett inlägg på $2",
-	"discordrcfeed-flow-edit-title": "💬 $1 ändrade ämnets titel till $2 på $3",
-	"discordrcfeed-flow-edit-topic-summary": "💬 $1 redigerade ämnets sammanfattning på $2",
-	"discordrcfeed-flow-lock-topic": "💬 $1 har $2 ämnet $3",
-	"discordrcfeed-flow-lock-topic-lock": "löst",
-	"discordrcfeed-flow-lock-topic-unlock": "återöppnat",
-	"discordrcfeed-flow-moderate-post": "💬 $1 har $2 ett inlägg på ämnet $3",
-	"discordrcfeed-flow-moderate-topic": "💬 $1 har $2 ämnet $3",
-	"discordrcfeed-flow-moderate-hide": "dolt",
-	"discordrcfeed-flow-moderate-unhide": "tagit fram",
-	"discordrcfeed-flow-moderate-suppress": "censurerat",
-	"discordrcfeed-flow-moderate-unsuppress": "avcensurerat",
-	"discordrcfeed-flow-moderate-delete": "raderat",
-	"discordrcfeed-flow-moderate-undelete": "återskapat",
-	"discordrcfeed-flow-new-topic": "💬 $1 skapade ämnet $2 på $3",
-	"discordrcfeed-flow-reply": "💬 $1 svarade på $2",}
+	"discordrcfeed-line-new": "📄 $1 skapade artikeln $3"
+}

@@ -18,22 +18,5 @@
     "discordrcfeed-emoji-log-block-unblock": "🟢",
     "discordrcfeed-emoji-log-rights": "👥",
     "discordrcfeed-emoji-log-import": "⤵️",
-
-    "discordrcfeed-flow-edit-header": "💬 $1 has edited a board description $2",
-    "discordrcfeed-flow-edit-post": "💬 $1 has edited a post on $2",
-    "discordrcfeed-flow-edit-title": "💬 $1 has changed the topic title to $2 on $3",
-    "discordrcfeed-flow-edit-topic-summary": "💬 $1 has edited topic summary on $2",
-    "discordrcfeed-flow-lock-topic": "💬 $1 has $2 the topic $3",
-    "discordrcfeed-flow-lock-topic-lock": "resolved",
-    "discordrcfeed-flow-lock-topic-unlock": "reopened",
-    "discordrcfeed-flow-moderate-post": "💬 $1 has $2 a post on topic $3",
-    "discordrcfeed-flow-moderate-topic": "💬 $1 has $2 the topic $3",
-    "discordrcfeed-flow-moderate-hide": "hidden",
-    "discordrcfeed-flow-moderate-unhide": "unhidden",
-    "discordrcfeed-flow-moderate-suppress": "suppressed",
-    "discordrcfeed-flow-moderate-unsuppress": "unsuppressed",
-    "discordrcfeed-flow-moderate-delete": "deleted",
-    "discordrcfeed-flow-moderate-undelete": "undeleted",
-    "discordrcfeed-flow-new-topic": "💬 $1 has created topic $2 on $3",
-    "discordrcfeed-flow-reply": "💬 $1 has replied in $2"
+    "discordrcfeed-emoji-flow": "💬"
 }

@@ -33,12 +33,14 @@ final class Constants {
 		],
 	];
 
-	public const COLOR_DEFAULT = 0xb3b4bc;
+	private const COLOR_GRAY = 0xb3b4bc;
 	private const COLOR_GREEN = 0x2daf32;
 	private const COLOR_BLUE = 0x36a1e8;
 	private const COLOR_RED = 0xe83535;
 	private const COLOR_MAGENTA = 0xd635e8;
 	private const COLOR_DARK_BLUE = 0x354fe8;
+
+	public const COLOR_DEFAULT = self::COLOR_GRAY;
 
 	public const COLOR_MAP_ACTION = [
 		RC_EDIT => self::COLOR_GREEN,
@@ -57,6 +59,5 @@ final class Constants {
 		'import'   => self::COLOR_GREEN,
 	];
 
-	// TODO: Add flow color
-	// 'flow'     => COLOR_GREEN,
+	public const COLOR_ACTION_FLOW = self::COLOR_GREEN;
 }

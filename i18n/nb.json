@@ -6,21 +6,5 @@
 	},
 	"discordrcfeed-line-edit-minor": "📝 $1 har gjort en mindre redigering i artikkelen $3",
 	"discordrcfeed-line-edit": "📝 $1 har redigert artikkelen $3",
-	"discordrcfeed-line-new": "📄 $1 har opprettet artikkelen $3",
-	"discordrcfeed-flow-edit-header": "💬 $1 har redigert en tavlebeskrivelse $2",
-	"discordrcfeed-flow-edit-post": "💬 $1 har redigert et innlegg på $2",
-	"discordrcfeed-flow-edit-title": "💬 $1 har endret emnets tittel til $2 på $3",
-	"discordrcfeed-flow-edit-topic-summary": "💬 $1 har redigert emnets sammendrag på $2",
-	"discordrcfeed-flow-lock-topic": "💬 $1 har $2 emnet $3",
-	"discordrcfeed-flow-lock-topic-lock": "løst",
-	"discordrcfeed-flow-lock-topic-unlock": "gjenåpnet",
-	"discordrcfeed-flow-moderate-post": "💬 $1 har $2 en post på emnet $3",
-	"discordrcfeed-flow-moderate-topic": "💬 $1 har $2 emnet $3",
-	"discordrcfeed-flow-moderate-hide": "skjult",
-	"discordrcfeed-flow-moderate-unhide": "vist igjen",
-	"discordrcfeed-flow-moderate-suppress": "undertrykt",
-	"discordrcfeed-flow-moderate-unsuppress": "fjernet undertrykking av",
-	"discordrcfeed-flow-moderate-delete": "slettet",
-	"discordrcfeed-flow-moderate-undelete": "gjenopprettet",
-	"discordrcfeed-flow-new-topic": "💬 $1 har opprettet emnet $2 på $3",
-	"discordrcfeed-flow-reply": "💬 $1 har svart i $2",}
+	"discordrcfeed-line-new": "📄 $1 har opprettet artikkelen $3"
+}

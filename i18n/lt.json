@@ -4,11 +4,5 @@
 			"Eitvys200"
 		]
 	},
-	"discordrcfeed-line-new": "📄 $1 sukūrė straipsnį $3",	"discordrcfeed-summary": "Santrauka",
-	"discordrcfeed-flow-lock-topic-lock": "Išspręsta",
-	"discordrcfeed-flow-moderate-hide": "paslėpta",
-	"discordrcfeed-flow-moderate-unhide": "nebeslepiama",
-	"discordrcfeed-flow-moderate-delete": "ištrinta",
-	"discordrcfeed-flow-moderate-undelete": "atkurta",
-	"discordrcfeed-flow-reply": "💬 $1 atsakė $2"
+	"discordrcfeed-line-new": "📄 $1 sukūrė straipsnį $3"
 }

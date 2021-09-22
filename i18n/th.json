@@ -7,22 +7,5 @@
 	},
 	"discordrcfeed-line-edit-minor": "📝 $1 แก้ไขเล็กน้อยในหน้า $3 ()",
 	"discordrcfeed-line-edit": "📝 $1 แก้ไขหน้า $3 ()",
-	"discordrcfeed-line-new": "📄 $1 สร้างหน้า $3 ()",
-	"discordrcfeed-flow-edit-header": "💬 $1 แก้ไขคำอธิบายบอร์ด $2",
-	"discordrcfeed-flow-edit-post": "💬 $1 แก้ไขโพสต์ใน $2",
-	"discordrcfeed-flow-edit-title": "💬 $1 เปลี่ยนชื่อหัวข้อเป็น $2 ใน $3",
-	"discordrcfeed-flow-edit-topic-summary": "💬 $1 แก้ไขคำอธิบายย่อของหัวข้อใน $2",
-	"discordrcfeed-flow-lock-topic": "💬 $1 $2 $3",
-	"discordrcfeed-flow-lock-topic-lock": "ทำเครื่องหมายว่าสำเร็จในหัวข้อ",
-	"discordrcfeed-flow-lock-topic-unlock": "ได้เปิดหัวข้อที่ปิดแล้ว ในหัวข้อ",
-	"discordrcfeed-flow-moderate-post": "💬 $1 $2โพสต์ในหัวข้อ $3",
-	"discordrcfeed-flow-moderate-topic": "💬 $1 $2หัวข้อ $3",
-	"discordrcfeed-flow-moderate-hide": "ซ่อน",
-	"discordrcfeed-flow-moderate-unhide": "เลิกซ่อน",
-	"discordrcfeed-flow-moderate-suppress": "เก็บซ่อน",
-	"discordrcfeed-flow-moderate-unsuppress": "เลิกเก็บซ่อน",
-	"discordrcfeed-flow-moderate-delete": "ลบ",
-	"discordrcfeed-flow-moderate-undelete": "นำกลับ",
-	"discordrcfeed-flow-new-topic": "💬 $1 สร้างหัวข้อ $2 ใน $3",
-	"discordrcfeed-flow-reply": "💬 $1 ตอบกลับใน $2"
+	"discordrcfeed-line-new": "📄 $1 สร้างหน้า $3 ()"
 }

@@ -7,22 +7,5 @@
 	},
 	"discordrcfeed-line-edit-minor": "📝 $1 робить незначне редагування у статтю $3",
 	"discordrcfeed-line-edit": "📝 $1 редагує статтю $3",
-	"discordrcfeed-line-new": "📄 $1 створює статтю $3",
-	"discordrcfeed-flow-edit-header": "💬 $1 редагує опис дошки $2",
-	"discordrcfeed-flow-edit-post": "💬 $1 редагує допис на $2",
-	"discordrcfeed-flow-edit-title": "💬 $1 змінює назву теми на $2 на $3",
-	"discordrcfeed-flow-edit-topic-summary": "💬 $1 редагує опис теми на $2",
-	"discordrcfeed-flow-lock-topic": "💬 $1 $2 тему $3",
-	"discordrcfeed-flow-lock-topic-lock": "закриває",
-	"discordrcfeed-flow-lock-topic-unlock": "повторно відкриває",
-	"discordrcfeed-flow-moderate-post": "💬 $1 $2 допис у темі $3",
-	"discordrcfeed-flow-moderate-topic": "💬 $1 $2 тему $3",
-	"discordrcfeed-flow-moderate-hide": "приховує",
-	"discordrcfeed-flow-moderate-unhide": "показує",
-	"discordrcfeed-flow-moderate-suppress": "пригнічує",
-	"discordrcfeed-flow-moderate-unsuppress": "скасовує пригнічення",
-	"discordrcfeed-flow-moderate-delete": "вилучає",
-	"discordrcfeed-flow-moderate-undelete": "скасовує вилучення",
-	"discordrcfeed-flow-new-topic": "💬 $1 створює тему $2 на $3",
-	"discordrcfeed-flow-reply": "💬 $1 відповідає у $2"
+	"discordrcfeed-line-new": "📄 $1 створює статтю $3"
 }

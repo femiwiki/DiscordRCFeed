@@ -8,23 +8,5 @@
 	},
 	"discordrcfeed-line-edit-minor": "📝 $1 님이 $3 문서를 사소하게 {{GENDER:$2|편집했습니다.}}",
 	"discordrcfeed-line-edit": "📝 $1 님이 $3 문서를 {{GENDER:$2|편집했습니다.}}",
-	"discordrcfeed-line-new": "📄 $1 님이 $3 문서를 새로 {{GENDER:$2|만들었습니다.}}",
-
-	"discordrcfeed-flow-edit-header": "💬 $1 님이 $2의 설명을 편집했습니다",
-	"discordrcfeed-flow-edit-post": "💬 $1 님이 $2의 게시글을 편집했습니다",
-	"discordrcfeed-flow-edit-title": "💬 $1 님이 주제 \"$3\"의 제목을 바꿨습니다 ($2)",
-	"discordrcfeed-flow-edit-topic-summary": "💬 $1 님이 $2의 주제 요약을 편집했습니다",
-	"discordrcfeed-flow-lock-topic": "💬 $1 님이 $3 주제를 $2으로 표시했습니다",
-	"discordrcfeed-flow-lock-topic-lock": "해결됨",
-	"discordrcfeed-flow-lock-topic-unlock": "다시 열림",
-	"discordrcfeed-flow-moderate-post": "💬 $1 님이 게시글을 $2 ($3)",
-	"discordrcfeed-flow-moderate-topic": "💬 $1 님이 주제를 $2 ($3)",
-	"discordrcfeed-flow-moderate-hide": "숨겼습니다",
-	"discordrcfeed-flow-moderate-unhide": "숨기기를 취소했습니다",
-	"discordrcfeed-flow-moderate-suppress": "표시하지 않도록 했습니다",
-	"discordrcfeed-flow-moderate-unsuppress": "표시하지 않도록 한 것을 복구했습니다",
-	"discordrcfeed-flow-moderate-delete": "삭제했습니다",
-	"discordrcfeed-flow-moderate-undelete": "삭제를 취소했습니다",
-	"discordrcfeed-flow-new-topic": "💬 $1 님이 $2 주제를 만들었습니다 ($3)",
-	"discordrcfeed-flow-reply": "💬 $1 님이 $2 주제에 댓글을 남겼습니다"
+	"discordrcfeed-line-new": "📄 $1 님이 $3 문서를 새로 {{GENDER:$2|만들었습니다.}}"
 }

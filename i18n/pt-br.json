@@ -7,20 +7,5 @@
 	},
 	"discordrcfeed-line-edit-minor": "📝 $1 fez edição menor para o artigo $3",
 	"discordrcfeed-line-edit": "📝 $1 editado o artigo $3",
-	"discordrcfeed-line-new": "📄 $1 criou o artigo $3",	"discordrcfeed-summary": "Resumo",	"discordrcfeed-flow-edit-header": "💬 $1 editou a descrição do quadro $2",
-	"discordrcfeed-flow-edit-post": "💬 $1 editou uma publicação em $2",
-	"discordrcfeed-flow-edit-title": "💬 $1 alterou o título do tópico para $2 em $3",
-	"discordrcfeed-flow-edit-topic-summary": "💬 $1 editou o resumo do tópico em $2",
-	"discordrcfeed-flow-lock-topic": "💬 $1 $2 o tópico $3",
-	"discordrcfeed-flow-lock-topic-lock": "resolvido",
-	"discordrcfeed-flow-lock-topic-unlock": "reaberto",
-	"discordrcfeed-flow-moderate-post": "💬 $1 $2 uma postagem no tópico $3",
-	"discordrcfeed-flow-moderate-topic": "💬 $1 $2 o tópico $3",
-	"discordrcfeed-flow-moderate-hide": "ocultado",
-	"discordrcfeed-flow-moderate-unhide": "não oculto",
-	"discordrcfeed-flow-moderate-suppress": "suprimido",
-	"discordrcfeed-flow-moderate-unsuppress": "não suprimido",
-	"discordrcfeed-flow-moderate-delete": "excluído",
-	"discordrcfeed-flow-moderate-undelete": "restaurado",
-	"discordrcfeed-flow-new-topic": "💬 $1 criou o tópico $2 em $3",
-	"discordrcfeed-flow-reply": "💬 $1 respondeu em $2",}
+	"discordrcfeed-line-new": "📄 $1 criou o artigo $3"
+}

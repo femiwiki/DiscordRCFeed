@@ -5,8 +5,5 @@
 		]
 	},
 	"discordrcfeed-line-edit": "📝 $1 ha modificato la voce $3",
-	"discordrcfeed-line-new": "📄 $1 ha creato la voce $3",	"discordrcfeed-article-protected": "🔒 $1 ha $2 la voce $3.",	"discordrcfeed-flow-lock-topic-lock": "risolto",
-	"discordrcfeed-flow-moderate-topic": "💬 $1 ha $2 l'argomento $3",
-	"discordrcfeed-flow-moderate-hide": "nascosto",
-	"discordrcfeed-flow-moderate-delete": "cancellato"
+	"discordrcfeed-line-new": "📄 $1 ha creato la voce $3"
 }

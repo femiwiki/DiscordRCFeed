@@ -4,12 +4,5 @@
 			"ToJack"
 		]
 	},
-	"discordrcfeed-article-saved-minor-edits": "вироиши хурд ба",
-	"discordrcfeed-article-protected": "🔒 $1 мақолаи $3-ро $2 кард. Сабаб: $4",
-	"discordrcfeed-flow-lock-topic-lock": "ҳалшуда",
-	"discordrcfeed-flow-moderate-topic": "💬 $1 мавзӯи $3ро $2 кард",
-	"discordrcfeed-flow-moderate-hide": "пинҳон",
-	"discordrcfeed-flow-moderate-unhide": "пинҳоннашуда",
-	"discordrcfeed-flow-moderate-delete": "ҳазф шуд",
-	"discordrcfeed-flow-moderate-undelete": "ҳазфнашуда"
+	"discordrcfeed-article-saved-minor-edits": "вироиши хурд ба"
 }

@@ -3,7 +3,6 @@
 namespace MediaWiki\Extension\DiscordRCFeed;
 
 use ExtensionRegistry;
-use Flow\Formatter\ChangesListFormatter;
 use IRCColourfulRCFeedFormatter;
 use MediaWiki\MediaWikiServices;
 use RCFeedFormatter as MediaWikiRCFeedFormatter;
@@ -52,15 +51,15 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			$fullString = implode( ' ', [ $emoji, $user, $comment ] );
 			return self::makePostData( $feed, $fullString, $color );
 		} elseif ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
-			$titleObj =& $rc->getTitle();
+			$titleObj = $rc->getTitle();
 			if ( in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] ) ) {
 				return null;
 			}
 			$store = MediaWikiServices::getInstance()->getCommentStore();
 			$comment = $store->getComment( 'rc_comment', $attribs )->text;
 			if ( $comment ) {
-			$comment = wfMessage( 'parentheses', $comment )->inContentLanguage()->text();
-			$comment = self::cleanupForDiscord( $comment );
+				$comment = wfMessage( 'parentheses', $comment )->inContentLanguage()->text();
+				$comment = self::cleanupForDiscord( $comment );
 			} else {
 				$comment = '';
 			}
@@ -82,12 +81,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			$title = $linkRenderer->getDiscordArticleText( $titleObj, $attribs['rc_this_oldid'],
 				$attribs['rc_last_oldid'] ?? false );
 
-			if ( $attribs['rc_old_len'] !== null && $attribs['rc_new_len'] !== null ) {
-				$szdiff = $attribs['rc_new_len'] - $attribs['rc_old_len'];
-				$szdiff = wfMessage( 'historysize' )->numParams( $szdiff )->inContentLanguage()->text();
-			} else {
-				$szdiff = '';
-			}
+			$szdiff = $this->getSizeDiff( $attribs );
 
 			$messageKey = $rcType == RC_LOG ? 'discordrcfeed-line-log'
 				: 'discordrcfeed-line-' . implode( '-', $flags );
@@ -116,7 +110,35 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 				$color = Constants::COLOR_DEFAULT;
 			}
 			return self::makePostData( $feed, $fullString, $color );
+		} elseif ( ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) && $rcType == RC_FLOW ) {
+			$emoji = wfMessage( 'discordrcfeed-emoji-flow' )->inContentLanguage()->text();
+
+			$flowFormatter = new FlowRCFeedFormatter();
+			$flowFormatter->setLinkRenderer( $linkRenderer );
+			$comment = $flowFormatter->getDiscordLine( $rc );
+
+			$titleObj = $rc->getTitle();
+			$title = LinkRenderer::makeLink( $titleObj->getFullURL(), $titleObj->getFullText() );
+			$title = wfMessage( 'parentheses', $title )->inContentLanguage()->text();
+
+			$szdiff = $this->getSizeDiff( $attribs );
+
+			$fullString = implode( ' ', [ $emoji, $comment, $title, $szdiff ] );
+			return self::makePostData( $feed, $fullString, Constants::COLOR_ACTION_FLOW );
+			// return self::makePostData( $feed, print_r( $rc, true ) );
 		}
+	}
+
+	/**
+	 * @param mixed $attribs
+	 * @return string
+	 */
+	private function getSizeDiff( $attribs ) {
+		if ( $attribs['rc_old_len'] !== null && $attribs['rc_new_len'] !== null ) {
+			$szdiff = $attribs['rc_new_len'] - $attribs['rc_old_len'];
+			return wfMessage( 'historysize' )->numParams( $szdiff )->inContentLanguage()->text();
+		}
+		return '';
 	}
 
 	/**

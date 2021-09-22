@@ -6,21 +6,5 @@
 	},
 	"discordrcfeed-line-edit-minor": "📝 $1 قد قام بتعديل طفيف ل مقالة $3",
 	"discordrcfeed-line-edit": "📝 $1 قد معدل مقالة $3",
-	"discordrcfeed-line-new": "📄 $1 قد أنشأ مقالة $3",	"discordrcfeed-flow-edit-header": "💬 $1 قد عدل وصف لوحة $2",
-	"discordrcfeed-flow-edit-post": "💬 $1 قد عدل منشورا في $2",
-	"discordrcfeed-flow-edit-title": "💬 $1 قد عدل عنوان الموضوع إلى $2 في $3",
-	"discordrcfeed-flow-edit-topic-summary": "💬 $1 قد عدل ملخص الموضوع في $2",
-	"discordrcfeed-flow-lock-topic": "💬 $1 قد $2 الموضوع $3",
-	"discordrcfeed-flow-lock-topic-lock": "محلول",
-	"discordrcfeed-flow-lock-topic-unlock": "معاد فتحه",
-	"discordrcfeed-flow-moderate-post": "💬 $1 قد $2 منشورا في موضوع $3",
-	"discordrcfeed-flow-moderate-topic": "💬 $1 قد $2 الموضوع $3",
-	"discordrcfeed-flow-moderate-hide": "مخفي",
-	"discordrcfeed-flow-moderate-unhide": "أظهر",
-	"discordrcfeed-flow-moderate-suppress": "مخفي",
-	"discordrcfeed-flow-moderate-unsuppress": "إلغاء الطمس",
-	"discordrcfeed-flow-moderate-delete": "محذوف",
-	"discordrcfeed-flow-moderate-undelete": "مسترجع",
-	"discordrcfeed-flow-new-topic": "💬 $1 قد أنشأ الموضوع $2 في $3",
-	"discordrcfeed-flow-reply": "💬 $1 قد رد في $2"
+	"discordrcfeed-line-new": "📄 $1 قد أنشأ مقالة $3"
 }

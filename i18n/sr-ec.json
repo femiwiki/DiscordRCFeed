@@ -6,20 +6,5 @@
 	},
 	"discordrcfeed-line-edit-minor": "📝 $1 је направио/ла мању измену на чланку *$3*",
 	"discordrcfeed-line-edit": "📝 $1 је направио/ла измену на чланку *$3*",
-	"discordrcfeed-line-new": "📄 $1 је израдио/ла чланак *$3*",
-	"discordrcfeed-flow-edit-header": "💬 $1 је уредио/ла опис табле $2",
-	"discordrcfeed-flow-edit-post": "💬 $1 је уредио/ла објаву на $2",
-	"discordrcfeed-flow-edit-title": "💬 $1 је променио/ла наслов теме са *$2* на наслов *$3*",
-	"discordrcfeed-flow-edit-topic-summary": "💬 $1 је уредио/ла опис теме на $2",
-	"discordrcfeed-flow-lock-topic": "💬 $1 је $2 тему *$3*",
-	"discordrcfeed-flow-lock-topic-lock": "решио/ла",
-	"discordrcfeed-flow-lock-topic-unlock": "поново отворио/ла",
-	"discordrcfeed-flow-moderate-post": "💬 $1 је $2 објаву теме *$3*",
-	"discordrcfeed-flow-moderate-topic": "💬 $1 је $2 тему *$3*",
-	"discordrcfeed-flow-moderate-hide": "сакрио/ла",
-	"discordrcfeed-flow-moderate-unhide": "открио/ла",
-	"discordrcfeed-flow-moderate-delete": "избрисао/ла",
-	"discordrcfeed-flow-moderate-undelete": "вратио/ла",
-	"discordrcfeed-flow-new-topic": "💬 $1 је направио/ла тему *$2* на $3",
-	"discordrcfeed-flow-reply": "💬 $1 је одговорио/ла у $2"
+	"discordrcfeed-line-new": "📄 $1 је израдио/ла чланак *$3*"
 }
