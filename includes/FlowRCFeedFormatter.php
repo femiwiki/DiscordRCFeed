@@ -15,7 +15,11 @@ class FlowRCFeedFormatter extends IRCLineUrlFormatter {
 	/** @var LinkRenderer */
 	private $linkRenderer;
 
-	public function __construct() {
+	/**
+	 * @param LinkRenderer $linkRenderer
+	 */
+	public function __construct( $linkRenderer ) {
+		$this->linkRenderer = $linkRenderer;
 		$permissions = MediaWikiServices::getInstance()->getService( 'FlowPermissions' );
 		$serializer = Container::get( 'formatter.revision.factory' )->create();
 		parent::__construct( $permissions, $serializer );
@@ -33,18 +37,11 @@ class FlowRCFeedFormatter extends IRCLineUrlFormatter {
 			LoggerFactory::getInstance( 'DiscordRCFeed' )->debug(
 				__METHOD__ . ': Failed to obtain serialized RC revision.'
 			);
-			return null;
+			return '';
 		}
 
 		$msg = $this->getDescription( $serialized, $ctx );
 		return $msg->inContentLanguage()->text();
-	}
-
-	/**
-	 * @param LinkRenderer $linkRenderer
-	 */
-	public function setLinkRenderer( $linkRenderer ) {
-		$this->linkRenderer = $linkRenderer;
 	}
 
 	/**

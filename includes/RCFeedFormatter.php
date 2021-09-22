@@ -113,9 +113,8 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 		} elseif ( ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) && $rcType == RC_FLOW ) {
 			$emoji = wfMessage( 'discordrcfeed-emoji-flow' )->inContentLanguage()->text();
 
-			$flowFormatter = new FlowRCFeedFormatter();
-			$flowFormatter->setLinkRenderer( $linkRenderer );
-			$comment = $flowFormatter->getDiscordLine( $rc );
+			$flowFormatter = new FlowRCFeedFormatter( $linkRenderer );
+			$comment = $flowFormatter->getDiscordLine( $rc ) ?: $comment;
 
 			$titleObj = $rc->getTitle();
 			$title = LinkRenderer::makeLink( $titleObj->getFullURL(), $titleObj->getFullText() );
