@@ -5,6 +5,7 @@ final class Constants {
 	public const DEFAULT_RC_FEED_PARAMS = [
 		'formatter' => DiscordRCFeedFormatter::class,
 		'class' => DiscordRCFeedEngine::class,
+		'line_style' => 'embed',
 		'user_tools' => [
 			[
 				'target' => 'talk',

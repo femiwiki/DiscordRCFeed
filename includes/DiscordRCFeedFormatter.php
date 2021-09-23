@@ -148,14 +148,20 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		int $color = Constants::COLOR_DEFAULT ): string {
 		global $wgSitename;
 
-		$embed = [
-			'color' => $color,
-			'description' => $description,
-		];
 		$post = [
 			'username' => $wgSitename,
-			'embeds' => [ $embed ],
+			'content' => $description,
 		];
+		if ( $feed['line_style'] == 'embed' ) {
+			$post['embeds'] = [
+				[
+					'color' => $color,
+					'description' => $description,
+				],
+			];
+		} else {
+			$post['content'] = $description;
+		}
 		if ( isset( $feed['request_override'] ) ) {
 			$post = array_replace_recursive( $post, $feed['request_override'] );
 		}
