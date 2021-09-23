@@ -76,7 +76,7 @@ class LinkRenderer {
 	 * @return string text with Discord syntax.
 	 */
 	public function makeLinksClickable( string $wt, bool $includingTools = true ): string {
-		if ( preg_match_all( '/\[\[([^|]]+)\]\]/', $wt, $matches ) ) {
+		if ( preg_match_all( '/\[\[([^|\]]+)\]\]/', $wt, $matches ) ) {
 			foreach ( $matches[0] as $i => $match ) {
 				$titleText = $matches[1][$i];
 				$titleObj = Title::newFromText( $titleText );
@@ -91,7 +91,7 @@ class LinkRenderer {
 				$wt = str_replace( $match, $replacement, $wt );
 			}
 		}
-		if ( preg_match_all( '/\[\[([^|]+)\|([^]]+)\]\]/', $wt, $matches ) ) {
+		if ( preg_match_all( '/\[\[([^|]+)\|([^\]]+)\]\]/', $wt, $matches ) ) {
 			foreach ( $matches[0] as $i => $match ) {
 				$titleObj = Title::newFromText( $matches[1][$i] );
 				if ( !$titleObj ) {
