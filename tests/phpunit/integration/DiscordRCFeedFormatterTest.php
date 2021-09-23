@@ -48,6 +48,7 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter::makePostData
+	 * @dataProvider providerEmbed
 	 */
 	public function testMakePostData( string $expected, array $globals, array $requestOverride ) {
 		$this->setMwGlobals( $globals );
