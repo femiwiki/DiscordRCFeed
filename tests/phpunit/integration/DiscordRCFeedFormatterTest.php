@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
 use MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter;
+use MediaWiki\Extension\DiscordRCFeed\MediaWikiServices;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\TestingAccessWrapper;
 
@@ -50,12 +51,13 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter::makePostData
 	 * @dataProvider providerEmbed
 	 */
-	public function testMakePostData( string $expected, array $globals, array $requestOverride ) {
+	public function testMakePostData( string $expected, array $globals, array $feed ) {
 		$this->setMwGlobals( $globals );
+		MediaWikiServices::addDefaultValues( $feed );
 		$this->assertJsonStringEqualsJsonString(
 			$expected,
 			$this->wrapper->makePostData(
-				$requestOverride,
+				$feed,
 				'message',
 				0x0000ff
 			)
