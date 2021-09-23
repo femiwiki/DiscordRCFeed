@@ -74,7 +74,7 @@ class LinkRenderer {
 	 * @param string $wt wikitext to parse.
 	 * @return string text with Discord syntax.
 	 */
-	public function makeLinksClickable( string $wt): string {
+	public function makeLinksClickable( string $wt ): string {
 		if ( preg_match_all( '/\[\[([^|\]]+)\]\]/', $wt, $matches ) ) {
 			foreach ( $matches[0] as $i => $match ) {
 				$titleText = $matches[1][$i];
