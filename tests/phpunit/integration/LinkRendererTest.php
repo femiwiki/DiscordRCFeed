@@ -49,7 +49,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 				],
 				'Foo',
 				// phpcs:ignore Generic.Files.LineLength.TooLong
-				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)User:Foo\) \(\[IP Block\]\(https://foo\.bar/index\.php(\?title=|/)Special:Block/Foo\)\)~'
+				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)User:Foo\) \(\[IP Block\]\(https://foo\.bar/index\.php(\?title=|/)Special:Block/User:Foo\)\)~'
 			],
 			[
 				[
@@ -65,7 +65,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 				],
 				'Foo',
 				// phpcs:ignore Generic.Files.LineLength.TooLong
-				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)Usuario:Foo\) \(\[IP Block\]\(https://foo\.bar/index\.php(\?title=|/)Especial:Bloquear/Foo\)\)~'
+				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)Usuario:Foo\) \(\[IP Block\]\(https://foo\.bar/index\.php(\?title=|/)Especial:Bloquear/Usuario:Foo\)\)~'
 			]
 		];
 	}
@@ -124,7 +124,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 				'Foo',
 				[ 2, 1 ],
 				// phpcs:ignore Generic.Files.LineLength.TooLong
-				'[Foo](https://foo.bar/index.php/Foo) ([Edit](https://foo.bar/index.php?title=Foo&action=edit) | [Diff](https://foo.bar/index.php?title=Foo&diff=2&oldid=1))'
+				'[Foo](https://foo.bar/index.php/Foo) ([Edit](https://foo.bar/index.php?title=Foo&action=edit) | [diff](https://foo.bar/index.php?title=Foo&diff=2&oldid=1))'
 			],
 		];
 	}
@@ -148,7 +148,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 
 	public static function providerTools(): array {
 		return [
-			[ 'edit', '(edit)' ],
+			[ [ 'edit' ], '(edit)' ],
 			[ [ 'edit', 'block' ], '(edit | block)' ],
 		];
 	}

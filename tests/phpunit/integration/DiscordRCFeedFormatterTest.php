@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
-use MediaWiki\Extension\DiscordRCFeed\RCFeedFormatter;
+use MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\TestingAccessWrapper;
 
@@ -10,11 +10,11 @@ use Wikimedia\TestingAccessWrapper;
  * @group DiscordRCFeed
  * @group Database
  *
- * @covers \MediaWiki\Extension\DiscordRCFeed\RCFeedFormatter
+ * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter
  */
-class RCFeedFormatterTest extends MediaWikiIntegrationTestCase {
+class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 
-	/** @var RCFeedFormatter */
+	/** @var DiscordRCFeedFormatter */
 	private $formatter;
 
 	/** @var TestingAccessWrapper */
@@ -22,7 +22,7 @@ class RCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 
 	protected function setUp(): void {
 		parent::setUp();
-		$this->formatter = new RCFeedFormatter();
+		$this->formatter = new DiscordRCFeedFormatter();
 		$this->wrapper = TestingAccessWrapper::newFromObject( $this->formatter );
 	}
 
@@ -47,7 +47,7 @@ class RCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\RCFeedFormatter::makePostData
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter::makePostData
 	 */
 	public function testMakePostData( string $expected, array $globals, array $requestOverride ) {
 		$this->setMwGlobals( $globals );

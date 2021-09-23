@@ -28,7 +28,7 @@ class LinkRenderer {
 	 * @return string
 	 */
 	public function getDiscordUserTextWithTools( User $user ): string {
-		$name = self::makeLink( $user->getUserPage()->getFullURL(), $user->getName() );
+		$rt = self::makeLink( $user->getUserPage()->getFullURL(), $user->getName() );
 		if ( $this->userTools ) {
 			$tools = [];
 			foreach ( $this->userTools as $tool ) {
@@ -40,11 +40,9 @@ class LinkRenderer {
 				$text = isset( $tool['msg'] ) ? Util::msg( $tool['msg'] ) : $tool['text'];
 				$tools[] = self::makeLink( $link, $text );
 			}
-			$tools = self::MakeNiceTools( $tools );
-		} else {
-			$tools = '';
+			$rt .= self::MakeNiceTools( $tools );
 		}
-		return "$name $tools";
+		return $rt;
 	}
 
 	/**
@@ -56,7 +54,7 @@ class LinkRenderer {
 	 * @return string
 	 */
 	public function getDiscordPageTextWithTools( Title $title, $thisOldId = null, $lastOldId = null ): string {
-		$page = self::makeLink( $title->getFullURL(), $title->getFullText() );
+		$rt = self::makeLink( $title->getFullURL(), $title->getFullText() );
 		if ( $this->pageTools ) {
 			$tools = [];
 			foreach ( $this->pageTools as $tool ) {
@@ -67,11 +65,9 @@ class LinkRenderer {
 				$tools[] = self::makeLink( $title->getFullURL( "diff=$thisOldId&oldid=$lastOldId" ),
 					Util::msg( 'diff' ) );
 			}
-			$tools = self::makeNiceTools( $tools );
-		} else {
-			$tools = '';
+			$rt .= self::makeNiceTools( $tools );
 		}
-		return "$page $tools";
+		return $rt;
 	}
 
 	/**
