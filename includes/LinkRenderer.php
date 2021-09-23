@@ -76,25 +76,31 @@ class LinkRenderer {
 	 * @return string text with Discord syntax.
 	 */
 	public function makeLinksClickable( string $wt, bool $includingTools = true ): string {
-		if ( !preg_match_all( '/\[\[([^]]+)\]\]/', $wt, $matches ) ) {
-			return $wt;
-		}
-		foreach ( $matches[0] as $i => $match ) {
-			$titleText = $matches[1][$i];
-			$titleObj = Title::newFromText( $titleText );
-			if ( !$titleObj ) {
-				continue;
-			}
-			if ( $includingTools ) {
-				if ( $titleObj->getNamespace() == NS_USER ) {
-					$replacement = $this->getDiscordUserTextWithTools( User::newFromName( $titleObj->getText() ) );
-				} else {
-					$replacement = $this->getDiscordPageTextWithTools( $titleObj );
+		if ( preg_match_all( '/\[\[([^|]]+)\]\]/', $wt, $matches ) ) {
+			foreach ( $matches[0] as $i => $match ) {
+				$titleText = $matches[1][$i];
+				$titleObj = Title::newFromText( $titleText );
+				if ( !$titleObj ) {
+					continue;
 				}
-			} else {
-				$replacement = self::makeLink( $titleObj->getFullURL(), $titleText );
+				if ( $includingTools ) {
+					$replacement = $this->getDiscordPageTextWithTools( $titleObj );
+				} else {
+					$replacement = self::makeLink( $titleObj->getFullURL(), $titleText );
+				}
+				$wt = str_replace( $match, $replacement, $wt );
 			}
-			$wt = str_replace( $match, $replacement, $wt );
+		}
+		if ( preg_match_all( '/\[\[([^|]+)\|([^]]+)\]\]/', $wt, $matches ) ) {
+			foreach ( $matches[0] as $i => $match ) {
+				$titleObj = Title::newFromText( $matches[1][$i] );
+				if ( !$titleObj ) {
+					continue;
+				}
+				$label = $matches[2][$i];
+				$replacement = self::makeLink( $titleObj->getFullURL(), $label );
+				$wt = str_replace( $match, $replacement, $wt );
+			}
 		}
 
 		return $wt;

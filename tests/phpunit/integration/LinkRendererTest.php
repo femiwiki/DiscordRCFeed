@@ -166,6 +166,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 	public static function providerWikitextWithLinks() {
 		return [
 			[ 'edited [[B]]', 'edited [B](https://foo.bar/index.php/B)' ],
+			[ 'edited [[Link|Label]]', 'edited [Label](https://foo.bar/index.php/Link)' ],
 			[ 'moved [[B]] to [[C]]', 'moved [B](https://foo.bar/index.php/B) to [C](https://foo.bar/index.php/C)' ],
 		];
 	}
