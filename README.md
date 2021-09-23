@@ -83,10 +83,10 @@ $wgRCFeeds['discord']['omit_log_types'] = [
 
 Page tools and user tools are tools shown after page or user link.
 
-| Option         | Description                                                                        | Output Example               |
-| -------------- | ---------------------------------------------------------------------------------- | ---------------------------- |
-| `'user_tools'` | If this is false, users will not get additional links in the notification message. | (talk \| block \| contribs ) |
-| `'page_tools'` | If this is false, pages will not get additional links in the notification message. | (edit \| history).           |
+| Option         | Description                                                                                                                    | Output Example               |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------- |
+| `'user_tools'` | If this is false, users will not get additional links in the notification message. 'Diff' is automatically added if available. | (talk \| block \| contribs ) |
+| `'page_tools'` | If this is false, pages will not get additional links in the notification message.                                             | (edit \| history).           |
 
 ```php
 // Remove page tools
