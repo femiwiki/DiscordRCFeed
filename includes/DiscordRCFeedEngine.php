@@ -3,11 +3,11 @@
 namespace MediaWiki\Extension\DiscordRCFeed;
 
 use Exception;
+use FormattedRCFeed;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\MediaWikiServices;
-use RCFeedEngine;
 
-class DiscordRCFeedEngine extends RCFeedEngine {
+class DiscordRCFeedEngine extends FormattedRCFeed {
 
 	/** @var HttpRequestFactory */
 	private $httpRequestFactory;
