@@ -18,8 +18,15 @@ class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
 			if ( strpos( $feedKey, 'discord' ) !== 0 ) {
 				continue;
 			}
-			if ( !isset( $wgRCFeeds[$feedKey]['url'] ) && !isset( $wgRCFeeds[$feedKey]['uri'] ) ) {
-				continue;
+			if ( !isset( $wgRCFeeds[$feedKey]['url'] ) ) {
+				// Reads 'uri' which is a key for other RCFeedFormatters, like
+				// JSONRCFeedFormatter and IRCColourfulRCFeedFormatter as the fallback of 'url'.
+				// DiscordRCFeedEngine should read only 'url', but this makes it less confusing for the end user.
+				if ( isset( $wgRCFeeds[$feedKey]['uri'] ) ) {
+					$wgRCFeeds[$feedKey]['url'] = $wgRCFeeds[$feedKey]['uri'];
+				} else {
+					continue;
+				}
 			}
 
 			// Don't send RC_CATEGORIZE events (same as T127360)

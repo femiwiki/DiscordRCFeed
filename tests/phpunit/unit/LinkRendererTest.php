@@ -18,7 +18,7 @@ class LinkRendererTest extends MediaWikiUnitTestCase {
 	public function testParseUrl() {
 		$this->assertSame(
 			'https://example.com/wiki/title=Foo%20%28bar%29',
-			LinkRenderer::parseUrl( 'https://example.com/wiki/title=Foo (bar)' )
+			$this->wrapper->parseUrl( 'https://example.com/wiki/title=Foo (bar)' )
 		);
 	}
 

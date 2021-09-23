@@ -26,33 +26,35 @@ class RCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 		$this->wrapper = TestingAccessWrapper::newFromObject( $this->formatter );
 	}
 
+	public static function providerEmbed(): array {
+		return [
+			[
+				'{"embeds": [ { "color" : "fff" ,"description" : "message"} ], "username": "TestWiki"}',
+				[],
+				[],
+			],
+			[
+				'{"embeds": [ { "color" : "fff" ,"description" : "message"} ], "username": "FooWiki"}',
+				[ 'wgSitename' => 'FooWiki' ],
+				[],
+			],
+			[
+				'{"embeds": [ { "color" : "fff" ,"description" : "message"} ], "username": "DummyBot"}',
+				[],
+				[ 'request_override' => [ 'username' => 'DummyBot' ] ],
+			],
+		];
+	}
+
 	/**
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\RCFeedFormatter::makePostData
 	 */
-	public function testMakePostData() {
+	public function testMakePostData( string $expected, array $globals, array $requestOverride ) {
+		$this->setMwGlobals( $globals );
 		$this->assertJsonStringEqualsJsonString(
-			'{"embeds": [ { "color" : "fff" ,"description" : "message"} ], "username": "TestWiki"}',
+			$expected,
 			$this->wrapper->makePostData(
-				[],
-				'message',
-				'fff'
-			)
-		);
-
-		$this->setMwGlobals( 'wgSitename', 'FooWiki' );
-		$this->assertJsonStringEqualsJsonString(
-			'{"embeds": [ { "color" : "fff" ,"description" : "message"} ], "username": "FooWiki"}',
-			$this->wrapper->makePostData(
-				[],
-				'message',
-				'fff'
-			)
-		);
-
-		$this->assertJsonStringEqualsJsonString(
-			'{"embeds": [ { "color" : "fff" ,"description" : "message"} ], "username": "DummyBot"}',
-			$this->wrapper->makePostData(
-				[ 'request_override' => [ 'username' => 'DummyBot' ] ],
+				$requestOverride,
 				'message',
 				'fff'
 			)

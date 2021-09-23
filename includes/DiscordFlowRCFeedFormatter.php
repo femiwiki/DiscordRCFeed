@@ -5,20 +5,18 @@ namespace MediaWiki\Extension\DiscordRCFeed;
 use Flow\Container;
 use Flow\FlowActions;
 use Flow\Formatter\IRCLineUrlFormatter;
-use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
 use RecentChange;
 use User;
 
-class FlowRCFeedFormatter extends IRCLineUrlFormatter {
-
+class DiscordFlowRCFeedFormatter extends IRCLineUrlFormatter {
 	/** @var LinkRenderer */
 	private $linkRenderer;
 
 	/**
 	 * @param LinkRenderer $linkRenderer
 	 */
-	public function __construct( $linkRenderer ) {
+	public function __construct( LinkRenderer $linkRenderer ) {
 		$this->linkRenderer = $linkRenderer;
 		$permissions = MediaWikiServices::getInstance()->getService( 'FlowPermissions' );
 		$serializer = Container::get( 'formatter.revision.factory' )->create();
@@ -29,12 +27,12 @@ class FlowRCFeedFormatter extends IRCLineUrlFormatter {
 	 * @param RecentChange $rc
 	 * @return string
 	 */
-	public function getDiscordLine( RecentChange $rc ) {
+	public function getDiscordLine( RecentChange $rc ): string {
 		$ctx = \RequestContext::getMain();
 
 		$serialized = $this->serializeRcRevision( $rc, $ctx );
 		if ( !$serialized ) {
-			LoggerFactory::getInstance( 'DiscordRCFeed' )->debug(
+			Util::getLogger()->debug(
 				__METHOD__ . ': Failed to obtain serialized RC revision.'
 			);
 			return '';
@@ -53,7 +51,7 @@ class FlowRCFeedFormatter extends IRCLineUrlFormatter {
 		foreach ( $source as $param ) {
 			if ( $param == 'user-text' && $data['properties'][$param] ) {
 				$user = User::newFromName( $data['properties'][$param] );
-				$params[] = $this->linkRenderer->getDiscordUserText( $user );
+				$params[] = $this->linkRenderer->getDiscordUserTextWithTools( $user );
 			} elseif (
 				in_array( $param, [ 'post-of-summary', 'topic-of-post-text-from-html' ] )
 				&& $data['properties'][$param]
@@ -64,7 +62,7 @@ class FlowRCFeedFormatter extends IRCLineUrlFormatter {
 			} elseif ( isset( $data['properties'][$param] ) ) {
 				$params[] = $data['properties'][$param];
 			} else {
-				wfDebugLog( 'Flow', __METHOD__ .
+				Util::getLogger()->debug( __METHOD__ .
 					": Missing expected parameter $param for change type $changeType" );
 				$params[] = '';
 			}
