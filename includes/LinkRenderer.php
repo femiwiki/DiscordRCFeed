@@ -72,10 +72,9 @@ class LinkRenderer {
 
 	/**
 	 * @param string $wt wikitext to parse.
-	 * @param bool $includingTools
 	 * @return string text with Discord syntax.
 	 */
-	public function makeLinksClickable( string $wt, bool $includingTools = true ): string {
+	public function makeLinksClickable( string $wt): string {
 		if ( preg_match_all( '/\[\[([^|\]]+)\]\]/', $wt, $matches ) ) {
 			foreach ( $matches[0] as $i => $match ) {
 				$titleText = $matches[1][$i];
@@ -83,11 +82,7 @@ class LinkRenderer {
 				if ( !$titleObj ) {
 					continue;
 				}
-				if ( $includingTools ) {
-					$replacement = $this->getDiscordPageTextWithTools( $titleObj );
-				} else {
-					$replacement = self::makeLink( $titleObj->getFullURL(), $titleText );
-				}
+				$replacement = $this->getDiscordPageTextWithTools( $titleObj );
 				$wt = str_replace( $match, $replacement, $wt );
 			}
 		}
