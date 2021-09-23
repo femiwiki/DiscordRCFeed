@@ -2,7 +2,7 @@
 namespace MediaWiki\Extension\DiscordRCFeed;
 
 final class Constants {
-	public const DEFAULT_PARAMS = [
+	public const DEFAULT_RC_FEED_PARAMS = [
 		'formatter' => RCFeedFormatter::class,
 		'class' => RCFeedEngine::class,
 		'user_tools' => [
