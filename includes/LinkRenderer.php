@@ -35,7 +35,7 @@ class LinkRenderer {
 				if ( $tool['target'] == 'talk' ) {
 					$link = $user->getTalkPage()->getFullURL();
 				} else {
-					$link = SpecialPage::getTitleFor( $tool['special'], $name )->getFullURL();
+					$link = SpecialPage::getTitleFor( $tool['special'], $user->getName() )->getFullURL();
 				}
 				$text = isset( $tool['msg'] ) ? Util::msg( $tool['msg'] ) : $tool['text'];
 				$tools[] = self::makeLink( $link, $text );

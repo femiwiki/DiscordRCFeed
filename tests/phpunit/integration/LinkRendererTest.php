@@ -49,7 +49,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 				],
 				'Foo',
 				// phpcs:ignore Generic.Files.LineLength.TooLong
-				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)User:Foo\) \(\[IP Block\]\(https://foo\.bar/index\.php(\?title=|/)Special:Block/User:Foo\)\)~'
+				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)User:Foo\) \(\[IP Block\]\(https://foo\.bar/index\.php(\?title=|/)Special:Block/Foo\)\)~'
 			],
 			[
 				[
@@ -65,7 +65,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 				],
 				'Foo',
 				// phpcs:ignore Generic.Files.LineLength.TooLong
-				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)Usuario:Foo\) \(\[IP Block\]\(https://foo\.bar/index\.php(\?title=|/)Especial:Bloquear/Usuario:Foo\)\)~'
+				'~\[Foo\]\(https://foo\.bar/index\.php(\?title=|/)Usuario:Foo\) \(\[IP Block\]\(https://foo\.bar/index\.php(\?title=|/)Especial:Bloquear/Foo\)\)~'
 			]
 		];
 	}
