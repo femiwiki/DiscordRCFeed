@@ -13,10 +13,10 @@ class LinkRenderer {
 	private $pageTools;
 
 	/**
-	 * @param array|null $userTools
-	 * @param array|null $pageTools
+	 * @param array $userTools
+	 * @param array $pageTools
 	 */
-	public function __construct( ?array $userTools, ?array $pageTools ) {
+	public function __construct( $userTools = [], $pageTools = [] ) {
 		$this->userTools = $userTools;
 		$this->pageTools = $pageTools;
 	}

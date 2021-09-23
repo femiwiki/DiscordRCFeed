@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\DiscordRCFeed\Tests\Unit;
 
 use MediaWiki\Extension\DiscordRCFeed\LinkRenderer;
 use MediaWikiUnitTestCase;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group DiscordRCFeed
@@ -11,6 +12,15 @@ use MediaWikiUnitTestCase;
  * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer
  */
 class LinkRendererTest extends MediaWikiUnitTestCase {
+
+	/** @var TestingAccessWrapper */
+	private $wrapper;
+
+	protected function setUp(): void {
+		parent::setUp();
+		$renderer = new LinkRenderer();
+		$this->wrapper = TestingAccessWrapper::newFromObject( $renderer );
+	}
 
 	/**
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::parseUrl
@@ -22,17 +32,27 @@ class LinkRendererTest extends MediaWikiUnitTestCase {
 		);
 	}
 
+	public static function providerLink(): array {
+		return [
+			[
+				'[Foo](Foo)',
+				[ 'Foo', 'Foo' ]
+			],
+			[
+				'[Foo](Foo%20Bar)',
+				[ 'Foo Bar', 'Foo' ]
+			],
+		];
+	}
+
 	/**
+	 * @dataProvider providerLink
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::makeLink
 	 */
-	public function testMakeLink() {
+	public function testMakeLink( $expected, $params ) {
 		$this->assertSame(
-			'[Foo](Foo)',
-			LinkRenderer::makeLink( 'Foo', 'Foo' )
-		);
-		$this->assertSame(
-			'[Foo](Foo%20Bar)',
-			LinkRenderer::makeLink( 'Foo Bar', 'Foo' )
+			$expected,
+			LinkRenderer::makeLink( ...$params )
 		);
 	}
 }
