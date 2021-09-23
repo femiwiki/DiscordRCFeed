@@ -29,17 +29,17 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	public static function providerEmbed(): array {
 		return [
 			[
-				'{"embeds": [ { "color" : "fff" ,"description" : "message"} ], "username": "TestWiki"}',
+				'{"embeds": [ { "color" : 255 ,"description" : "message"} ], "username": "TestWiki"}',
 				[],
 				[],
 			],
 			[
-				'{"embeds": [ { "color" : "fff" ,"description" : "message"} ], "username": "FooWiki"}',
+				'{"embeds": [ { "color" : 255 ,"description" : "message"} ], "username": "FooWiki"}',
 				[ 'wgSitename' => 'FooWiki' ],
 				[],
 			],
 			[
-				'{"embeds": [ { "color" : "fff" ,"description" : "message"} ], "username": "DummyBot"}',
+				'{"embeds": [ { "color" : 255 ,"description" : "message"} ], "username": "DummyBot"}',
 				[],
 				[ 'request_override' => [ 'username' => 'DummyBot' ] ],
 			],
@@ -57,7 +57,7 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 			$this->wrapper->makePostData(
 				$requestOverride,
 				'message',
-				'fff'
+				0x0000ff
 			)
 		);
 	}
