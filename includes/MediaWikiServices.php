@@ -53,11 +53,18 @@ class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
 				}
 			}
 
-			// Set default values for parameters
-			foreach ( Constants::DEFAULT_RC_FEED_PARAMS as $paramKey => $param ) {
-				if ( !isset( $wgRCFeeds[$feedKey][$paramKey] ) ) {
-					$wgRCFeeds[$feedKey][$paramKey] = $param;
-				}
+			self::addDefaultValues( $wgRCFeeds[$feedKey] );
+		}
+	}
+
+	/**
+	 * Sets default values for feed
+	 * @param array &$feed
+	 */
+	public static function addDefaultValues( &$feed ) {
+		foreach ( Constants::DEFAULT_RC_FEED_PARAMS as $paramKey => $param ) {
+			if ( !isset( $feed[$paramKey] ) ) {
+				$feed[$paramKey] = $param;
 			}
 		}
 	}
