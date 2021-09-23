@@ -77,6 +77,8 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				$linkRenderer->getDiscordUserTextWithTools( $user ),
 				// $2: username for GENDER
 				$user->getName(),
+				// $3
+				$linkRenderer->getDiscordPageTextWithTools( $titleObj ),
 			];
 			$message = $message->params( ...$params )->inContentLanguage()->text();
 
@@ -109,7 +111,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	 * @param mixed $attribs
 	 * @return string
 	 */
-	private static function getSizeDiff( mixed $attribs ): string {
+	private static function getSizeDiff( $attribs ): string {
 		if ( $attribs['rc_old_len'] !== null && $attribs['rc_new_len'] !== null ) {
 			$szdiff = $attribs['rc_new_len'] - $attribs['rc_old_len'];
 			return wfMessage( 'historysize' )->numParams( $szdiff )->inContentLanguage()->text();

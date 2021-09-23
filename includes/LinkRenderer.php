@@ -40,7 +40,7 @@ class LinkRenderer {
 				$text = isset( $tool['msg'] ) ? Util::msg( $tool['msg'] ) : $tool['text'];
 				$tools[] = self::makeLink( $link, $text );
 			}
-			$rt .= self::MakeNiceTools( $tools );
+			$rt .= ' ' . self::MakeNiceTools( $tools );
 		}
 		return $rt;
 	}
@@ -65,7 +65,7 @@ class LinkRenderer {
 				$tools[] = self::makeLink( $title->getFullURL( "diff=$thisOldId&oldid=$lastOldId" ),
 					Util::msg( 'diff' ) );
 			}
-			$rt .= self::makeNiceTools( $tools );
+			$rt .= ' ' . self::makeNiceTools( $tools );
 		}
 		return $rt;
 	}
