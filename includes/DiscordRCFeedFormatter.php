@@ -150,7 +150,6 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 
 		$post = [
 			'username' => $wgSitename,
-			'content' => $description,
 		];
 		if ( $feed['line_style'] == 'embed' ) {
 			$post['embeds'] = [
