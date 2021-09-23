@@ -3,9 +3,9 @@
 namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
 use MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter;
+use MediaWiki\Extension\DiscordRCFeed\MediaWikiServices;
 use MediaWikiIntegrationTestCase;
 use Wikimedia\TestingAccessWrapper;
-use MediaWiki\Extension\DiscordRCFeed\MediaWikiServices;
 
 /**
  * @group DiscordRCFeed
