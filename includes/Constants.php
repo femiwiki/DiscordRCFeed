@@ -3,8 +3,8 @@ namespace MediaWiki\Extension\DiscordRCFeed;
 
 final class Constants {
 	public const DEFAULT_RC_FEED_PARAMS = [
-		'formatter' => RCFeedFormatter::class,
-		'class' => RCFeedEngine::class,
+		'formatter' => DiscordRCFeedFormatter::class,
+		'class' => DiscordRCFeedEngine::class,
 		'user_tools' => [
 			[
 				'target' => 'talk',

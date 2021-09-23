@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 use MediaWiki\Extension\DiscordRCFeed\LinkRenderer;
 use MediaWikiIntegrationTestCase;
 use User;
+use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group DiscordRCFeed
@@ -14,28 +15,31 @@ use User;
  */
 class LinkRendererTest extends MediaWikiIntegrationTestCase {
 
+	/** @var TestingAccessWrapper */
+	private $wrapper;
+
+	protected function setUp(): void {
+		parent::setUp();
+		$renderer = new LinkRenderer();
+		$this->wrapper = TestingAccessWrapper::newFromObject( $renderer );
+	}
+
 	public static function providerDiscordUserText() {
 		return [
 			[
-				[
-					'wgServer' => 'https://foo.bar'
-				],
+				[ 'wgServer' => 'https://foo.bar' ],
 				[],
 				'Foo',
 				'~\[Foo\]\(https://foo\.bar/index\.php/User:Foo\)~'
 			],
 			[
-				[
-					'wgServer' => 'https://foo.bar'
-				],
+				[ 'wgServer' => 'https://foo.bar' ],
 				[],
 				'Foo&bar',
 				'~\[Foo&bar\]\(https://foo\.bar/index\.php/User:Foo%26bar\)~'
 			],
 			[
-				[
-					'wgServer' => 'https://foo.bar'
-				],
+				[ 'wgServer' => 'https://foo.bar' ],
 				[
 					[
 						'target' => 'special',
@@ -50,7 +54,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 			[
 				[
 					'wgLanguageCode' => 'es',
-					'wgServer' => 'https://foo.bar'
+					'wgServer' => 'https://foo.bar',
 				],
 				[
 					[
@@ -68,9 +72,9 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerDiscordUserText
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::getDiscordUserText
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::getDiscordUserTextWithTools
 	 */
-	public function testGetDiscordUserText( array $globals, array $userTools, string $name, string $regex,
+	public function testGetDiscordUserTextWithTools( array $globals, array $userTools, string $name, string $regex,
 		string $message = '' ) {
 		$this->setMwGlobals( $globals );
 		$linkRenderer = new LinkRenderer( $userTools );
@@ -79,60 +83,84 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 		$user->addToDatabase();
 		$this->assertRegExp(
 			$regex,
-			$linkRenderer->getDiscordUserText( $user ),
+			$linkRenderer->getDiscordUserTextWithTools( $user ),
 			$message
 		);
 	}
 
-	/**
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::getDiscordArticleText
-	 */
-	public function testGetDiscordArticleText() {
-		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
-		$pageTools =
-		[
+	public static function providerDiscordPageText(): array {
+		$editPageTool = [
+			'query' => 'action=edit',
+			'msg' => 'edit'
+		];
+		return [
 			[
-				'query' => 'action=edit',
-				'msg' => 'edit'
+				[ 'wgServer' => 'https://foo.bar' ],
+				[],
+				'Foo',
+				[],
+				// phpcs:ignore Generic.Files.LineLength.TooLong
+				'[Foo](https://foo.bar/index.php/Foo)'
+			],
+			[
+				[ 'wgServer' => 'https://foo.bar' ],
+				[],
+				'Foo&bar',
+				[],
+				// phpcs:ignore Generic.Files.LineLength.TooLong
+				'[Foo&bar](https://foo.bar/index.php/Foo%26bar)'
+			],
+			[
+				[ 'wgServer' => 'https://foo.bar' ],
+				[ $editPageTool ],
+				'Foo',
+				[],
+				// phpcs:ignore Generic.Files.LineLength.TooLong
+				'[Foo](https://foo.bar/index.php/Foo) ([Edit](https://foo.bar/index.php?title=Foo&action=edit))'
+			],
+			[
+				[ 'wgServer' => 'https://foo.bar' ],
+				[ $editPageTool ],
+				'Foo',
+				[ 2, 1 ],
+				// phpcs:ignore Generic.Files.LineLength.TooLong
+				'[Foo](https://foo.bar/index.php/Foo) ([Edit](https://foo.bar/index.php?title=Foo&action=edit) | [diff](https://foo.bar/index.php?title=Foo&diff=2&oldid=1))'
 			],
 		];
+	}
+
+	/**
+	 * @dataProvider providerDiscordPageText
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::getDiscordPageTextWithTools
+	 */
+	public function testGetDiscordPageTextWithTools( array $globals, array $pageTools, string $titleText,
+		array $params, string $expected ) {
+		$this->setMwGlobals( $globals );
 		$linkRenderer = new LinkRenderer( null, $pageTools );
-		$page = $this->getExistingTestPage( 'foo' );
+		$page = $this->getExistingTestPage( $titleText );
 		$title = $page->getTitle();
 
 		$this->assertSame(
-			// phpcs:ignore Generic.Files.LineLength.TooLong
-			'[Foo](https://foo.bar/index.php/Foo) ([Edit](https://foo.bar/index.php?title=Foo&action=edit))',
-			$linkRenderer->getDiscordArticleText( $page, 2 )
+			$expected,
+			$linkRenderer->getDiscordPageTextWithTools( $title, ...$params )
 		);
-		// phpcs:ignore Generic.Files.LineLength.TooLong
-		$expected = '[Foo](https://foo.bar/index.php/Foo) ([Edit](https://foo.bar/index.php?title=Foo&action=edit))';
-		$this->assertSame( $expected, $linkRenderer->getDiscordArticleText( $page ) );
-
-		$linkRenderer = new LinkRenderer();
-		$expected = '[Foo](https://foo.bar/index.php/Foo)';
-		$this->assertSame( $expected, $linkRenderer->getDiscordArticleText( $page ) );
-		$expected = '[Foo&bar](https://foo.bar/index.php/Foo%26bar)';
-		$page = $this->getExistingTestPage( 'foo&bar' );
-		$title = $page->getTitle();
-		$this->assertSame( $expected, $linkRenderer->getDiscordArticleText( $page ) );
 	}
 
-	public static function providerTools() {
+	public static function providerTools(): array {
 		return [
-			[ 'edit', '(edit)' ],
+			[ [ 'edit' ], '(edit)' ],
 			[ [ 'edit', 'block' ], '(edit | block)' ],
 		];
 	}
 
 	/**
+	 * @dataProvider providerTools
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::makeNiceTools
 	 * @param string|array $tools
 	 * @param string $expected
-	 * @dataProvider providerTools
 	 */
 	public function testMakeNiceTools( $tools, $expected ) {
-		$this->assertSame( $expected, LinkRenderer::makeNiceTools( $tools ) );
+		$this->assertSame( $expected, $this->wrapper->makeNiceTools( $tools ) );
 	}
 
 	public static function providerWikitextWithLinks() {

@@ -4,24 +4,19 @@ namespace MediaWiki\Extension\DiscordRCFeed;
 
 use Exception;
 use MediaWiki\Http\HttpRequestFactory;
-use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
-use Psr\Log\LoggerInterface;
-use RCFeedEngine as MediaWikiRCFeedEngine;
+use RCFeedEngine;
 
-class RCFeedEngine extends MediaWikiRCFeedEngine {
+class DiscordRCFeedEngine extends RCFeedEngine {
 
 	/** @var HttpRequestFactory */
 	private $httpRequestFactory;
-
-	/** @var LoggerInterface */
-	private static $logger = null;
 
 	/**
 	 * @inheritDoc
 	 */
 	public function __construct( array $params ) {
-		if ( !isset( $params['url'] ) && !isset( $params['uri'] ) ) {
+		if ( !isset( $params['url'] ) ) {
 			throw new Exception( "RCFeed for Discord must have a 'url' set." );
 		}
 		$this->httpRequestFactory = MediaWikiServices::getInstance()->getHttpRequestFactory();
@@ -33,7 +28,7 @@ class RCFeedEngine extends MediaWikiRCFeedEngine {
 	 */
 	public function send( array $feed, $line ) {
 		$req = $this->httpRequestFactory->create(
-			$feed['url'] ?? $feed['uri'],
+			$feed['url'],
 			[
 				'method' => 'POST',
 				'postData' => $line
@@ -44,19 +39,9 @@ class RCFeedEngine extends MediaWikiRCFeedEngine {
 
 		$status = $req->execute();
 		if ( !$status->isOK() ) {
-			self::getLogger()->warning( $status->getMessage()->text() );
+			Util::getLogger()->warning( $status->getMessage()->text() );
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * @return LoggerInterface
-	 */
-	private static function getLogger(): LoggerInterface {
-		if ( !self::$logger ) {
-			self::$logger = LoggerFactory::getInstance( 'DiscordRCFeed' );
-		}
-		return self::$logger;
 	}
 }

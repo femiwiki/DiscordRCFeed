@@ -1,53 +1,11 @@
 <?php
 namespace MediaWiki\Extension\DiscordRCFeed;
 
-use MessageSpecifier;
 use SpecialPage;
 use Title;
 use User;
-use WikiPage;
 
 class LinkRenderer {
-	/**
-	 * Replaces some special characters on urls. This has to be done as Discord webhook api does not
-	 * accept urlencoded text.
-	 * @param string $url
-	 * @return string
-	 */
-	public static function parseUrl( string $url ): string {
-		foreach ( [
-			' ' => '%20',
-			'(' => '%28',
-			')' => '%29',
-		] as $search => $replace ) {
-			$url = str_replace( $search, $replace, $url );
-		}
-		return $url;
-	}
-
-	/**
-	 * @param string $target
-	 * @param string $text
-	 * @return string
-	 */
-	public static function makeLink( string $target, $text ): string {
-		$target = self::parseUrl( $target );
-		return "[$text]($target)";
-	}
-
-	/**
-	 * @param string|array $tools
-	 * @return string
-	 */
-	public static function makeNiceTools( $tools ) {
-		if ( is_string( $tools ) ) {
-			$tools = [ $tools ];
-		}
-		$sep = wfMessage( 'pipe-separator' )->inContentLanguage()->text();
-		$tools = implode( $sep, $tools );
-		return wfMessage( 'parentheses', $tools )->inContentLanguage()->text();
-	}
-
 	/** @var array */
 	private $userTools;
 
@@ -55,7 +13,8 @@ class LinkRenderer {
 	private $pageTools;
 
 	/**
-	 * @inheritDoc
+	 * @param array $userTools
+	 * @param array $pageTools
 	 */
 	public function __construct( $userTools = [], $pageTools = [] ) {
 		$this->userTools = $userTools;
@@ -63,28 +22,25 @@ class LinkRenderer {
 	}
 
 	/**
-	 * Gets nice HTML text for user containing the link to user page
-	 * and also links to user site, groups editing, talk and contribs pages.
+	 * Gets nice HTML text for user containing the link to user page and also links to user site,
+	 * groups editing, talk and contribs pages if configured.
 	 * @param User $user
 	 * @return string
 	 */
-	public function getDiscordUserText( $user ) {
-		$name = $user->getName();
-
-		$rt = self::makeLink( $user->getUserPage()->getFullURL(), $name );
-		if ( $this->userTools && $user instanceof User ) {
+	public function getDiscordUserTextWithTools( User $user ): string {
+		$rt = self::makeLink( $user->getUserPage()->getFullURL(), $user->getName() );
+		if ( $this->userTools ) {
 			$tools = [];
 			foreach ( $this->userTools as $tool ) {
 				if ( $tool['target'] == 'talk' ) {
 					$link = $user->getTalkPage()->getFullURL();
 				} else {
-					$link = SpecialPage::getTitleFor( $tool['special'], $name )->getFullURL();
+					$link = SpecialPage::getTitleFor( $tool['special'], $user->getName() )->getFullURL();
 				}
-				$text = isset( $tool['msg'] ) ? self::msg( $tool['msg'] ) : $tool['text'];
+				$text = isset( $tool['msg'] ) ? Util::msg( $tool['msg'] ) : $tool['text'];
 				$tools[] = self::makeLink( $link, $text );
 			}
-			$tools = self::MakeNiceTools( $tools );
-			$rt .= " $tools";
+			$rt .= ' ' . self::MakeNiceTools( $tools );
 		}
 		return $rt;
 	}
@@ -92,30 +48,26 @@ class LinkRenderer {
 	/**
 	 * Gets nice HTML text for article containing the link to article page
 	 * and also into edit, delete and article history pages.
-	 * @param WikiPage|Title $title
-	 * @param int|bool $thisOldId
-	 * @param int|bool $lastOldId
+	 * @param Title $title
+	 * @param int|null $thisOldId
+	 * @param int|null $lastOldId
 	 * @return string
 	 */
-	public function getDiscordArticleText( $title, $thisOldId = false, $lastOldId = false ) {
-		if ( $title instanceof WikiPage ) {
-			$title = $title->getTitle();
-		}
-		$link = self::makeLink( $title->getFullURL(), $title->getFullText() );
+	public function getDiscordPageTextWithTools( Title $title, $thisOldId = null, $lastOldId = null ): string {
+		$rt = self::makeLink( $title->getFullURL(), $title->getFullText() );
 		if ( $this->pageTools ) {
 			$tools = [];
 			foreach ( $this->pageTools as $tool ) {
 				$tools[] = self::makeLink( $title->getFullURL( $tool['query'] ),
-					self::msg( $tool['msg'] ) );
+					Util::msg( $tool['msg'] ) );
 			}
 			if ( $thisOldId && $lastOldId ) {
 				$tools[] = self::makeLink( $title->getFullURL( "diff=$thisOldId&oldid=$lastOldId" ),
-					self::msg( 'diff' ) );
+					Util::msg( 'diff' ) );
 			}
-			$tools = self::makeNiceTools( $tools );
-			$link .= " $tools";
+			$rt .= ' ' . self::makeNiceTools( $tools );
 		}
-		return $link;
+		return $rt;
 	}
 
 	/**
@@ -123,7 +75,7 @@ class LinkRenderer {
 	 * @param bool $includingTools
 	 * @return string text with Discord syntax.
 	 */
-	public function makeLinksClickable( $wt, $includingTools = true ) {
+	public function makeLinksClickable( string $wt, bool $includingTools = true ): string {
 		if ( !preg_match_all( '/\[\[([^]]+)\]\]/', $wt, $matches ) ) {
 			return $wt;
 		}
@@ -135,9 +87,9 @@ class LinkRenderer {
 			}
 			if ( $includingTools ) {
 				if ( $titleObj->getNamespace() == NS_USER ) {
-					$replacement = $this->getDiscordUserText( User::newFromName( $titleObj ) );
+					$replacement = $this->getDiscordUserTextWithTools( User::newFromName( $titleObj->getText() ) );
 				} else {
-					$replacement = $this->getDiscordArticleText( $titleObj );
+					$replacement = $this->getDiscordPageTextWithTools( $titleObj );
 				}
 			} else {
 				$replacement = self::makeLink( $titleObj->getFullURL(), $titleText );
@@ -149,15 +101,41 @@ class LinkRenderer {
 	}
 
 	/**
-	 * @param string|string[]|MessageSpecifier $key Message key, or array of keys, or a MessageSpecifier
-	 * @param mixed ...$params Normal message parameters
+	 * @param string $target
+	 * @param string $text
 	 * @return string
 	 */
-	private static function msg( $key, ...$params ) {
-		if ( $params ) {
-			return wfMessage( $key, ...$params )->inContentLanguage()->text();
-		} else {
-			return wfMessage( $key )->inContentLanguage()->text();
+	public static function makeLink( string $target, string $text ): string {
+		if ( !$target ) {
+			return $text;
 		}
+		$target = self::parseUrl( $target );
+		return "[$text]($target)";
+	}
+
+	/**
+	 * @param array $tools
+	 * @return string
+	 */
+	private static function makeNiceTools( array $tools ): string {
+		$tools = implode( Util::msg( 'pipe-separator' ), $tools );
+		return Util::msg( 'parentheses', $tools );
+	}
+
+	/**
+	 * Replaces some special characters on urls. This has to be done as Discord webhook api does not
+	 * accept urlencoded text.
+	 * @param string $url
+	 * @return string
+	 */
+	private static function parseUrl( string $url ): string {
+		foreach ( [
+			' ' => '%20',
+			'(' => '%28',
+			')' => '%29',
+		] as $search => $replace ) {
+			$url = str_replace( $search, $replace, $url );
+		}
+		return $url;
 	}
 }

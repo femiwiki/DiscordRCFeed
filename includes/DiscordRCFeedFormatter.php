@@ -5,11 +5,10 @@ namespace MediaWiki\Extension\DiscordRCFeed;
 use ExtensionRegistry;
 use IRCColourfulRCFeedFormatter;
 use MediaWiki\MediaWikiServices;
-use RCFeedFormatter as MediaWikiRCFeedFormatter;
+use RCFeedFormatter;
 use RecentChange;
-use User;
 
-class RCFeedFormatter implements MediaWikiRCFeedFormatter {
+class DiscordRCFeedFormatter implements RCFeedFormatter {
 
 	/**
 	 * @inheritDoc
@@ -17,23 +16,22 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	public function getLine( array $feed, RecentChange $rc, $comment ) {
 		$attribs = $rc->getAttributes();
 		$rcType = $attribs['rc_type'];
-		if ( in_array( $rcType, $feed['omit_types'] ) ) {
+		$user = $rc->getPerformer();
+		$titleObj = $rc->getTitle();
+		if (
+			in_array( $rcType, $feed['omit_types'] )
+			|| in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] )
+		) {
 			return null;
 		}
 
 		$linkRenderer = new LinkRenderer( $feed['user_tools'], $feed['page_tools'] );
-		$user = $rc->getPerformer();
-
 		if ( $rcType == RC_LOG ) {
 			$logType = $attribs['rc_log_type'];
 			$logAction = $attribs['rc_log_action'];
 			if ( in_array( $logType, $feed['omit_log_types'] )
 				|| in_array( "$logType/$logAction", $feed['omit_log_actions'] )
 			) {
-				return null;
-			}
-			$titleObj = $rc->getTitle();
-			if ( in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] ) ) {
 				return null;
 			}
 
@@ -46,61 +44,42 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			}
 
 			$emoji = self::getEmojiForLog( $logType, $logAction );
-			$user = $linkRenderer->getDiscordUserText( $user );
+			$user = $linkRenderer->getDiscordUserTextWithTools( $user );
 
 			$fullString = implode( ' ', [ $emoji, $user, $comment ] );
-			return self::makePostData( $feed, $fullString, $color );
 		} elseif ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
-			$titleObj = $rc->getTitle();
-			if ( in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] ) ) {
-				return null;
-			}
 			$store = MediaWikiServices::getInstance()->getCommentStore();
 			$comment = $store->getComment( 'rc_comment', $attribs )->text;
 			if ( $comment ) {
-				$comment = wfMessage( 'parentheses', $comment )->inContentLanguage()->text();
+				$comment = Util::msg( 'parentheses', $comment );
 				$comment = self::cleanupForDiscord( $comment );
-			} else {
-				$comment = '';
 			}
 
 			$flags = [];
 			if ( $rcType == RC_NEW ) {
-				$action = 'new';
 				$flags[] = 'new';
 			} elseif ( $rcType == RC_EDIT ) {
-				$action = 'edit';
 				$flags[] = 'edit';
 			}
 			if ( $attribs['rc_minor'] ) {
 				$flags[] = 'minor';
 			}
-			if ( $attribs['rc_bot'] ) {
-				$flags[] = 'bot';
-			}
-			$title = $linkRenderer->getDiscordArticleText( $titleObj, $attribs['rc_this_oldid'],
-				$attribs['rc_last_oldid'] ?? false );
+			$title = $linkRenderer->getDiscordPageTextWithTools( $titleObj, $attribs['rc_this_oldid'],
+				$attribs['rc_last_oldid'] ?? null );
 
-			$szdiff = $this->getSizeDiff( $attribs );
+			$szdiff = self::getSizeDiff( $attribs );
 
 			$messageKey = $rcType == RC_LOG ? 'discordrcfeed-line-log'
 				: 'discordrcfeed-line-' . implode( '-', $flags );
 			$message = wfMessage( $messageKey );
 			$params = [
 				// $1: username
-				$linkRenderer->getDiscordUserText( $user ),
+				$linkRenderer->getDiscordUserTextWithTools( $user ),
 				// $2: username for GENDER
 				$user->getName(),
+				// $3
+				$linkRenderer->getDiscordPageTextWithTools( $titleObj ),
 			];
-			if ( $titleObj->getNamespace() == NS_USER ) {
-				$targetUser = User::newFromName( $titleObj->getText() );
-				// username
-				$params[] = $linkRenderer->getDiscordUserText( $targetUser );
-				// username for GENDER
-				$params[] = $targetUser->getName();
-			} else {
-				$params[] = $title;
-			}
 			$message = $message->params( ...$params )->inContentLanguage()->text();
 
 			$fullString = implode( ' ', [ $message, $szdiff, $comment ] );
@@ -109,30 +88,30 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			} else {
 				$color = Constants::COLOR_DEFAULT;
 			}
-			return self::makePostData( $feed, $fullString, $color );
 		} elseif ( ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) && $rcType == RC_FLOW ) {
-			$emoji = wfMessage( 'discordrcfeed-emoji-flow' )->inContentLanguage()->text();
+			$emoji = Util::msg( 'discordrcfeed-emoji-flow' );
 
-			$flowFormatter = new FlowRCFeedFormatter( $linkRenderer );
+			$flowFormatter = new DiscordFlowRCFeedFormatter( $linkRenderer );
 			$comment = $flowFormatter->getDiscordLine( $rc ) ?: $comment;
 
-			$titleObj = $rc->getTitle();
 			$title = LinkRenderer::makeLink( $titleObj->getFullURL(), $titleObj->getFullText() );
-			$title = wfMessage( 'parentheses', $title )->inContentLanguage()->text();
+			$title = Util::msg( 'parentheses', $title );
 
-			$szdiff = $this->getSizeDiff( $attribs );
+			$szdiff = self::getSizeDiff( $attribs );
 
 			$fullString = implode( ' ', [ $emoji, $comment, $title, $szdiff ] );
-			return self::makePostData( $feed, $fullString, Constants::COLOR_ACTION_FLOW );
-			// return self::makePostData( $feed, print_r( $rc, true ) );
+			$color = Constants::COLOR_ACTION_FLOW;
+		} else {
+			return null;
 		}
+		return self::makePostData( $feed, $fullString, $color );
 	}
 
 	/**
 	 * @param mixed $attribs
 	 * @return string
 	 */
-	private function getSizeDiff( $attribs ) {
+	private static function getSizeDiff( $attribs ): string {
 		if ( $attribs['rc_old_len'] !== null && $attribs['rc_new_len'] !== null ) {
 			$szdiff = $attribs['rc_new_len'] - $attribs['rc_old_len'];
 			return wfMessage( 'historysize' )->numParams( $szdiff )->inContentLanguage()->text();
@@ -145,7 +124,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	 * @param string $LogAction
 	 * @return string
 	 */
-	private static function getEmojiForLog( $LogType, $LogAction ) {
+	private static function getEmojiForLog( string $LogType, string $LogAction ): string {
 		$keys = [
 			"discordrcfeed-emoji-log-$LogType-$LogAction",
 			"discordrcfeed-emoji-log-$LogType",
@@ -162,10 +141,11 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	/**
 	 * @param array $feed
 	 * @param string $description message to be sent.
-	 * @param int|null $color
+	 * @param int $color
 	 * @return string
 	 */
-	private static function makePostData( $feed, $description, $color = Constants::COLOR_DEFAULT ) {
+	private static function makePostData( array $feed, string $description,
+		int $color = Constants::COLOR_DEFAULT ): string {
 		global $wgSitename;
 
 		$embed = [
@@ -173,8 +153,8 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 			'description' => $description,
 		];
 		$post = [
+			'username' => $wgSitename,
 			'embeds' => [ $embed ],
-			'username' => $wgSitename
 		];
 		if ( isset( $feed['request_override'] ) ) {
 			$post = array_replace_recursive( $post, $feed['request_override'] );
@@ -187,7 +167,7 @@ class RCFeedFormatter implements MediaWikiRCFeedFormatter {
 	 * @param string $text
 	 * @return string
 	 */
-	public static function cleanupForDiscord( $text ) {
+	public static function cleanupForDiscord( string $text ): string {
 		$text = IRCColourfulRCFeedFormatter::cleanupForIRC( $text );
 		return $text;
 	}
