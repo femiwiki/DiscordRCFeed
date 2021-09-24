@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed;
 
-use DatabaseLogEntry;
 use ExtensionRegistry;
 use IRCColourfulRCFeedFormatter;
 use LogFormatter;
@@ -45,13 +44,12 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 
 			$emoji = self::getEmojiForLog( $logType, $logAction );
 
-			$logEntry = DatabaseLogEntry::newFromRow( $attribs );
-			$formatter = LogFormatter::newFromEntry( $logEntry );
+			$formatter = LogFormatter::newFromRow( $attribs );
 			$actionText = $formatter->getPlainActionText();
 			$actionText = $linkRenderer->makeLinksClickable( $actionText, $user );
 			$actionText = self::cleanupForDiscord( $actionText );
 
-			$comment = $logEntry->getComment();
+			$comment = $attribs['rc_comment'];
 			if ( $comment ) {
 				$comment = Util::msg( 'parentheses', $comment );
 			}
