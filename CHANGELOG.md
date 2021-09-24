@@ -4,4 +4,10 @@ Versions and bullets are arranged chronologically from latest to oldest.
 
 ## v0.1.1
 
-- Uses LogFormatter for logs instead of IRCActionComment. Now log messages are translated to the language of the user.
+Breaking changes:
+
+- `'request_override'` parameter is renamed to `'request_replace'`.
+
+Others:
+
+- Log messages are now translated to the language of the user as LogFormatter is used for logs instead of IRCActionComment.
