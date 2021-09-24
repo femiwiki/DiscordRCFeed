@@ -72,9 +72,17 @@ class LinkRenderer {
 
 	/**
 	 * @param string $wt wikitext to parse.
+	 * @param User|null $user
 	 * @return string text with Discord syntax.
 	 */
-	public function makeLinksClickable( string $wt ): string {
+	public function makeLinksClickable( string $wt, $user = null ): string {
+		if ( $user ) {
+			$name = $user->getName();
+			if ( strpos( $wt, $name ) === 0 ) {
+				$replacement = $this->getDiscordUserTextWithTools( $user );
+				$wt = $replacement . substr( $wt, strlen( $name ) );
+			}
+		}
 		if ( preg_match_all( '/\[\[([^|\]]+)\]\]/', $wt, $matches ) ) {
 			foreach ( $matches[0] as $i => $match ) {
 				$titleText = $matches[1][$i];

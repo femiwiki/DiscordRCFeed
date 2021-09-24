@@ -2,8 +2,10 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed;
 
+use DatabaseLogEntry;
 use ExtensionRegistry;
 use IRCColourfulRCFeedFormatter;
+use LogFormatter;
 use MediaWiki\MediaWikiServices;
 use RCFeedFormatter;
 use RecentChange;
@@ -35,8 +37,6 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				return null;
 			}
 
-			$comment = $linkRenderer->makeLinksClickable( $comment );
-			$comment = self::cleanupForDiscord( $comment );
 			if ( isset( Constants::COLOR_MAP_LOG[$logType] ) ) {
 				$color = Constants::COLOR_MAP_LOG[$logType];
 			} else {
@@ -44,9 +44,23 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			}
 
 			$emoji = self::getEmojiForLog( $logType, $logAction );
-			$user = $linkRenderer->getDiscordUserTextWithTools( $user );
 
-			$fullString = implode( ' ', [ $emoji, $user, $comment ] );
+			$logEntry = DatabaseLogEntry::newFromRow( $attribs );
+			$formatter = LogFormatter::newFromEntry( $logEntry );
+			$actionText = $formatter->getPlainActionText();
+			$actionText = $linkRenderer->makeLinksClickable( $actionText, $user );
+			$actionText = self::cleanupForDiscord( $actionText );
+
+			$comment = $logEntry->getComment();
+			if ( $comment ) {
+				$comment = Util::msg( 'parentheses', $comment );
+			}
+
+			$fullString = implode( ' ', array_filter( [
+				$emoji,
+				$actionText,
+				$comment,
+			] ) );
 		} elseif ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$store = MediaWikiServices::getInstance()->getCommentStore();
 			$comment = $store->getComment( 'rc_comment', $attribs )->text;
@@ -82,7 +96,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			];
 			$message = $message->params( ...$params )->inContentLanguage()->text();
 
-			$fullString = implode( ' ', [ $message, $szdiff, $comment ] );
+			$fullString = implode( ' ', array_filter( [ $message, $szdiff, $comment ] ) );
 			if ( isset( Constants::COLOR_MAP_ACTION[$rcType] ) ) {
 				$color = Constants::COLOR_MAP_ACTION[$rcType];
 			} else {
