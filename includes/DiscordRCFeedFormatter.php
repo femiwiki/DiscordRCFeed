@@ -161,8 +161,8 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		} else {
 			$post['content'] = $description;
 		}
-		if ( isset( $feed['request_override'] ) ) {
-			$post = array_replace_recursive( $post, $feed['request_override'] );
+		if ( isset( $feed['request_replace'] ) ) {
+			$post = array_replace_recursive( $post, $feed['request_replace'] );
 		}
 		return json_encode( $post );
 	}

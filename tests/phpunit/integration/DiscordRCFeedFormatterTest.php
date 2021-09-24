@@ -42,7 +42,7 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 			[
 				'{"embeds": [ { "color" : 255 ,"description" : "message"} ], "username": "DummyBot"}',
 				[],
-				[ 'request_override' => [ 'username' => 'DummyBot' ] ],
+				[ 'request_replace' => [ 'username' => 'DummyBot' ] ],
 			],
 		];
 	}
