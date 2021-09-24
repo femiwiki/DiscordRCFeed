@@ -26,10 +26,6 @@ final class Util {
 	 * @return string
 	 */
 	public static function msg( $key, ...$params ): string {
-		if ( $params ) {
-			return wfMessage( $key, ...$params )->inContentLanguage()->text();
-		} else {
-			return wfMessage( $key )->inContentLanguage()->text();
-		}
+		return wfMessage( $key, ...$params )->inContentLanguage()->text();
 	}
 }
