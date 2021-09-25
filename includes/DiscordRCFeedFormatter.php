@@ -88,6 +88,11 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 
 			$szdiff = self::getSizeDiff( $attribs );
 
+			// i18n messages:
+			// 	discordrcfeed-line-new
+			// 	discordrcfeed-line-new-minor (maybe?)
+			// 	discordrcfeed-line-edit
+			// 	discordrcfeed-line-edit-minor
 			$messageKey = $rcType == RC_LOG ? 'discordrcfeed-line-log'
 				: 'discordrcfeed-line-' . implode( '-', $flags );
 			$message = wfMessage( $messageKey );
