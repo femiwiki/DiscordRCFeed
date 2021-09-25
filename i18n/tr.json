@@ -6,7 +6,6 @@
 			"Uncitoyen"
 		]
 	},
-	"discordrcfeed-line-edit-minor": "📝 $1 kullanıcısı $3 maddesi küçük düzenleme yapıldı",
-	"discordrcfeed-line-edit": "📝 $1 kullanıcısı $3 maddesi düzenlendi",
-	"discordrcfeed-line-new": "📄 $1 kullanıcısı $3 maddesini oluşturdu"
+	"discordrcfeed-line-edit-minor": "$1 kullanıcısı $3 maddesi küçük düzenleme yapıldı",
+	"discordrcfeed-line-edit": "$1 kullanıcısı $3 maddesi düzenlendi"
 }

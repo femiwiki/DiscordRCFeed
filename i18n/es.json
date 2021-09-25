@@ -7,7 +7,6 @@
 			"Ihojose"
 		]
 	},
-	"discordrcfeed-line-edit-minor": "📝 $1 hizo una edición menor en el artículo $3",
-	"discordrcfeed-line-edit": "📝 $1 editó el artículo $3",
-	"discordrcfeed-line-new": "📄 $1 creó el artículo $3"
+	"discordrcfeed-line-edit-minor": "$1 hizo una edición menor en el artículo $3",
+	"discordrcfeed-line-edit": "$1 editó el artículo $3"
 }

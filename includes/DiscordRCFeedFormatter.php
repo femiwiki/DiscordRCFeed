@@ -67,6 +67,45 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				$comment,
 			] ) );
 		} elseif ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
+			$flag = '';
+			if ( $attribs['rc_minor'] ) {
+				$flag .= '-minor';
+			}
+			if ( $attribs['rc_bot'] ) {
+				$flag .= '-bot';
+			}
+
+			if ( $rcType == RC_NEW ) {
+				$emoji = Util::msg( 'discordrcfeed-emoji-log-create-create' );
+				$desc = 'logentry-create-create';
+			} else {
+				// i18n messages:
+				//  discordrcfeed-emoji-edit
+				//  discordrcfeed-emoji-edit-minor
+				//  discordrcfeed-emoji-edit-bot
+				//  discordrcfeed-emoji-edit-minor-bot
+				$emoji = Util::msg( 'discordrcfeed-emoji-edit' . $flag );
+			}
+
+			$szdiff = self::getSizeDiff( $attribs );
+
+			// i18n messages:
+			//  discordrcfeed-emoji-edit
+			//  discordrcfeed-emoji-edit-minor
+			//  discordrcfeed-emoji-edit-bot
+			//  discordrcfeed-emoji-edit-minor-bot
+			$desc = wfMessage( 'discordrcfeed-line-edit' . $flag );
+			$params = [
+				// $1: username
+				$linkRenderer->getDiscordUserTextWithTools( $user ),
+				// $2: username for GENDER
+				$user->getName(),
+				// $3
+				$linkRenderer->getDiscordPageTextWithTools( $titleObj, $attribs['rc_this_oldid'],
+					$attribs['rc_last_oldid'] ?? null ),
+			];
+			$desc = $desc->params( ...$params )->inContentLanguage()->text();
+
 			$store = MediaWikiServices::getInstance()->getCommentStore();
 			$comment = $store->getComment( 'rc_comment', $attribs )->text;
 			if ( $comment ) {
@@ -74,34 +113,12 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				$comment = self::cleanupForDiscord( $comment );
 			}
 
-			$flags = [];
-			if ( $rcType == RC_NEW ) {
-				$flags[] = 'new';
-			} elseif ( $rcType == RC_EDIT ) {
-				$flags[] = 'edit';
-			}
-			if ( $attribs['rc_minor'] ) {
-				$flags[] = 'minor';
-			}
-			$title = $linkRenderer->getDiscordPageTextWithTools( $titleObj, $attribs['rc_this_oldid'],
-				$attribs['rc_last_oldid'] ?? null );
-
-			$szdiff = self::getSizeDiff( $attribs );
-
-			$messageKey = $rcType == RC_LOG ? 'discordrcfeed-line-log'
-				: 'discordrcfeed-line-' . implode( '-', $flags );
-			$message = wfMessage( $messageKey );
-			$params = [
-				// $1: username
-				$linkRenderer->getDiscordUserTextWithTools( $user ),
-				// $2: username for GENDER
-				$user->getName(),
-				// $3
-				$linkRenderer->getDiscordPageTextWithTools( $titleObj ),
-			];
-			$message = $message->params( ...$params )->inContentLanguage()->text();
-
-			$fullString = implode( ' ', array_filter( [ $message, $szdiff, $comment ] ) );
+			$fullString = implode( ' ', array_filter( [
+				$emoji,
+				$desc,
+				$szdiff,
+				$comment
+			] ) );
 			if ( isset( Constants::COLOR_MAP_ACTION[$rcType] ) ) {
 				$color = Constants::COLOR_MAP_ACTION[$rcType];
 			} else {

@@ -4,7 +4,6 @@
 			"Mainframe98"
 		]
 	},
-	"discordrcfeed-line-edit-minor": "📝 $1 heeft pagina $3 een kleine bewerking gemaakt",
-	"discordrcfeed-line-edit": "📝 $1 heeft pagina $3 bewerkt",
-	"discordrcfeed-line-new": "📄 $1 heeft pagina $3 aangemaakt"
+	"discordrcfeed-line-edit-minor": "$1 heeft pagina $3 een kleine bewerking gemaakt",
+	"discordrcfeed-line-edit": "$1 heeft pagina $3 bewerkt"
 }
