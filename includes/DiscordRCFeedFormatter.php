@@ -4,7 +4,7 @@ namespace MediaWiki\Extension\DiscordRCFeed;
 
 use ExtensionRegistry;
 use IRCColourfulRCFeedFormatter;
-use MediaWiki\Extension\DiscordRCFeed\LogFormatter\LogFormatter;
+use LogFormatter;
 use MediaWiki\MediaWikiServices;
 use RCFeedFormatter;
 use RecentChange;
