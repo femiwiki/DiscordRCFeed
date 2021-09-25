@@ -5,7 +5,6 @@
 			"Xiplus"
 		]
 	},
-	"discordrcfeed-line-edit-minor": "📝 $1已進行了小編輯條目$3",
-	"discordrcfeed-line-edit": "📝 $1已已編輯條目$3",
-	"discordrcfeed-line-new": "📝 $1已建立條目$3"
+	"discordrcfeed-line-edit-minor": "$1已進行了小編輯條目$3",
+	"discordrcfeed-line-edit": "$1已已編輯條目$3"
 }

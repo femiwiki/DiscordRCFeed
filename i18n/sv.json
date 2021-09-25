@@ -5,7 +5,6 @@
 			"WikiPhoenix"
 		]
 	},
-	"discordrcfeed-line-edit-minor": "📝 $1 har gjort en mindre redigering på artikeln $3",
-	"discordrcfeed-line-edit": "📝 $1 har redigerat artikeln $3",
-	"discordrcfeed-line-new": "📄 $1 skapade artikeln $3"
+	"discordrcfeed-line-edit-minor": "$1 har gjort en mindre redigering på artikeln $3",
+	"discordrcfeed-line-edit": "$1 har redigerat artikeln $3"
 }

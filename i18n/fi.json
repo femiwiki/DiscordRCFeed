@@ -5,6 +5,6 @@
 			"Aleksi Postari"
 		]
 	},
-	"discordrcfeed-line-edit-minor": "📝 $1 teki pienen muutoksen artikkelia $3",
-	"discordrcfeed-line-edit": "📝 $1 muokkasi artikkelia $3",
-	"discordrcfeed-line-new": "📄 $1 loi artikkelin $3"
+	"discordrcfeed-line-edit-minor": "$1 teki pienen muutoksen artikkelia $3",
+	"discordrcfeed-line-edit": "$1 muokkasi artikkelia $3"
+}
