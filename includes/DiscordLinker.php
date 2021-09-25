@@ -5,7 +5,7 @@ use SpecialPage;
 use Title;
 use User;
 
-class LinkRenderer {
+class DiscordLinker {
 	/** @var array */
 	private $userTools;
 

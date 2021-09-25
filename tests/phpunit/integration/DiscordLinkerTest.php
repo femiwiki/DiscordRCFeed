@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
-use MediaWiki\Extension\DiscordRCFeed\LinkRenderer;
+use MediaWiki\Extension\DiscordRCFeed\DiscordLinker;
 use MediaWikiIntegrationTestCase;
 use User;
 use Wikimedia\TestingAccessWrapper;
@@ -11,16 +11,16 @@ use Wikimedia\TestingAccessWrapper;
  * @group DiscordRCFeed
  * @group Database
  *
- * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer
+ * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker
  */
-class LinkRendererTest extends MediaWikiIntegrationTestCase {
+class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 
 	/** @var TestingAccessWrapper */
 	private $wrapper;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$renderer = new LinkRenderer();
+		$renderer = new DiscordLinker();
 		$this->wrapper = TestingAccessWrapper::newFromObject( $renderer );
 	}
 
@@ -72,12 +72,12 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerDiscordUserText
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::getDiscordUserTextWithTools
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::getDiscordUserTextWithTools
 	 */
 	public function testGetDiscordUserTextWithTools( array $globals, array $userTools, string $name, string $regex,
 		string $message = '' ) {
 		$this->setMwGlobals( $globals );
-		$linkRenderer = new LinkRenderer( $userTools );
+		$linkRenderer = new DiscordLinker( $userTools );
 		$user = new User();
 		$user->setName( $name );
 		$user->addToDatabase();
@@ -131,12 +131,12 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerDiscordPageText
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::getDiscordPageTextWithTools
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::getDiscordPageTextWithTools
 	 */
 	public function testGetDiscordPageTextWithTools( array $globals, array $pageTools, string $titleText,
 		array $params, string $expected ) {
 		$this->setMwGlobals( $globals );
-		$linkRenderer = new LinkRenderer( null, $pageTools );
+		$linkRenderer = new DiscordLinker( null, $pageTools );
 		$page = $this->getExistingTestPage( $titleText );
 		$title = $page->getTitle();
 
@@ -155,7 +155,7 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerTools
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::makeNiceTools
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makeNiceTools
 	 * @param string|array $tools
 	 * @param string $expected
 	 */
@@ -174,14 +174,14 @@ class LinkRendererTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::makeLinksClickable
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makeLinksClickable
 	 * @param string $wt
 	 * @param string $expected
 	 * @dataProvider providerWikitextWithLinks
 	 */
 	public function testMakeLinksClickable( $wt, $expected ) {
 		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
-		$renderer = new LinkRenderer();
+		$renderer = new DiscordLinker();
 		$actual = $renderer->makeLinksClickable( $wt );
 		$this->assertSame( $expected, $actual );
 	}

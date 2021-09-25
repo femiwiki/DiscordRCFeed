@@ -10,13 +10,13 @@ use RecentChange;
 use User;
 
 class DiscordFlowRCFeedFormatter extends IRCLineUrlFormatter {
-	/** @var LinkRenderer */
+	/** @var DiscordLinker */
 	private $linkRenderer;
 
 	/**
-	 * @param LinkRenderer $linkRenderer
+	 * @param DiscordLinker $linkRenderer
 	 */
-	public function __construct( LinkRenderer $linkRenderer ) {
+	public function __construct( DiscordLinker $linkRenderer ) {
 		$this->linkRenderer = $linkRenderer;
 		$permissions = MediaWikiServices::getInstance()->getService( 'FlowPermissions' );
 		$serializer = Container::get( 'formatter.revision.factory' )->create();
@@ -58,7 +58,7 @@ class DiscordFlowRCFeedFormatter extends IRCLineUrlFormatter {
 				) {
 				$url = $data['properties']['post-url'] ?? $data['properties']['workflow-url'] ?? '';
 				$text = $data['properties'][$param]['plaintext'] ?? $data['properties'][$param];
-				$params[] = LinkRenderer::makeLink( $url, $text );
+				$params[] = DiscordLinker::makeLink( $url, $text );
 			} elseif ( isset( $data['properties'][$param] ) ) {
 				$params[] = $data['properties'][$param];
 			} else {

@@ -27,7 +27,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			return null;
 		}
 
-		$linkRenderer = new LinkRenderer( $feed['user_tools'], $feed['page_tools'] );
+		$linkRenderer = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
 		if ( $rcType == RC_LOG ) {
 			$logType = $attribs['rc_log_type'];
 			$logAction = $attribs['rc_log_action'];
@@ -130,7 +130,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			$flowFormatter = new DiscordFlowRCFeedFormatter( $linkRenderer );
 			$comment = $flowFormatter->getDiscordLine( $rc ) ?: $comment;
 
-			$title = LinkRenderer::makeLink( $titleObj->getFullURL(), $titleObj->getFullText() );
+			$title = DiscordLinker::makeLink( $titleObj->getFullURL(), $titleObj->getFullText() );
 			$title = Util::msg( 'parentheses', $title );
 
 			$szdiff = self::getSizeDiff( $attribs );

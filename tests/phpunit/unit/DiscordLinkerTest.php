@@ -2,28 +2,28 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed\Tests\Unit;
 
-use MediaWiki\Extension\DiscordRCFeed\LinkRenderer;
+use MediaWiki\Extension\DiscordRCFeed\DiscordLinker;
 use MediaWikiUnitTestCase;
 use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group DiscordRCFeed
  *
- * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer
+ * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker
  */
-class LinkRendererTest extends MediaWikiUnitTestCase {
+class DiscordLinkerTest extends MediaWikiUnitTestCase {
 
 	/** @var TestingAccessWrapper */
 	private $wrapper;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$renderer = new LinkRenderer();
+		$renderer = new DiscordLinker();
 		$this->wrapper = TestingAccessWrapper::newFromObject( $renderer );
 	}
 
 	/**
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::parseUrl
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::parseUrl
 	 */
 	public function testParseUrl() {
 		$this->assertSame(
@@ -47,12 +47,12 @@ class LinkRendererTest extends MediaWikiUnitTestCase {
 
 	/**
 	 * @dataProvider providerLink
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\LinkRenderer::makeLink
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makeLink
 	 */
 	public function testMakeLink( $expected, $params ) {
 		$this->assertSame(
 			$expected,
-			LinkRenderer::makeLink( ...$params )
+			DiscordLinker::makeLink( ...$params )
 		);
 	}
 }
