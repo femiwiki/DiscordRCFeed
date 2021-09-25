@@ -33,7 +33,7 @@ final class Util {
 	 * @param string $url
 	 * @return bool
 	 */
-	public static function urlIsLocal( string $url ): string {
+	public static function urlIsLocal( string $url ): bool {
 		global $wgServer;
 		$server = wfParseUrl( $wgServer );
 		$url = wfParseUrl( $url );
