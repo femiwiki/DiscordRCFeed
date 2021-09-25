@@ -8,6 +8,7 @@ use LogFormatter;
 use MediaWiki\MediaWikiServices;
 use RCFeedFormatter;
 use RecentChange;
+use RequestContext;
 
 class DiscordRCFeedFormatter implements RCFeedFormatter {
 
@@ -45,6 +46,12 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			$emoji = self::getEmojiForLog( $logType, $logAction );
 
 			$formatter = LogFormatter::newFromRow( $attribs );
+			// Set the language of LogFormatter always the content language to prevent the message shown in an arbitrary
+			// language the editor uses.
+			// https://github.com/femiwiki/DiscordRCFeed/issues/6
+			$context = RequestContext::getMain();
+			$context->setLanguage( MediaWikiServices::getInstance()->getContentLanguage() );
+			$formatter->setContext( $context );
 			$actionText = $formatter->getPlainActionText();
 			$actionText = $linkRenderer->makeLinksClickable( $actionText, $user );
 			$actionText = self::cleanupForDiscord( $actionText );
