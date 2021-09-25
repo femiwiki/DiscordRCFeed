@@ -30,23 +30,23 @@ final class Util {
 	}
 
 	/**
-	 * @param array $url return value of parse_url()
-	 * @return string
+	 * @param string $url
+	 * @return bool
 	 */
-	public static function urlUnparse( array $url ): string {
-		$text = '';
-		if ( isset( $url['path'] ) ) {
-			$text .= $url['path'];
+	public static function urlIsLocal( string $url ): string {
+		global $wgServer;
+		$server = wfParseUrl( $wgServer );
+		$url = wfParseUrl( $url );
+		$bitNames = [
+			'scheme',
+			'host',
+			'port',
+		];
+		foreach ( $bitNames as $name ) {
+			if ( isset( $url[$name] ) && $server[$name] !== $url[$name] ) {
+				return false;
+			}
 		}
-		if ( isset( $url['query'] ) ) {
-			$text .= "?{$url['query']}";
-		}
-		if ( isset( $url['fragment'] ) ) {
-			$text .= "#{$url['fragment']}";
-		}
-		if ( $text ) {
-			$text = wfExpandUrl( $text );
-		}
-		return $text;
+		return true;
 	}
 }

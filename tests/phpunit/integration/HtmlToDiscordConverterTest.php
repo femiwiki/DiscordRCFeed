@@ -13,13 +13,56 @@ use Wikimedia\TestingAccessWrapper;
  */
 class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 
+	/** @var HtmlToDiscordConverter */
+	private $converter;
+
 	/** @var TestingAccessWrapper */
 	private $wrapper;
 
 	protected function setUp(): void {
 		parent::setUp();
-		$converter = new HtmlToDiscordConverter();
-		$this->wrapper = TestingAccessWrapper::newFromObject( $converter );
+		$this->converter = new HtmlToDiscordConverter();
+		$this->wrapper = TestingAccessWrapper::newFromObject( $this->converter );
+	}
+
+	public static function providerHtml(): array {
+		return [
+			[
+				'[Admin](http://f.oo/index.php/User:Admin) '
+				. '[commented](http://f.oo/index.php?title='
+				. 'Topic:Wh925tqnitcssmp8&topic_showPostId=wh925tqnixav0qng#flow-post-wh925tqnixav0qng) '
+				. 'on "Lorem" (Ipsum) ([Lorem](http://f.oo/index.php/Topic:Wh925tqnitcssmp8) on '
+				. '[Talk:Main Page](http://f.oo/w/Talk:%EB%8C%80%EB%AC%B8))',
+
+				'<a href="/index.php?title=User:Admin&amp;action=edit&amp;redlink=1" class="new '
+				. 'mw-userlink fw-link" title="User:Admin (page does not exist)"><bdi>Admin</bdi>'
+				. '</a> <span class="mw-usertoollinks">(<a href="/index.php?title=User_talk:Admin&amp;'
+				. 'action=edit&amp;redlink=1" class="new mw-usertoollinks-talk fw-link" title="User '
+				. 'talk:Admin (page does not exist)">talk</a> | <a href="/w/Special:Contributions/Admin"'
+				. ' class="mw-usertoollinks-contribs fw-link" title="Special:Contributions/Admin">contribs</a>'
+				. ' | <a href="/w/Special:Block/Admin" class="mw-usertoollinks-block fw-link" '
+				. 'title="Special:Block/Admin">block</a>)</span> <a target="_blank" rel="nofollow '
+				. 'noreferrer noopener" class="external text" href="http://f.oo/index.php?'
+				. 'title=Topic:Wh925tqnitcssmp8&amp;topic_showPostId=wh925tqnixav0qng#flow-post-wh925tqnixav0qng">'
+				. 'commented</a> on "Lorem" (<em>Ipsum</em>) (<a href="/w/Topic:Wh925tqnitcssmp8" title="Lorem">'
+				. 'Lorem</a> on <a href="/w/Talk:%EB%8C%80%EB%AC%B8" class="mw-title fw-link" title="Talk:Main Page">'
+				. 'Talk:Main Page</a>)',
+				'convert()',
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider providerHtml
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::convert
+	 */
+	public function testConvert( $expected, $html, $message = '' ) {
+		$this->setMwGlobals( 'wgServer', 'http://f.oo' );
+		$this->assertSame(
+			$expected,
+			$this->converter->convert( $html ),
+			$message
+		);
 	}
 
 	public static function providerUserName(): array {
@@ -37,7 +80,7 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider providerUserName
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::replaceUserName
 	 */
-	public function testReplaceUserName( $expected, $params, $message = null ) {
+	public function testReplaceUserName( $expected, $params, $message = '' ) {
 		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
 		$this->assertSame(
 			$expected,
@@ -66,7 +109,7 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider providerTitle
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::replaceTitleLinks
 	 */
-	public function testReplaceTitleLinks( $expected, $params, $message = null ) {
+	public function testReplaceTitleLinks( $expected, $params, $message = '' ) {
 		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
 		$this->assertSame(
 			$expected,
@@ -97,7 +140,7 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider providerLinks
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::replaceLinks
 	 */
-	public function testReplaceLinks( $expected, $params, $message = null ) {
+	public function testReplaceLinks( $expected, $params, $message = '' ) {
 		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
 		$this->assertSame(
 			$expected,

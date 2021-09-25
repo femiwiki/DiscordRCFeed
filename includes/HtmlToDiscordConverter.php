@@ -120,9 +120,8 @@ class HtmlToDiscordConverter {
 		if ( preg_match_all( self::REGEX_LINK, $text, $matches ) ) {
 			foreach ( $matches[1] as $i => $group ) {
 				$capture = $matches[0][$i];
-				// Links can omit some parts (example: "/index.php/Title"). Prepend it.
-				$url = parse_url( $matches[1][$i] );
-				$url = Util::urlUnparse( $url );
+				$url = $matches[1][$i];
+				$url = Util::urlIsLocal( $url ) ? wfExpandUrl( $url ) : '';
 				$label = $matches[2][$i];
 
 				$link = DiscordLinker::makeLink( $url, $label );

@@ -41,7 +41,7 @@ class HtmlToDiscordConverterTest extends MediaWikiUnitTestCase {
 	 * @dataProvider providerUserTools
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::removeUserTools
 	 */
-	public function testRemoveUserTools( $expected, $params, $message = null ) {
+	public function testRemoveUserTools( $expected, $params, $message = '' ) {
 		$this->assertSame(
 			$expected,
 			$this->wrapper->removeUserTools( $params ),
