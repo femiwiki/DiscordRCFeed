@@ -8,6 +8,7 @@ namespace MediaWiki\Extension\DiscordRCFeed\LogFormatter;
  * The craziest hack for arbitrary parent extending.
  * https://stackoverflow.com/a/37895055/10916512
  */
+// @phan-suppress-next-line PhanUndeclaredExtendedClass
 class ContentLanguageLogFormatter extends ArbitraryParentLogFormatter {
 
 	/**
@@ -15,6 +16,7 @@ class ContentLanguageLogFormatter extends ArbitraryParentLogFormatter {
 	 * @inheritDoc
 	 */
 	protected function msg( $key, ...$params ) {
+		// @phan-suppress-next-line PhanUndeclaredClass
 		return parent::msg( $key, ...$params )->inContentLanguage();
 	}
 

@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\DiscordRCFeed\LogFormatter;
 
 use DatabaseLogEntry;
+use LegacyLogFormatter;
 use LogEntry;
 use LogFormatter as ParentLogFormatter;
 
@@ -24,6 +25,7 @@ class LogFormatter extends ParentLogFormatter {
 		// The craziest hack for arbitrary parent extending.
 		// https://stackoverflow.com/a/37895055/10916512
 		class_alias( $handler, __NAMESPACE__ . '\ArbitraryParentLogFormatter' );
+		// @phan-suppress-next-line PhanParamTooMany, PhanTypeMismatchReturnProbablyReal
 		return new ContentLanguageLogFormatter( $entry );
 	}
 
