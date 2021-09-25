@@ -152,37 +152,4 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 			[ [ 'edit', 'block' ], '(edit | block)' ],
 		];
 	}
-
-	/**
-	 * @dataProvider providerTools
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makeNiceTools
-	 * @param string|array $tools
-	 * @param string $expected
-	 */
-	public function testMakeNiceTools( $tools, $expected ) {
-		$this->assertSame( $expected, $this->wrapper->makeNiceTools( $tools ) );
-	}
-
-	public static function providerWikitextWithLinks() {
-		return [
-			[ 'edited [[B]]', 'edited [B](https://foo.bar/index.php/B)' ],
-			[ '[[ ]]', '[[ ]]' ],
-			[ 'edited [[Link|Label]]', 'edited [Label](https://foo.bar/index.php/Link)' ],
-			[ '[[ |Label]]', '[[ |Label]]' ],
-			[ 'moved [[B]] to [[C]]', 'moved [B](https://foo.bar/index.php/B) to [C](https://foo.bar/index.php/C)' ],
-		];
-	}
-
-	/**
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makeLinksClickable
-	 * @param string $wt
-	 * @param string $expected
-	 * @dataProvider providerWikitextWithLinks
-	 */
-	public function testMakeLinksClickable( $wt, $expected ) {
-		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
-		$renderer = new DiscordLinker();
-		$actual = $renderer->makeLinksClickable( $wt );
-		$this->assertSame( $expected, $actual );
-	}
 }

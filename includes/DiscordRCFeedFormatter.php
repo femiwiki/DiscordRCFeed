@@ -2,8 +2,9 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed;
 
+use ChangesList;
 use ExtensionRegistry;
-use IRCColourfulRCFeedFormatter;
+use Flow\Container;
 use LogFormatter;
 use MediaWiki\MediaWikiServices;
 use RCFeedFormatter;
@@ -28,45 +29,8 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		}
 
 		$linkRenderer = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
-		if ( $rcType == RC_LOG ) {
-			$logType = $attribs['rc_log_type'];
-			$logAction = $attribs['rc_log_action'];
-			if ( in_array( $logType, $feed['omit_log_types'] )
-				|| in_array( "$logType/$logAction", $feed['omit_log_actions'] )
-			) {
-				return null;
-			}
-
-			if ( isset( Constants::COLOR_MAP_LOG[$logType] ) ) {
-				$color = Constants::COLOR_MAP_LOG[$logType];
-			} else {
-				$color = Constants::COLOR_MAP_ACTION[RC_LOG];
-			}
-
-			$emoji = self::getEmojiForLog( $logType, $logAction );
-
-			$formatter = LogFormatter::newFromRow( $attribs );
-			// Set the language of LogFormatter always the content language to prevent the message shown in an arbitrary
-			// language the editor uses.
-			// https://github.com/femiwiki/DiscordRCFeed/issues/6
-			$context = RequestContext::getMain();
-			$context->setLanguage( MediaWikiServices::getInstance()->getContentLanguage() );
-			$formatter->setContext( $context );
-			$actionText = $formatter->getPlainActionText();
-			$actionText = $linkRenderer->makeLinksClickable( $actionText, $user );
-			$actionText = self::cleanupForDiscord( $actionText );
-
-			$comment = $attribs['rc_comment'];
-			if ( $comment ) {
-				$comment = Util::msg( 'parentheses', $comment );
-			}
-
-			$fullString = implode( ' ', array_filter( [
-				$emoji,
-				$actionText,
-				$comment,
-			] ) );
-		} elseif ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
+		$converter = new HtmlToDiscordConverter( $linkRenderer );
+		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$flag = '';
 			if ( $attribs['rc_minor'] ) {
 				$flag .= '-minor';
@@ -110,7 +74,6 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			$comment = $store->getComment( 'rc_comment', $attribs )->text;
 			if ( $comment ) {
 				$comment = Util::msg( 'parentheses', $comment );
-				$comment = self::cleanupForDiscord( $comment );
 			}
 
 			$fullString = implode( ' ', array_filter( [
@@ -124,23 +87,76 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			} else {
 				$color = Constants::COLOR_DEFAULT;
 			}
+		} elseif ( $rcType == RC_LOG ) {
+			$logType = $attribs['rc_log_type'];
+			$logAction = $attribs['rc_log_action'];
+			if ( in_array( $logType, $feed['omit_log_types'] )
+				|| in_array( "$logType/$logAction", $feed['omit_log_actions'] )
+			) {
+				return null;
+			}
+
+			if ( isset( Constants::COLOR_MAP_LOG[$logType] ) ) {
+				$color = Constants::COLOR_MAP_LOG[$logType];
+			} else {
+				$color = Constants::COLOR_MAP_ACTION[RC_LOG];
+			}
+
+			$emoji = self::getEmojiForLog( $logType, $logAction );
+
+			$formatter = LogFormatter::newFromRow( $attribs );
+			$formatter->setContext( self::getContentLanguageContext() );
+			$desc = $formatter->getActionText();
+			$desc = $converter->convert( $desc );
+
+			$comment = $attribs['rc_comment'];
+			if ( $comment ) {
+				$comment = Util::msg( 'parentheses', $comment );
+			}
+
+			$fullString = implode( ' ', array_filter( [
+				$emoji,
+				$desc,
+				$comment,
+			] ) );
 		} elseif ( ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) && $rcType == RC_FLOW ) {
 			$emoji = Util::msg( 'discordrcfeed-emoji-flow' );
 
-			$flowFormatter = new DiscordFlowRCFeedFormatter( $linkRenderer );
-			$comment = $flowFormatter->getDiscordLine( $rc ) ?: $comment;
+			$flowFormatter = FlowDiscordFormatter::getInstance();
+			$query = Container::get( 'query.changeslist' );
+			$changesList = new ChangesList( self::getContentLanguageContext() );
+			$row = $query->getResult( $changesList, $rc, $changesList->isWatchlist() );
+			$desc = $flowFormatter->format( $row, $changesList );
+			$desc = $converter->convert( $desc );
 
 			$title = DiscordLinker::makeLink( $titleObj->getFullURL(), $titleObj->getFullText() );
 			$title = Util::msg( 'parentheses', $title );
 
 			$szdiff = self::getSizeDiff( $attribs );
 
-			$fullString = implode( ' ', [ $emoji, $comment, $title, $szdiff ] );
+			$fullString = implode( ' ', [
+				$emoji,
+				$desc,
+				$szdiff,
+			] );
 			$color = Constants::COLOR_ACTION_FLOW;
 		} else {
 			return null;
 		}
 		return self::makePostData( $feed, $fullString, $color );
+	}
+
+	/**
+	 *
+	 * get a context which has the content language to prevent the message shown in an arbitrary language the editor
+	 * uses.
+	 * https://github.com/femiwiki/DiscordRCFeed/issues/6
+	 * @return RequestContext
+	 */
+	private static function getContentLanguageContext(): RequestContext {
+		$context = RequestContext::getMain();
+		$context->setLanguage( MediaWikiServices::getInstance()->getContentLanguage() );
+		return $context;
 	}
 
 	/**
@@ -201,15 +217,5 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			$post = array_replace_recursive( $post, $feed['request_replace'] );
 		}
 		return json_encode( $post );
-	}
-
-	/**
-	 * Remove newlines, carriage returns and decode html entities
-	 * @param string $text
-	 * @return string
-	 */
-	public static function cleanupForDiscord( string $text ): string {
-		$text = IRCColourfulRCFeedFormatter::cleanupForIRC( $text );
-		return $text;
 	}
 }

@@ -71,45 +71,6 @@ class DiscordLinker {
 	}
 
 	/**
-	 * @param string $wt wikitext to parse.
-	 * @param User|null $user
-	 * @return string text with Discord syntax.
-	 */
-	public function makeLinksClickable( string $wt, $user = null ): string {
-		if ( $user ) {
-			$name = $user->getName();
-			if ( strpos( $wt, $name ) === 0 ) {
-				$replacement = $this->getDiscordUserTextWithTools( $user );
-				$wt = $replacement . substr( $wt, strlen( $name ) );
-			}
-		}
-		if ( preg_match_all( '/\[\[([^|\]]+)\]\]/', $wt, $matches ) ) {
-			foreach ( $matches[0] as $i => $match ) {
-				$titleText = $matches[1][$i];
-				$titleObj = Title::newFromText( $titleText );
-				if ( !$titleObj ) {
-					continue;
-				}
-				$replacement = $this->getDiscordPageTextWithTools( $titleObj );
-				$wt = str_replace( $match, $replacement, $wt );
-			}
-		}
-		if ( preg_match_all( '/\[\[([^|]+)\|([^\]]+)\]\]/', $wt, $matches ) ) {
-			foreach ( $matches[0] as $i => $match ) {
-				$titleObj = Title::newFromText( $matches[1][$i] );
-				if ( !$titleObj ) {
-					continue;
-				}
-				$label = $matches[2][$i];
-				$replacement = self::makeLink( $titleObj->getFullURL(), $label );
-				$wt = str_replace( $match, $replacement, $wt );
-			}
-		}
-
-		return $wt;
-	}
-
-	/**
 	 * @param string $target
 	 * @param string $text
 	 * @return string

@@ -28,4 +28,25 @@ final class Util {
 	public static function msg( $key, ...$params ): string {
 		return wfMessage( $key, ...$params )->inContentLanguage()->text();
 	}
+
+	/**
+	 * @param array $url return value of parse_url()
+	 * @return string
+	 */
+	public static function urlUnparse( array $url ): string {
+		$text = '';
+		if ( isset( $url['path'] ) ) {
+			$text .= $url['path'];
+		}
+		if ( isset( $url['query'] ) ) {
+			$text .= "?{$url['query']}";
+		}
+		if ( isset( $url['fragment'] ) ) {
+			$text .= "#{$url['fragment']}";
+		}
+		if ( $text ) {
+			$text = wfExpandUrl( $text );
+		}
+		return $text;
+	}
 }
