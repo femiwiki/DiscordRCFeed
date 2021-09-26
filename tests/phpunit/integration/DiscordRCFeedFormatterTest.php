@@ -30,17 +30,17 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	public static function providerEmbed(): array {
 		return [
 			[
-				'{"embeds": [ { "color" : 255 ,"description" : "message"} ], "username": "TestWiki"}',
+				'{"embeds": [ { "color" : 255 ,"description" : "message (comment)"} ], "username": "TestWiki"}',
 				'',
 				[],
 			],
 			[
-				'{"embeds": [ { "color" : 255 ,"description" : "message"} ], "username": "FooWiki"}',
+				'{"embeds": [ { "color" : 255 ,"description" : "message (comment)"} ], "username": "FooWiki"}',
 				'FooWiki',
 				[],
 			],
 			[
-				'{"embeds": [ { "color" : 255 ,"description" : "message"} ], "username": "DummyBot"}',
+				'{"embeds": [ { "color" : 255 ,"description" : "message (comment)"} ], "username": "DummyBot"}',
 				'',
 				[ 'request_replace' => [ 'username' => 'DummyBot' ] ],
 			],
@@ -62,9 +62,11 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 		$this->assertJsonStringEqualsJsonString(
 			$expected,
 			$this->wrapper->makePostData(
+				[],
 				$feed,
+				0x0000ff,
 				'message',
-				0x0000ff
+				'comment',
 			)
 		);
 	}

@@ -172,7 +172,10 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	 * @return string|array
 	 */
 	private static function getSizeDiff( $attribs, $diffOnly ) {
-		if ( $attribs['rc_old_len'] !== null && $attribs['rc_new_len'] !== null ) {
+		if (
+			isset( $attribs['rc_old_len'] ) && isset( $attribs['rc_new_len'] )
+			&& $attribs['rc_old_len'] !== null && $attribs['rc_new_len'] !== null
+		) {
 			$szdiff = $attribs['rc_new_len'] - $attribs['rc_old_len'];
 			if ( $diffOnly ) {
 				return wfMessage( 'nbytes' )->numParams( $szdiff )->inContentLanguage()->text();
@@ -234,11 +237,11 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			$szdiff = self::getSizeDiff( $attribs, true );
 		}
 
-		$fullString = implode( ' ', [
+		$fullString = implode( ' ', array_filter( [
 			$desc,
 			$comment,
 			$szdiff,
-		] );
+		] ) );
 
 		$post = [
 			'username' => $wgSitename,
@@ -278,7 +281,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 						'inline' => true,
 					];
 				}
-				if ( isset( $size ) ) {
+				if ( isset( $size ) && $size ) {
 					$post['embeds'][0]['fields'][] = [
 						'name' => Util::msg( 'listfiles_size' ),
 						'value' => "$size " . Util::msg( 'parentheses', $szdiff ),
