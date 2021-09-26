@@ -2,6 +2,12 @@
 
 Versions and bullets are arranged chronologically from latest to oldest.
 
+## Unreleased
+
+Breaking changes:
+
+- `'line_style'` parameter is renamed to `'style'`.
+
 ## v0.1.2
 
 - The Logging messages are now always shown in the content language of the wiki. (https://github.com/femiwiki/DiscordRCFeed/issues/6)
