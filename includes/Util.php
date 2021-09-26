@@ -27,7 +27,7 @@ final class Util {
 	 * @param mixed ...$params Normal message parameters
 	 * @return string
 	 */
-	public static function msg( $key, ...$params ): string {
+	public static function msgText( $key, ...$params ): string {
 		return wfMessage( $key, ...$params )->inContentLanguage()->text();
 	}
 

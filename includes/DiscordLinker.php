@@ -34,10 +34,10 @@ class DiscordLinker {
 			} else {
 				$link = SpecialPage::getTitleFor( $tool['special'], $user->getName() )->getFullURL();
 			}
-			$text = isset( $tool['msg'] ) ? Util::msg( $tool['msg'] ) : $tool['text'];
+			$text = isset( $tool['msg'] ) ? Util::msgText( $tool['msg'] ) : $tool['text'];
 			$tools[] = self::makeLink( $link, $text );
 		}
-		return implode( $sep ?: Util::msg( 'pipe-separator' ), $tools );
+		return implode( $sep ?: Util::msgText( 'pipe-separator' ), $tools );
 	}
 
 	/**
@@ -50,7 +50,7 @@ class DiscordLinker {
 		$rt = self::makeLink( $user->getUserPage()->getFullURL(), $user->getName() );
 		if ( $this->userTools ) {
 			$tools = $this->makeUserTools( $user );
-			$tools = Util::msg( 'parentheses', $tools );
+			$tools = Util::msgText( 'parentheses', $tools );
 			$rt .= ' ' . $tools;
 		}
 		return $rt;
@@ -67,13 +67,13 @@ class DiscordLinker {
 		$tools = [];
 		foreach ( $this->pageTools as $tool ) {
 			$tools[] = self::makeLink( $title->getFullURL( $tool['query'] ),
-				Util::msg( $tool['msg'] ) );
+				Util::msgText( $tool['msg'] ) );
 		}
 		if ( $thisOldId && $lastOldId ) {
 			$tools[] = self::makeLink( $title->getFullURL( "diff=$thisOldId&oldid=$lastOldId" ),
-				Util::msg( 'diff' ) );
+				Util::msgText( 'diff' ) );
 		}
-		return implode( $sep ?: Util::msg( 'pipe-separator' ), $tools );
+		return implode( $sep ?: Util::msgText( 'pipe-separator' ), $tools );
 	}
 
 	/**
@@ -88,7 +88,7 @@ class DiscordLinker {
 		$rt = self::makeLink( $title->getFullURL(), $title->getFullText() );
 		if ( $this->pageTools ) {
 			$tools = $this->makePageTools( $title, $thisOldId, $lastOldId );
-			$tools = Util::msg( 'parentheses', $tools );
+			$tools = Util::msgText( 'parentheses', $tools );
 			$rt .= ' ' . $tools;
 		}
 		return $rt;

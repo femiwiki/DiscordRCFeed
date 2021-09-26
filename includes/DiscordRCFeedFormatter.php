@@ -34,13 +34,6 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			return null;
 		}
 
-		$this->linker = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
-		$this->converter = new HtmlToDiscordConverter( $this->linker );
-
-		$desc = $this->getDescription( $feed, $rc, $feed['style'] != 'structure' );
-		if ( !$desc ) {
-			return null;
-		}
 		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$color = Constants::COLOR_MAP_ACTION[$rcType] ?? Constants::COLOR_DEFAULT;
 
@@ -63,8 +56,20 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		} else {
 			return null;
 		}
+
+		$this->linker = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
+		$this->converter = new HtmlToDiscordConverter( $this->linker );
+		$desc = $this->getDescription( $feed, $rc, $feed['style'] != 'structure' );
+		if ( !$desc ) {
+			return null;
+		}
+		if ( defined( 'MW_VERSION' ) && version_compare( MW_VERSION, '1.37', '>=' ) ) {
+			$title = Title::castFromPageReference( $rc->getPage() );
+		} else {
+			$title = $rc->getTitle();
+		}
 		return $this->makePostData( $attribs, $feed, $color, $desc, $comment,
-			$rc->getPerformer(), $rc->getTitle() );
+			User::newFromIdentity( $rc->getPerformerIdentity() ), $title );
 	}
 
 	/**
@@ -76,8 +81,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	private function getDescription( array $feed, RecentChange $rc, bool $includeTools = true ): string {
 		$attribs = $rc->getAttributes();
 		$rcType = $attribs['rc_type'];
-		$user = $rc->getPerformer();
-		$titleObj = $rc->getTitle();
+		$user = User::newFromIdentity( $rc->getPerformerIdentity() );
 		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$flag = '';
 			if ( $attribs['rc_minor'] ) {
@@ -88,7 +92,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			}
 
 			if ( $rcType == RC_NEW ) {
-				$emoji = Util::msg( 'discordrcfeed-emoji-log-create-create' );
+				$emoji = Util::msgText( 'discordrcfeed-emoji-log-create-create' );
 				$desc = 'logentry-create-create';
 			} else {
 				// i18n messages:
@@ -96,15 +100,17 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				//  discordrcfeed-emoji-edit-minor
 				//  discordrcfeed-emoji-edit-bot
 				//  discordrcfeed-emoji-edit-minor-bot
-				$emoji = Util::msg( 'discordrcfeed-emoji-edit' . $flag );
+				$emoji = Util::msgText( 'discordrcfeed-emoji-edit' . $flag );
+				// i18n messages:
+				//  discordrcfeed-emoji-edit
+				//  discordrcfeed-emoji-edit-minor
+				//  discordrcfeed-emoji-edit-bot
+				//  discordrcfeed-emoji-edit-minor-bot
+				$desc = 'discordrcfeed-line-edit' . $flag;
 			}
+			$desc = wfMessage( $desc );
 
-			// i18n messages:
-			//  discordrcfeed-emoji-edit
-			//  discordrcfeed-emoji-edit-minor
-			//  discordrcfeed-emoji-edit-bot
-			//  discordrcfeed-emoji-edit-minor-bot
-			$desc = wfMessage( 'discordrcfeed-line-edit' . $flag );
+			$titleObj = $rc->getTitle();
 			if ( $includeTools ) {
 				$params = [
 					// $1: username
@@ -144,7 +150,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 
 			$comment = $attribs['rc_comment'];
 		} elseif ( self::isFlowLoaded() && $rcType == RC_FLOW ) {
-			$emoji = Util::msg( 'discordrcfeed-emoji-flow' );
+			$emoji = Util::msgText( 'discordrcfeed-emoji-flow' );
 
 			$formatter = FlowDiscordFormatter::getInstance();
 			$formatter->plaintext = !$includeTools;
@@ -233,7 +239,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		if ( $style == 'structure' ) {
 			list( $size, $szdiff ) = self::getSizeDiff( $attribs, false );
 		} else {
-			$comment = $comment ? Util::msg( 'parentheses', $comment ) : '';
+			$comment = $comment ? Util::msgText( 'parentheses', $comment ) : '';
 			$szdiff = self::getSizeDiff( $attribs, true );
 		}
 
@@ -283,14 +289,14 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				}
 				if ( isset( $size ) && $size ) {
 					$post['embeds'][0]['fields'][] = [
-						'name' => Util::msg( 'listfiles_size' ),
-						'value' => "$size " . Util::msg( 'parentheses', $szdiff ),
+						'name' => Util::msgText( 'listfiles_size' ),
+						'value' => "$size " . Util::msgText( 'parentheses', $szdiff ),
 						'inline' => true,
 					];
 				}
 				if ( $comment ) {
 					$post['embeds'][0]['fields'][] = [
-						'name' => Util::msg( 'summary' ),
+						'name' => Util::msgText( 'summary' ),
 						'value' => $comment,
 						'inline' => true,
 					];
