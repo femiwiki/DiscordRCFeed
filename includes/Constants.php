@@ -32,6 +32,9 @@ final class Constants {
 				'msg' => 'hist'
 			],
 		],
+		'omit_log_types' => [
+			'patrol',
+		]
 	];
 
 	private const COLOR_GRAY = 0xb3b4bc;

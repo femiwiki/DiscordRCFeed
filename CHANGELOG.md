@@ -7,6 +7,7 @@ Versions and bullets are arranged chronologically from latest to oldest.
 Breaking changes:
 
 - `'line_style'` parameter is renamed to `'style'`.
+- Patrol events are omitted by default now.
 
 Others:
 
