@@ -28,7 +28,6 @@ class FlowDiscordFormatter extends FlowChangesListFormatter {
 			return false;
 		}
 		$text = $this->getDescription( $data, $ctx )->parse();
-		// $text = Utils::htmlToPlaintext( $text );
 		$titleLink = $this->getTitleLink( $data, $row, $ctx );
 		if ( $titleLink ) {
 			$titleLink = $ctx->msg( 'parentheses' )->rawParams( $titleLink )->text();

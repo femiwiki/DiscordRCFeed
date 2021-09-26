@@ -9,7 +9,6 @@ use LogFormatter;
 use MediaWiki\MediaWikiServices;
 use RCFeedFormatter;
 use RecentChange;
-use RequestContext;
 
 class DiscordRCFeedFormatter implements RCFeedFormatter {
 
@@ -96,16 +95,12 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				return null;
 			}
 
-			if ( isset( Constants::COLOR_MAP_LOG[$logType] ) ) {
-				$color = Constants::COLOR_MAP_LOG[$logType];
-			} else {
-				$color = Constants::COLOR_MAP_ACTION[RC_LOG];
-			}
+			$color = Constants::COLOR_MAP_LOG[$logType] ?? Constants::COLOR_MAP_ACTION[RC_LOG];
 
 			$emoji = self::getEmojiForLog( $logType, $logAction );
 
 			$formatter = LogFormatter::newFromRow( $attribs );
-			$formatter->setContext( self::getContentLanguageContext() );
+			$formatter->setContext( Util::getContentLanguageContext() );
 			$desc = $formatter->getActionText();
 			$desc = $converter->convert( $desc );
 
@@ -124,13 +119,10 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 
 			$flowFormatter = FlowDiscordFormatter::getInstance();
 			$query = Container::get( 'query.changeslist' );
-			$changesList = new ChangesList( self::getContentLanguageContext() );
-			$row = $query->getResult( $changesList, $rc, $changesList->isWatchlist() );
+			$changesList = new ChangesList( Util::getContentLanguageContext() );
+			$row = $query->getResult( $changesList, $rc, );
 			$desc = $flowFormatter->format( $row, $changesList );
 			$desc = $converter->convert( $desc );
-
-			$title = DiscordLinker::makeLink( $titleObj->getFullURL(), $titleObj->getFullText() );
-			$title = Util::msg( 'parentheses', $title );
 
 			$szdiff = self::getSizeDiff( $attribs );
 
@@ -144,19 +136,6 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			return null;
 		}
 		return self::makePostData( $feed, $fullString, $color );
-	}
-
-	/**
-	 *
-	 * get a context which has the content language to prevent the message shown in an arbitrary language the editor
-	 * uses.
-	 * https://github.com/femiwiki/DiscordRCFeed/issues/6
-	 * @return RequestContext
-	 */
-	private static function getContentLanguageContext(): RequestContext {
-		$context = RequestContext::getMain();
-		$context->setLanguage( MediaWikiServices::getInstance()->getContentLanguage() );
-		return $context;
 	}
 
 	/**

@@ -3,8 +3,10 @@
 namespace MediaWiki\Extension\DiscordRCFeed;
 
 use MediaWiki\Logger\LoggerFactory;
+use MediaWiki\MediaWikiServices;
 use MessageSpecifier;
 use Psr\Log\LoggerInterface;
+use RequestContext;
 
 final class Util {
 	/** @var LoggerInterface */
@@ -48,5 +50,18 @@ final class Util {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 *
+	 * get a context which has the content language to prevent the message shown in an arbitrary language the editor
+	 * uses.
+	 * https://github.com/femiwiki/DiscordRCFeed/issues/6
+	 * @return RequestContext
+	 */
+	public static function getContentLanguageContext(): RequestContext {
+		$context = RequestContext::getMain();
+		$context->setLanguage( MediaWikiServices::getInstance()->getContentLanguage() );
+		return $context;
 	}
 }

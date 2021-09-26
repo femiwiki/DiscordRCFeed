@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
 use MediaWiki\Extension\DiscordRCFeed\Util;
 use MediaWikiIntegrationTestCase;
+use RequestContext;
 
 /**
  * @group DiscordRCFeed
@@ -54,5 +55,13 @@ class UtilTest extends MediaWikiIntegrationTestCase {
 			Util::urlIsLocal( $url ),
 			$message
 		);
+	}
+
+	/**
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\Util::getContentLanguageContext
+	 */
+	public function testGetContentLanguageContext() {
+		$ctx = Util::getContentLanguageContext();
+		$this->assertInstanceOf( RequestContext::class, $ctx );
 	}
 }

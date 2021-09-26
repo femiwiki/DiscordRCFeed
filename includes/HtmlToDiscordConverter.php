@@ -7,17 +7,19 @@ use Title;
 use User;
 
 class HtmlToDiscordConverter {
+	// phpcs:disable Generic.Files.LineLength.TooLong
 	/** @var string */
-	private const REGEX_USER = '#<a[^>]+class=[\'"][^\'"]*mw-userlink[^\'"]*[\'"][^>]*><bdi>([^<+]+)</bdi></a>#';
+	private const REGEX_FOR_USER_LINK = '#<a[^>]+class=[\'"][^\'"]*mw-userlink[^\'"]*[\'"][^>]*><bdi>([^<+]+)</bdi></a>#';
 
 	/** @var string */
-	private const REGEX_USER_LINKS = '#<span[^>]+class=[\'"][^\'"]*mw-usertoollinks[^\'"]*[\'"][^>]*>.+</span>#';
+	private const REGEX_FOR_USER_TOOLS = '#<span[^>]+class=[\'"][^\'"]*mw-usertoollinks[^\'"]*[\'"][^>]*>.+</span>#';
 
 	/** @var string */
-	private const REGEX_TITLE = '#<a[^>]+href=[\'"][^\'"=]*[/=]([^\'"]+)[\'"][^>]*title=[^>]*>([^<+]+)</a>#';
+	private const REGEX_FOR_TITLE_LINK = '#<a[^>]+href=[\'"][^\'"=]*[/=]([^\'"]+)[\'"][^>]*title=[^>]*>([^<+]+)</a>#';
 
 	/** @var string */
-	private const REGEX_LINK = '#<a[^>]+href=[\'"]([^\'"]+)[\'"][^>]*>([^<+]+)</a>#';
+	private const REGEX_FOR_GENERAL_LINK = '#<a[^>]+href=[\'"]([^\'"]+)[\'"][^>]*>([^<+]+)</a>#';
+	// phpcs:enable Generic.Files.LineLength.TooLong
 
 	/** @var DiscordLinker */
 	private $linker;
@@ -34,10 +36,10 @@ class HtmlToDiscordConverter {
 	 * @return string
 	 */
 	public function convert( string $text ): string {
-		$text = self::removeUserTools( $text );
-		$text = $this->replaceUserName( $text );
-		$text = $this->replaceTitleLinks( $text );
-		$text = self::replaceLinks( $text );
+		$text = $this->removeUserTools( $text );
+		$text = $this->convertUserName( $text );
+		$text = $this->convertTitleLinks( $text );
+		$text = $this->convertLinks( $text );
 
 		$text = Sanitizer::stripAllTags( $text );
 		return $text;
@@ -47,16 +49,16 @@ class HtmlToDiscordConverter {
 	 * @param string $text
 	 * @return string
 	 */
-	private function replaceUserName( string $text ): string {
-		if ( preg_match_all( self::REGEX_USER, $text, $matches ) ) {
-			foreach ( $matches[0] as $i => $group ) {
+	private function convertUserName( string $text ): string {
+		if ( preg_match_all( self::REGEX_FOR_USER_LINK, $text, $matches ) ) {
+			foreach ( $matches[0] as $i => $fullMatch ) {
 				$username = $matches[1][$i];
 				$user = User::newFromName( $username );
 				if ( !$user ) {
 					continue;
 				}
 				$replace = $this->linker->getDiscordUserTextWithTools( $user );
-				$text = str_replace( $group, $replace, $text );
+				$text = str_replace( $fullMatch, $replace, $text );
 			}
 		}
 		return $text;
@@ -66,18 +68,17 @@ class HtmlToDiscordConverter {
 	 * @param string $text
 	 * @return string
 	 */
-	private static function removeUserTools( string $text ): string {
-		return preg_replace( self::REGEX_USER_LINKS, '', $text );
+	private function removeUserTools( string $text ): string {
+		return preg_replace( self::REGEX_FOR_USER_TOOLS, '', $text );
 	}
 
 	/**
 	 * @param string $text
 	 * @return string
 	 */
-	private function replaceTitleLinks( string $text ): string {
-		if ( preg_match_all( self::REGEX_TITLE, $text, $matches ) ) {
-			foreach ( $matches[1] as $i => $group ) {
-				$capture = $matches[0][$i];
+	private function convertTitleLinks( string $text ): string {
+		if ( preg_match_all( self::REGEX_FOR_TITLE_LINK, $text, $matches ) ) {
+			foreach ( $matches[0] as $i => $fullMatch ) {
 				$url = $matches[1][$i];
 				$label = $matches[2][$i];
 
@@ -90,7 +91,7 @@ class HtmlToDiscordConverter {
 				} else {
 					$replace = DiscordLinker::makeLink( $title->getFullURL(), $label );
 				}
-				$text = str_replace( $capture, $replace, $text );
+				$text = str_replace( $fullMatch, $replace, $text );
 			}
 		}
 		return $text;
@@ -116,16 +117,15 @@ class HtmlToDiscordConverter {
 	 * @param string $text
 	 * @return string
 	 */
-	private static function replaceLinks( string $text ): string {
-		if ( preg_match_all( self::REGEX_LINK, $text, $matches ) ) {
-			foreach ( $matches[1] as $i => $group ) {
-				$capture = $matches[0][$i];
+	private function convertLinks( string $text ): string {
+		if ( preg_match_all( self::REGEX_FOR_GENERAL_LINK, $text, $matches ) ) {
+			foreach ( $matches[0] as $i => $fullMatch ) {
 				$url = $matches[1][$i];
 				$url = Util::urlIsLocal( $url ) ? wfExpandUrl( $url ) : '';
 				$label = $matches[2][$i];
 
 				$link = DiscordLinker::makeLink( $url, $label );
-				$text = str_replace( $capture, $link, $text );
+				$text = str_replace( $fullMatch, $link, $text );
 			}
 		}
 		return $text;

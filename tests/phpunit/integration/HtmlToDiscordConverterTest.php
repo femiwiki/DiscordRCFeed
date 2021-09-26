@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
 use MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter;
 use MediaWikiIntegrationTestCase;
+use Title;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -71,25 +72,25 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 				'[Admin](https://foo.bar/index.php/User:Admin)',
 				'<a href="/index.php?title=User:Admin&amp;action=view&amp;redlink=1" '
 				. 'class="new mw-userlink fw-link" title="User:Admin (page does not exist)"><bdi>Admin</bdi></a>',
-				'replaceUserName()',
+				'convertUserName()',
 			],
 		];
 	}
 
 	/**
 	 * @dataProvider providerUserName
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::replaceUserName
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::convertUserName
 	 */
-	public function testReplaceUserName( $expected, $params, $message = '' ) {
+	public function testConvertUserName( $expected, $params, $message = '' ) {
 		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
 		$this->assertSame(
 			$expected,
-			$this->wrapper->replaceUserName( $params ),
+			$this->wrapper->convertUserName( $params ),
 			$message
 		);
 	}
 
-	public static function providerTitle(): array {
+	public static function providerTitleHtml(): array {
 		return [
 			[
 				'[Main Page](https://foo.bar/index.php/Main_Page)',
@@ -106,14 +107,14 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider providerTitle
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::replaceTitleLinks
+	 * @dataProvider providerTitleHtml
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::convertTitleLinks
 	 */
-	public function testReplaceTitleLinks( $expected, $params, $message = '' ) {
+	public function testConvertTitleLinks( $expected, $params, $message = '' ) {
 		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
 		$this->assertSame(
 			$expected,
-			$this->wrapper->replaceTitleLinks( $params ),
+			$this->wrapper->convertTitleLinks( $params ),
 			$message
 		);
 	}
@@ -138,13 +139,52 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerLinks
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::replaceLinks
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::convertLinks
 	 */
-	public function testReplaceLinks( $expected, $params, $message = '' ) {
+	public function testConvertLinks( $expected, $params, $message = '' ) {
 		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
 		$this->assertSame(
 			$expected,
-			$this->wrapper->replaceLinks( $params ),
+			$this->wrapper->convertLinks( $params ),
+			$message
+		);
+	}
+
+	public static function providerTitle(): array {
+		return [
+			[
+				true,
+				Title::newFromText( 'Foo' ),
+			],
+			[
+				true,
+				null,
+			],
+			[
+				false,
+				Title::newFromText( 'Talk:Foo' ),
+			],
+			[
+				false,
+				Title::newFromText( 'Topic:Wh92jykmy8scu7l8' ),
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider providerTitle
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::shouldIncludeTitleLinks
+	 */
+	public function testShouldIncludeTitleLinks( $expected, $params, $message = '' ) {
+		$this->mergeMwGlobalArrayValue(
+			'wgNamespaceContentModels',
+			[
+				NS_TALK => CONTENT_MODEL_FLOW_BOARD,
+			]
+		);
+		$this->assertSame(
+			$expected,
+			$this->wrapper->shouldIncludeTitleLinks( $params ),
 			$message
 		);
 	}
