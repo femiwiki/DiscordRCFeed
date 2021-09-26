@@ -8,6 +8,10 @@ Breaking changes:
 
 - `'line_style'` parameter is renamed to `'style'`.
 
+Others:
+
+- Fixed bug that the array type default parameters are ignored.
+
 ## v0.1.2
 
 - The Logging messages are now always shown in the content language of the wiki. (https://github.com/femiwiki/DiscordRCFeed/issues/6)

@@ -32,7 +32,7 @@ class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
 			// Don't send RC_CATEGORIZE events (same as T127360)
 			if ( !isset( $wgRCFeeds[$feedKey]['omit_types'] ) ) {
 				$wgRCFeeds[$feedKey]['omit_types'] = [ RC_CATEGORIZE ];
-			} else {
+			} elseif ( !in_array( RC_CATEGORIZE, $wgRCFeeds[$feedKey]['omit_types'] ) ) {
 				$wgRCFeeds[$feedKey]['omit_types'][] = RC_CATEGORIZE;
 			}
 
@@ -63,7 +63,7 @@ class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
 	 */
 	public static function addDefaultValues( &$feed ) {
 		foreach ( Constants::DEFAULT_RC_FEED_PARAMS as $paramKey => $param ) {
-			if ( !isset( $feed[$paramKey] ) ) {
+			if ( !isset( $feed[$paramKey] ) || empty( $feed[$paramKey] ) ) {
 				$feed[$paramKey] = $param;
 			}
 		}
