@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\DiscordRCFeed;
 
 use Flow\Container;
+use Flow\FlowActions;
 use Flow\Formatter\ChangesListFormatter as FlowChangesListFormatter;
 use Flow\Formatter\RecentChangesRow;
 use IContextSource;
@@ -15,6 +16,9 @@ class FlowDiscordFormatter extends FlowChangesListFormatter {
 	protected function getHistoryType() {
 		return '';
 	}
+
+	/** @var bool */
+	public $plaintext = false;
 
 	/**
 	 * @inheritDoc
@@ -43,5 +47,28 @@ class FlowDiscordFormatter extends FlowChangesListFormatter {
 		$permissions = MediaWikiServices::getInstance()->getService( 'FlowPermissions' );
 		$revisionFormatter = Container::get( 'formatter.revision.factory' )->create();
 		return new self( $permissions, $revisionFormatter );
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function getDescriptionParams( array $data, FlowActions $actions, $changeType ) {
+		if ( !$this->plaintext ) {
+			return parent::getDescriptionParams( $data,  $actions, $changeType );
+		}
+		$source = $actions->getValue( $changeType, 'history', 'i18n-params' );
+		$params = [];
+		foreach ( $source as $param ) {
+			if ( isset( $data['properties'][$param] ) ) {
+				$params[] = $param == 'user-links' ?
+					$data['properties']['user-text'] : $data['properties'][$param];
+			} else {
+				wfDebugLog( 'Flow', __METHOD__ .
+					": Missing expected parameter $param for change type $changeType" );
+				$params[] = '';
+			}
+		}
+
+		return $params;
 	}
 }

@@ -72,9 +72,9 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerDiscordUserText
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::getDiscordUserTextWithTools
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makeUserTextWithTools
 	 */
-	public function testGetDiscordUserTextWithTools( array $globals, array $userTools, string $name, string $regex,
+	public function testMakeUserTextWithTools( array $globals, array $userTools, string $name, string $regex,
 		string $message = '' ) {
 		$this->setMwGlobals( $globals );
 		$linkRenderer = new DiscordLinker( $userTools );
@@ -83,7 +83,7 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 		$user->addToDatabase();
 		$this->assertRegExp(
 			$regex,
-			$linkRenderer->getDiscordUserTextWithTools( $user ),
+			$linkRenderer->makeUserTextWithTools( $user ),
 			$message
 		);
 	}
@@ -131,9 +131,9 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 
 	/**
 	 * @dataProvider providerDiscordPageText
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::getDiscordPageTextWithTools
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makePageTextWithTools
 	 */
-	public function testGetDiscordPageTextWithTools( array $globals, array $pageTools, string $titleText,
+	public function testMakePageTextWithTools( array $globals, array $pageTools, string $titleText,
 		array $params, string $expected ) {
 		$this->setMwGlobals( $globals );
 		$linkRenderer = new DiscordLinker( null, $pageTools );
@@ -142,7 +142,7 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertSame(
 			$expected,
-			$linkRenderer->getDiscordPageTextWithTools( $title, ...$params )
+			$linkRenderer->makePageTextWithTools( $title, ...$params )
 		);
 	}
 
