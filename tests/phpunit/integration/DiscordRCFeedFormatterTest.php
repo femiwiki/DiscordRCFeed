@@ -66,7 +66,7 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 				$feed,
 				0x0000ff,
 				'message',
-				'comment',
+				'comment'
 			)
 		);
 	}
