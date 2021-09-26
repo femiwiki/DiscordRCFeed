@@ -31,17 +31,17 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 		return [
 			[
 				'{"embeds": [ { "color" : 255 ,"description" : "message"} ], "username": "TestWiki"}',
-				[],
+				'',
 				[],
 			],
 			[
 				'{"embeds": [ { "color" : 255 ,"description" : "message"} ], "username": "FooWiki"}',
-				[ 'wgSitename' => 'FooWiki' ],
+				'FooWiki',
 				[],
 			],
 			[
 				'{"embeds": [ { "color" : 255 ,"description" : "message"} ], "username": "DummyBot"}',
-				[],
+				'',
 				[ 'request_replace' => [ 'username' => 'DummyBot' ] ],
 			],
 		];
@@ -51,9 +51,14 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter::makePostData
 	 * @dataProvider providerEmbed
 	 */
-	public function testMakePostData( string $expected, array $globals, array $feed ) {
-		$this->setMwGlobals( $globals );
-		MediaWikiServices::addDefaultValues( $feed );
+	public function testMakePostData( string $expected, string $sitename, array $feed ) {
+		if ( $sitename ) {
+			$this->setMwGlobals( 'wgSitename', $sitename );
+		}
+		$defaultParams = [
+			'style' => 'embed',
+		];
+		MediaWikiServices::initializeParameters( $feed, $defaultParams );
 		$this->assertJsonStringEqualsJsonString(
 			$expected,
 			$this->wrapper->makePostData(
