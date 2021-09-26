@@ -30,42 +30,42 @@ class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
 			}
 
 			// Don't send RC_CATEGORIZE events (same as T127360)
-			if ( !isset( $wgRCFeeds[$feedKey]['omit_types'] ) ) {
-				$wgRCFeeds[$feedKey]['omit_types'] = [ RC_CATEGORIZE ];
-			} elseif ( !in_array( RC_CATEGORIZE, $wgRCFeeds[$feedKey]['omit_types'] ) ) {
-				$wgRCFeeds[$feedKey]['omit_types'][] = RC_CATEGORIZE;
-			}
-
-			// Makes sure always being array.
-			$mustBeArray = [
-				'omit_namespaces',
-				'omit_types',
-				'omit_log_types',
-				'omit_log_actions',
+			$replacingArray = [
+				'omit_types' => [ RC_CATEGORIZE ],
 			];
-			foreach ( $mustBeArray as $param ) {
-				if ( isset( $wgRCFeeds[$feedKey][$param] ) ) {
-					if ( !is_array( $wgRCFeeds[$feedKey][$param] ) ) {
-						$wgRCFeeds[$feedKey][$param] = [ $wgRCFeeds[$feedKey][$param] ];
-					}
-				} else {
-					$wgRCFeeds[$feedKey][$param] = [];
-				}
-			}
 
-			self::addDefaultValues( $wgRCFeeds[$feedKey] );
+			self::initializeParameters( $wgRCFeeds[$feedKey], Constants::DEFAULT_RC_FEED_PARAMS, $replacingArray );
 		}
 	}
 
 	/**
-	 * Sets default values for feed
 	 * @param array &$feed
+	 * @param array|null $defaultParameters
+	 * @param array|null $mergeParameters
 	 */
-	public static function addDefaultValues( &$feed ) {
-		foreach ( Constants::DEFAULT_RC_FEED_PARAMS as $paramKey => $param ) {
-			if ( !isset( $feed[$paramKey] ) || empty( $feed[$paramKey] ) ) {
-				$feed[$paramKey] = $param;
+	public static function initializeParameters( &$feed, $defaultParameters = null, $mergeParameters = null ) {
+		// Makes sure always being array.
+		$mustBeArray = [
+			'omit_namespaces',
+			'omit_types',
+			'omit_log_types',
+			'omit_log_actions',
+		];
+		foreach ( $mustBeArray as $param ) {
+			if ( isset( $feed[$param] ) ) {
+				if ( !is_array( $feed[$param] ) ) {
+					$feed[$param] = [ $feed[$param] ];
+				}
+			} else {
+				$feed[$param] = [];
 			}
+		}
+
+		if ( $defaultParameters ) {
+			$feed = array_replace_recursive( $defaultParameters, $feed );
+		}
+		if ( $mergeParameters ) {
+			$feed = array_merge_recursive( $feed, $mergeParameters );
 		}
 	}
 }
