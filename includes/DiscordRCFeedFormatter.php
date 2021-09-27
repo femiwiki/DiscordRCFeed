@@ -9,83 +9,36 @@ use LogFormatter;
 use MediaWiki\MediaWikiServices;
 use RCFeedFormatter;
 use RecentChange;
+use Sanitizer;
+use Title;
+use User;
 
 class DiscordRCFeedFormatter implements RCFeedFormatter {
+
+	/** @var DiscordLinker */
+	private $linker;
+
+	/** @var HtmlToDiscordConverter */
+	private $converter;
 
 	/**
 	 * @inheritDoc
 	 */
-	public function getLine( array $feed, RecentChange $rc, $comment ) {
+	public function getLine( array $feed, RecentChange $rc, $actionComment ) {
 		$attribs = $rc->getAttributes();
 		$rcType = $attribs['rc_type'];
-		$user = $rc->getPerformer();
-		$titleObj = $rc->getTitle();
 		if (
 			in_array( $rcType, $feed['omit_types'] )
-			|| in_array( $titleObj->getNamespace(), $feed['omit_namespaces'] )
+			|| in_array( $rc->getTitle()->getNamespace(), $feed['omit_namespaces'] )
 		) {
 			return null;
 		}
 
-		$linkRenderer = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
-		$converter = new HtmlToDiscordConverter( $linkRenderer );
 		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
-			$flag = '';
-			if ( $attribs['rc_minor'] ) {
-				$flag .= '-minor';
-			}
-			if ( $attribs['rc_bot'] ) {
-				$flag .= '-bot';
-			}
-
-			if ( $rcType == RC_NEW ) {
-				$emoji = Util::msg( 'discordrcfeed-emoji-log-create-create' );
-				$desc = 'logentry-create-create';
-			} else {
-				// i18n messages:
-				//  discordrcfeed-emoji-edit
-				//  discordrcfeed-emoji-edit-minor
-				//  discordrcfeed-emoji-edit-bot
-				//  discordrcfeed-emoji-edit-minor-bot
-				$emoji = Util::msg( 'discordrcfeed-emoji-edit' . $flag );
-			}
-
-			$szdiff = self::getSizeDiff( $attribs );
-
-			// i18n messages:
-			//  discordrcfeed-emoji-edit
-			//  discordrcfeed-emoji-edit-minor
-			//  discordrcfeed-emoji-edit-bot
-			//  discordrcfeed-emoji-edit-minor-bot
-			$desc = wfMessage( 'discordrcfeed-line-edit' . $flag );
-			$params = [
-				// $1: username
-				$linkRenderer->getDiscordUserTextWithTools( $user ),
-				// $2: username for GENDER
-				$user->getName(),
-				// $3
-				$linkRenderer->getDiscordPageTextWithTools( $titleObj, $attribs['rc_this_oldid'],
-					$attribs['rc_last_oldid'] ?? null ),
-			];
-			$desc = $desc->params( ...$params )->inContentLanguage()->text();
+			$color = Constants::COLOR_MAP_ACTION[$rcType] ?? Constants::COLOR_DEFAULT;
 
 			$store = MediaWikiServices::getInstance()->getCommentStore();
 			$comment = $store->getComment( 'rc_comment', $attribs )->text;
-			if ( $comment ) {
-				$comment = Util::msg( 'parentheses', $comment );
-			}
-
-			$fullString = implode( ' ', array_filter( [
-				$emoji,
-				$desc,
-				$szdiff,
-				$comment
-			] ) );
-			if ( isset( Constants::COLOR_MAP_ACTION[$rcType] ) ) {
-				$color = Constants::COLOR_MAP_ACTION[$rcType];
-			} else {
-				$color = Constants::COLOR_DEFAULT;
-			}
 		} elseif ( $rcType == RC_LOG ) {
 			$logType = $attribs['rc_log_type'];
 			$logAction = $attribs['rc_log_action'];
@@ -96,58 +49,149 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			}
 
 			$color = Constants::COLOR_MAP_LOG[$logType] ?? Constants::COLOR_MAP_ACTION[RC_LOG];
+			$comment = $attribs['rc_comment'];
+		} elseif ( self::isFlowLoaded() && $rcType == RC_FLOW ) {
+			$color = Constants::COLOR_ACTION_FLOW;
+			$comment = '';
+		} else {
+			return null;
+		}
+
+		$this->linker = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
+		$this->converter = new HtmlToDiscordConverter( $this->linker );
+		$desc = $this->getDescription( $feed, $rc, $feed['style'] != 'structure' );
+		if ( !$desc ) {
+			return null;
+		}
+		if ( defined( 'MW_VERSION' ) && version_compare( MW_VERSION, '1.37', '>=' ) ) {
+			$title = Title::castFromPageReference( $rc->getPage() );
+		} else {
+			$title = $rc->getTitle();
+		}
+		return $this->makePostData( $attribs, $feed, $color, $desc, $comment,
+			User::newFromIdentity( $rc->getPerformerIdentity() ), $title );
+	}
+
+	/**
+	 * @param array $feed
+	 * @param RecentChange $rc
+	 * @param bool $includeTools
+	 * @return string
+	 */
+	private function getDescription( array $feed, RecentChange $rc, bool $includeTools = true ): string {
+		$attribs = $rc->getAttributes();
+		$rcType = $attribs['rc_type'];
+		$user = User::newFromIdentity( $rc->getPerformerIdentity() );
+		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
+			$flag = '';
+			if ( $attribs['rc_minor'] ) {
+				$flag .= '-minor';
+			}
+			if ( $attribs['rc_bot'] ) {
+				$flag .= '-bot';
+			}
+
+			if ( $rcType == RC_NEW ) {
+				$emoji = Util::msgText( 'discordrcfeed-emoji-log-create-create' );
+				$desc = 'logentry-create-create';
+			} else {
+				// i18n messages:
+				//  discordrcfeed-emoji-edit
+				//  discordrcfeed-emoji-edit-minor
+				//  discordrcfeed-emoji-edit-bot
+				//  discordrcfeed-emoji-edit-minor-bot
+				$emoji = Util::msgText( 'discordrcfeed-emoji-edit' . $flag );
+				// i18n messages:
+				//  discordrcfeed-emoji-edit
+				//  discordrcfeed-emoji-edit-minor
+				//  discordrcfeed-emoji-edit-bot
+				//  discordrcfeed-emoji-edit-minor-bot
+				$desc = 'discordrcfeed-line-edit' . $flag;
+			}
+			$desc = wfMessage( $desc );
+
+			$titleObj = $rc->getTitle();
+			if ( $includeTools ) {
+				$params = [
+					// $1: username
+					$this->linker->makeUserTextWithTools( $user ),
+					// $2: username for GENDER
+					$user->getName(),
+					// $3
+					$this->linker->makePageTextWithTools( $titleObj, $attribs['rc_this_oldid'],
+					$attribs['rc_last_oldid'] ?? null ),
+				];
+			} else {
+				$params = [
+					// $1: username
+					$user->getName(),
+					// $2: username for GENDER
+					$user->getName(),
+					// $3
+					$titleObj->getFullText(),
+				];
+			}
+			$desc = $desc->params( ...$params )->inContentLanguage()->text();
+		} elseif ( $rcType == RC_LOG ) {
+			$logType = $attribs['rc_log_type'];
+			$logAction = $attribs['rc_log_action'];
 
 			$emoji = self::getEmojiForLog( $logType, $logAction );
 
 			$formatter = LogFormatter::newFromRow( $attribs );
 			$formatter->setContext( Util::getContentLanguageContext() );
-			$desc = $formatter->getActionText();
-			$desc = $converter->convert( $desc );
-
-			$comment = $attribs['rc_comment'];
-			if ( $comment ) {
-				$comment = Util::msg( 'parentheses', $comment );
+			if ( $includeTools ) {
+				$desc = $formatter->getActionText();
+				$desc = $this->converter->convert( $desc );
+			} else {
+				$desc = $formatter->getPlainActionText();
+				$desc = preg_replace( '/\[\[|\]\]/', '"', $desc );
 			}
 
-			$fullString = implode( ' ', array_filter( [
-				$emoji,
-				$desc,
-				$comment,
-			] ) );
-		} elseif ( ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) && $rcType == RC_FLOW ) {
-			$emoji = Util::msg( 'discordrcfeed-emoji-flow' );
+			$comment = $attribs['rc_comment'];
+		} elseif ( self::isFlowLoaded() && $rcType == RC_FLOW ) {
+			$emoji = Util::msgText( 'discordrcfeed-emoji-flow' );
 
-			$flowFormatter = FlowDiscordFormatter::getInstance();
+			$formatter = FlowDiscordFormatter::getInstance();
+			$formatter->plaintext = !$includeTools;
 			$query = Container::get( 'query.changeslist' );
 			$changesList = new ChangesList( Util::getContentLanguageContext() );
-			$row = $query->getResult( $changesList, $rc, );
-			$desc = $flowFormatter->format( $row, $changesList );
-			$desc = $converter->convert( $desc );
+			$row = $query->getResult( $changesList, $rc );
+			$desc = $formatter->format( $row, $changesList );
+			if ( $includeTools ) {
+				$desc = $this->converter->convert( $desc );
+			} else {
+				$desc = Sanitizer::stripAllTags( $desc );
+			}
 
-			$szdiff = self::getSizeDiff( $attribs );
-
-			$fullString = implode( ' ', [
-				$emoji,
-				$desc,
-				$szdiff,
-			] );
 			$color = Constants::COLOR_ACTION_FLOW;
 		} else {
-			return null;
+			return '';
 		}
-		return self::makePostData( $feed, $fullString, $color );
+
+		return "$emoji $desc";
 	}
 
 	/**
 	 * @param mixed $attribs
-	 * @return string
+	 * @param bool $diffOnly
+	 * @return string|array
 	 */
-	private static function getSizeDiff( $attribs ): string {
-		if ( $attribs['rc_old_len'] !== null && $attribs['rc_new_len'] !== null ) {
+	private static function getSizeDiff( $attribs, $diffOnly ) {
+		if (
+			isset( $attribs['rc_old_len'] ) && isset( $attribs['rc_new_len'] )
+			&& $attribs['rc_old_len'] !== null && $attribs['rc_new_len'] !== null
+		) {
 			$szdiff = $attribs['rc_new_len'] - $attribs['rc_old_len'];
-			return wfMessage( 'historysize' )->numParams( $szdiff )->inContentLanguage()->text();
+			if ( $diffOnly ) {
+				return wfMessage( 'nbytes' )->numParams( $szdiff )->inContentLanguage()->text();
+			} else {
+				$newLen = wfMessage( 'nbytes' )->numParams( $attribs['rc_new_len'] )->inContentLanguage()->text();
+				$szdiff = ( $szdiff > 0 ? '+' : '' ) . strval( $szdiff );
+				return [ $newLen, $szdiff ];
+			}
 		}
-		return '';
+		return $diffOnly ? '' : [ '', '' ];
 	}
 
 	/**
@@ -170,31 +214,106 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	}
 
 	/**
+	 * https://discord.com/developers/docs/resources/webhook#execute-webhook
+	 * @param array $attribs
 	 * @param array $feed
-	 * @param string $description message to be sent.
 	 * @param int $color
+	 * @param string $desc
+	 * @param string $comment
+	 * @param User|null $performer
+	 * @param Title|null $title
 	 * @return string
 	 */
-	private static function makePostData( array $feed, string $description,
-		int $color = Constants::COLOR_DEFAULT ): string {
+	private function makePostData(
+		array $attribs,
+		array $feed,
+		int $color = Constants::COLOR_DEFAULT,
+		string $desc = '',
+		string $comment = '',
+		User $performer = null,
+		Title $title = null
+	): string {
 		global $wgSitename;
+		$style = $feed['style'];
+
+		if ( $style == 'structure' ) {
+			list( $size, $szdiff ) = self::getSizeDiff( $attribs, false );
+		} else {
+			$comment = $comment ? Util::msgText( 'parentheses', $comment ) : '';
+			$szdiff = self::getSizeDiff( $attribs, true );
+			$szdiff = $szdiff ? Util::msgText( 'parentheses', $szdiff ) : '';
+		}
+
+		$fullString = implode( ' ', array_filter( [
+			$desc,
+			$comment,
+			$szdiff,
+		] ) );
 
 		$post = [
 			'username' => $wgSitename,
 		];
-		if ( $feed['style'] == 'embed' ) {
-			$post['embeds'] = [
-				[
-					'color' => $color,
-					'description' => $description,
-				],
-			];
-		} else {
-			$post['content'] = $description;
+		switch ( $feed['style'] ) {
+			case 'embed':
+				$post['embeds'] = [
+					[
+						'color' => $color,
+						'description' => $fullString,
+					],
+				];
+				break;
+			case 'inline':
+				$post['content'] = $fullString;
+				break;
+			case 'structure':
+				$post['embeds'] = [
+					[
+						'color' => $color,
+						'description' => $desc,
+						'fields' => [],
+					],
+				];
+				if ( $performer ) {
+					$post['embeds'][0]['fields'][] = [
+						'name' => $performer->getName(),
+						'value' => $this->linker->makeUserTools( $performer, PHP_EOL ),
+						'inline' => true,
+					];
+				}
+				if ( $title ) {
+					$post['embeds'][0]['fields'][] = [
+						'name' => $title->getFullText(),
+						'value' => $this->linker->makePageTools( $title, $attribs['rc_this_oldid'],
+							$attribs['rc_last_oldid'] ?? null, PHP_EOL ),
+						'inline' => true,
+					];
+				}
+				if ( isset( $size ) && $size ) {
+					$post['embeds'][0]['fields'][] = [
+						'name' => Util::msgText( 'listfiles_size' ),
+						'value' => "$size" . PHP_EOL . Util::msgText( 'parentheses', $szdiff ),
+						'inline' => true,
+					];
+				}
+				if ( $comment ) {
+					$post['embeds'][0]['fields'][] = [
+						'name' => Util::msgText( 'summary' ),
+						'value' => $comment,
+						'inline' => true,
+					];
+				}
+				break;
 		}
 		if ( isset( $feed['request_replace'] ) ) {
 			$post = array_replace_recursive( $post, $feed['request_replace'] );
 		}
 		return json_encode( $post );
+	}
+
+	/**
+	 * @return bool
+	 */
+	private static function isFlowLoaded(): bool {
+		return ExtensionRegistry::getInstance()->isLoaded( 'Flow' );
 	}
 }

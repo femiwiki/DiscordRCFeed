@@ -57,7 +57,7 @@ class HtmlToDiscordConverter {
 				if ( !$user ) {
 					continue;
 				}
-				$replace = $this->linker->getDiscordUserTextWithTools( $user );
+				$replace = $this->linker->makeUserTextWithTools( $user );
 				$text = str_replace( $fullMatch, $replace, $text );
 			}
 		}
@@ -87,7 +87,7 @@ class HtmlToDiscordConverter {
 					continue;
 				}
 				if ( self::shouldIncludeTitleLinks( $title ) ) {
-					$replace = $this->linker->getDiscordPageTextWithTools( $title );
+					$replace = $this->linker->makePageTextWithTools( $title );
 				} else {
 					$replace = DiscordLinker::makeLink( $title->getFullURL(), $label );
 				}

@@ -12,6 +12,7 @@ Breaking changes:
 Others:
 
 - Fixed bug that the array type default parameters are ignored.
+- A new parameter for `'style'`, `'structure'` is added.
 
 ## v0.1.2
 

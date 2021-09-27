@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
+namespace MediaWiki\Extension\DiscordRCFeed\Tests\Unit;
 
 use MediaWiki\Extension\DiscordRCFeed\MediaWikiServices;
 use MediaWikiUnitTestCase;
