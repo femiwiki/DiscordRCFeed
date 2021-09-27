@@ -120,8 +120,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 					// $2: username for GENDER
 					$user->getName(),
 					// $3
-					$this->linker->makePageTextWithTools( $titleObj, $attribs['rc_this_oldid'],
-					$attribs['rc_last_oldid'] ?? null ),
+					$this->linker->makePageTextWithTools( $titleObj ),
 				];
 			} else {
 				$params = [

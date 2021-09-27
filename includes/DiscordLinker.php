@@ -1,6 +1,8 @@
 <?php
 namespace MediaWiki\Extension\DiscordRCFeed;
 
+use MediaWiki\MediaWikiServices;
+use RevisionStore;
 use SpecialPage;
 use Title;
 use User;
@@ -30,7 +32,7 @@ class DiscordLinker {
 	private static function makeTools( array $tools, callable $makeLink, $sep = null ) {
 		$links = [];
 		foreach ( $tools as $tool ) {
-			$link = $makeLink( $tool['target'] );
+			$link = $makeLink( $tool );
 			if ( !$link ) {
 				continue;
 			}
@@ -49,11 +51,11 @@ class DiscordLinker {
 	public function makeUserTools( User $user, $sep = null, $includeSelf = false ): string {
 		return self::makeTools(
 			$this->userTools,
-			static function ( $target ) use ( $user, $includeSelf ) {
-				if ( $target == 'user_page' && !$includeSelf ) {
+			static function ( $tool ) use ( $user, $includeSelf ) {
+				if ( $tool['target'] == 'user_page' && !$includeSelf ) {
 					return null;
 				}
-				if ( $target == 'talk' ) {
+				if ( $tool['target'] == 'talk' ) {
 					return $user->getTalkPage()->getFullURL();
 				}
 				return SpecialPage::getTitleFor( $tool['special'], $user->getName() )->getFullURL();
@@ -71,15 +73,22 @@ class DiscordLinker {
 	public function makePageTools( Title $title, $sep = null, $includeSelf = false ): string {
 		return self::makeTools(
 			$this->pageTools,
-			static function ( $target ) use ( $title, $includeSelf ) {
-				if ( $target == 'view' && !$includeSelf ) {
+			static function ( $tool ) use ( $title, $includeSelf ) {
+				if ( $tool['target'] == 'view' && !$includeSelf ) {
 					return null;
 				} elseif ( $tool['target'] == 'diff' ) {
-					$lastOldId = $title->getLatestRevID();
-					if ( $lastOldId === 0 ) {
+					$store = MediaWikiServices::getInstance()->getRevisionStore();
+					$revision = $store->getRevisionByTitle( $title );
+					if ( !$revision ) {
 						return null;
 					}
-					return $title->getFullURL( "oldid=$lastOldId&diff=next" );
+					$parentId = $revision->getParentId();
+					if ( !$parentId ) {
+						// New page, skips diff
+						return null;
+					}
+					$revisionId = $revision->getId();
+					return $title->getFullURL( "oldid=$revisionId&diff=prev" );
 				}
 				return $title->getFullURL( $tool['query'] );
 			},
