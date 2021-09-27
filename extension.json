@@ -15,11 +15,11 @@
     "DiscordRCFeed": ["i18n"]
   },
   "Hooks": {
-    "MediaWikiServices": "MediaWikiServices"
+    "MediaWikiServices": "main"
   },
   "HookHandlers": {
-    "MediaWikiServices": {
-      "class": "MediaWiki\\Extension\\DiscordRCFeed\\MediaWikiServices"
+    "main": {
+      "class": "MediaWiki\\Extension\\DiscordRCFeed\\FeedSanitizer"
     }
   },
   "TestAutoloadNamespaces": {

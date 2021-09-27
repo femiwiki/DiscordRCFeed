@@ -37,7 +37,22 @@ final class Constants {
 		],
 		'omit_log_types' => [
 			'patrol',
-		]
+		],
+		'omit_talk' => false,
+		'only_talk' => false,
+	];
+
+	public const RC_FEED_MUST_BE_ARRAY_PARAMS = [
+		'omit_namespaces',
+		'omit_types',
+		'omit_log_types',
+		'omit_log_actions',
+		'omit_usernames',
+		'only_usernames',
+		'omit_pages',
+		'only_pages',
+		'omit_content_models',
+		'only_content_models',
 	];
 
 	private const COLOR_GRAY = 0xb3b4bc;

@@ -3,11 +3,11 @@
 namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
 use MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter;
-use MediaWiki\Extension\DiscordRCFeed\MediaWikiServices;
+use MediaWiki\Extension\DiscordRCFeed\FeedSanitizer;
 use MediaWikiIntegrationTestCase;
 use MessageCache;
 use RecentChange;
-use User;
+use Title;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -67,7 +67,9 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 		$defaultParams = [
 			'style' => 'embed',
 		];
-		MediaWikiServices::initializeParameters( $feed, $defaultParams );
+		FeedSanitizer::initializeParameters( $feed, $defaultParams );
+		$user = $this->getTestSysop()->getUser();
+		$user->setName( 'Dummy' );
 		$this->assertJsonStringEqualsJsonString(
 			$expected,
 			$this->wrapper->makePostData(
@@ -75,74 +77,11 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 				$feed,
 				0x0000ff,
 				'message',
-				'comment'
+				'comment',
+				$user,
+				Title::newFromText( 'Dummy' )
 			)
 		);
-	}
-
-	public static function providerGetLineOmittance() {
-		return [
-			[
-				[
-					'omit_namespaces' => [ NS_TALK ],
-				],
-				[
-					'rc_namespace' => NS_TALK,
-				],
-				'should omit the given namespaces'
-			],
-			[
-				[],
-				[
-					'rc_type' => RC_CATEGORIZE,
-				],
-				'should omit RC_CATEGORIZE change always'
-			],
-			[
-				[
-					'omit_log_types' => 'patrol',
-				],
-				[
-					'rc_type' => RC_LOG,
-					'rc_log_type' => 'patrol',
-					'rc_log_action' => 'patrol',
-				],
-				'should omit the given log types'
-			],
-			[
-				[
-					'omit_log_actions' => 'patrol/patrol-auto',
-				],
-				[
-					'rc_type' => RC_LOG,
-					'rc_log_type' => 'patrol',
-					'rc_log_action' => 'patrol-auto',
-				],
-				'should omit the given log action'
-			],
-		];
-	}
-
-	/**
-	 * @dataProvider providerGetLineOmittance
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter::getLine
-	 */
-	public function testOmitChanges( array $feed, array $attribs, string $message = '' ) {
-		// Provide mandatory parameters if not given
-		$attribs = array_replace_recursive( [
-			'rc_namespace' => NS_MAIN,
-			'rc_title' => 'Test page',
-			'rc_type' => RC_EDIT,
-		], $attribs );
-		MediaWikiServices::initializeParameters( $feed, [
-			'style' => 'embed',
-			'user_tools' => [],
-			'page_tools' => [],
-		], [ 'omit_types' => [ RC_CATEGORIZE ] ] );
-
-		$rc = self::makeRecentChange( $attribs );
-		$rt = $this->formatter->getLine( $feed, $rc, '' );
-		$this->assertNull( $rt, $message );
 	}
 
 	public static function providerGetDescription() {
@@ -178,9 +117,9 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testGetDescription( array $expected, array $feed, array $attribs, string $message = '' ) {
 		// Provide mandatory parameters if not given
-		$testUser = new User();
+		$testUser = $this->getTestSysop()->getUser();
 		$testUser->setName( 'GetDescriptionTestUser' );
-		$testUser->addToDatabase();
+		$title = Title::newFromText( 'Test page' );
 		$attribs = array_replace_recursive( [
 			'rc_minor' => false,
 			'rc_bot' => false,
@@ -188,11 +127,11 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 			'rc_namespace' => NS_MAIN,
 			'rc_title' => 'Test page',
 		], $attribs );
-		MediaWikiServices::initializeParameters( $feed, [], [] );
+		FeedSanitizer::initializeParameters( $feed );
 
 		$rc = self::makeRecentChange( $attribs );
 		$this->setContentLang( 'qqx' );
-		$rt = $this->wrapper->getDescription( $feed, $rc, '' );
+		$rt = $this->wrapper->getDescription( $feed, $rc, false, $testUser, $title );
 		foreach ( $expected as $key ) {
 			$this->assertStringContainsString( $key, $rt, $message );
 		}

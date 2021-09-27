@@ -29,18 +29,8 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	public function getLine( array $feed, RecentChange $rc, $actionComment ) {
 		$attribs = $rc->getAttributes();
 		$rcType = $attribs['rc_type'];
-		if ( defined( 'MW_VERSION' ) && version_compare( MW_VERSION, '1.37', '>=' ) ) {
-			// @phan-suppress-next-line PhanUndeclaredMethod, PhanUndeclaredStaticMethod
-			$title = Title::castFromPageReference( $rc->getPage() );
-		} else {
-			$title = $rc->getTitle();
-		}
-		if (
-			in_array( $rcType, $feed['omit_types'] )
-			|| in_array( $rc->getTitle()->getNamespace(), $feed['omit_namespaces'] )
-		) {
-			return null;
-		}
+		$title = Util::getTitleFromRC( $rc );
+		$performer = Util::getPerformerFromRC( $rc );
 
 		$this->linker = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
 		$this->converter = new HtmlToDiscordConverter( $this->linker );
@@ -54,11 +44,6 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		} elseif ( $rcType == RC_LOG ) {
 			$logType = $attribs['rc_log_type'];
 			$logAction = $attribs['rc_log_action'];
-			if ( in_array( $logType, $feed['omit_log_types'] )
-				|| in_array( "$logType/$logAction", $feed['omit_log_actions'] )
-			) {
-				return null;
-			}
 
 			$color = Constants::COLOR_MAP_LOG[$logType] ?? Constants::COLOR_MAP_ACTION[RC_LOG];
 			$comment = $attribs['rc_comment'];
@@ -71,24 +56,27 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			return null;
 		}
 
-		$desc = $this->getDescription( $feed, $rc, $feed['style'] != 'structure' );
-		if ( !$desc ) {
-			return null;
-		}
-		return $this->makePostData( $attribs, $feed, $color, $desc, $comment,
-			User::newFromIdentity( $rc->getPerformerIdentity() ), $title );
+		$desc = $this->getDescription( $feed, $rc, $feed['style'] != 'structure', $performer, $title );
+		return $this->makePostData( $attribs, $feed, $color, $desc, $comment, $performer, $title );
 	}
 
 	/**
 	 * @param array $feed
 	 * @param RecentChange $rc
 	 * @param bool $includeTools
+	 * @param User|null $performer
+	 * @param Title|null $title
 	 * @return string
 	 */
-	private function getDescription( array $feed, RecentChange $rc, bool $includeTools = true ): string {
+	private function getDescription(
+		array $feed,
+		RecentChange $rc,
+		bool $includeTools = true,
+		User $performer = null,
+		Title $title = null
+	): string {
 		$attribs = $rc->getAttributes();
 		$rcType = $attribs['rc_type'];
-		$user = User::newFromIdentity( $rc->getPerformerIdentity() );
 		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$flag = '';
 			if ( $attribs['rc_minor'] ) {
@@ -117,24 +105,23 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			}
 			$desc = new Message( $desc );
 
-			$titleObj = $rc->getTitle();
 			if ( $includeTools ) {
 				$params = [
 					// $1: username
-					$this->linker->makeUserTextWithTools( $user ),
+					$this->linker->makeUserTextWithTools( $performer ),
 					// $2: username for GENDER
-					$user->getName(),
+					$performer->getName(),
 					// $3
-					$this->linker->makePageTextWithTools( $titleObj ),
+					$this->linker->makePageTextWithTools( $title ),
 				];
 			} else {
 				$params = [
 					// $1: username
-					$user->getName(),
+					$performer->getName(),
 					// $2: username for GENDER
-					$user->getName(),
+					$performer->getName(),
 					// $3
-					$titleObj->getFullText(),
+					$title->getFullText(),
 				];
 			}
 			$desc = $desc->params( ...$params )->inContentLanguage()->text();

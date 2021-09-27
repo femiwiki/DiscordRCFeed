@@ -2,7 +2,7 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed;
 
-class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
+class FeedSanitizer implements \MediaWiki\Hook\MediaWikiServicesHook {
 
 	/**
 	 * Modifies RC Feeds with keys start with 'discord'.
@@ -30,11 +30,16 @@ class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
 			}
 
 			// Don't send RC_CATEGORIZE events (same as T127360)
-			$replacingArray = [
+			$mergeParams = [
 				'omit_types' => [ RC_CATEGORIZE ],
 			];
 
-			self::initializeParameters( $wgRCFeeds[$feedKey], Constants::DEFAULT_RC_FEED_PARAMS, $replacingArray );
+			self::initializeParameters(
+				$wgRCFeeds[$feedKey],
+				Constants::DEFAULT_RC_FEED_PARAMS,
+				$mergeParams,
+				Constants::RC_FEED_MUST_BE_ARRAY_PARAMS
+			);
 		}
 	}
 
@@ -42,15 +47,15 @@ class MediaWikiServices implements \MediaWiki\Hook\MediaWikiServicesHook {
 	 * @param array &$feed
 	 * @param array|null $defaultParameters
 	 * @param array|null $mergeParameters
+	 * @param array $mustBeArray
 	 */
-	public static function initializeParameters( &$feed, $defaultParameters = null, $mergeParameters = null ) {
+	public static function initializeParameters(
+		&$feed,
+		$defaultParameters = null,
+		$mergeParameters = null,
+		$mustBeArray = []
+	) {
 		// Makes sure always being array.
-		$mustBeArray = [
-			'omit_namespaces',
-			'omit_types',
-			'omit_log_types',
-			'omit_log_actions',
-		];
 		foreach ( $mustBeArray as $param ) {
 			if ( isset( $feed[$param] ) ) {
 				if ( !is_array( $feed[$param] ) ) {

@@ -4,12 +4,11 @@ namespace MediaWiki\Extension\DiscordRCFeed;
 
 use Flow\Container;
 use Flow\FlowActions;
-use Flow\Formatter\ChangesListFormatter as FlowChangesListFormatter;
 use Flow\Formatter\RecentChangesRow;
 use IContextSource;
 use MediaWiki\MediaWikiServices;
 
-class FlowDiscordFormatter extends FlowChangesListFormatter {
+class FlowDiscordFormatter extends \Flow\Formatter\ChangesListFormatter {
 	/**
 	 * @inheritDoc
 	 */
