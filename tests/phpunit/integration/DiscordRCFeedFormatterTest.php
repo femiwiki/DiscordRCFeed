@@ -217,14 +217,14 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 				'should show if exact match does not exist'
 			],
 			[
-				'❓',
+				'🚀',
 				'random',
 				'random',
 				'test-emoji-rocket',
 				'should use the given fallback if no match is found'
 			],
 			[
-				'🚀',
+				'❓',
 				'random',
 				'random',
 				'',
