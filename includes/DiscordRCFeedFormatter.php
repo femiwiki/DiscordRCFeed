@@ -156,7 +156,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			$formatter->plaintext = !$includeTools;
 			$query = Container::get( 'query.changeslist' );
 			$changesList = new ChangesList( Util::getContentLanguageContext() );
-			$row = $query->getResult( $changesList, $rc, );
+			$row = $query->getResult( $changesList, $rc );
 			$desc = $formatter->format( $row, $changesList );
 			if ( $includeTools ) {
 				$desc = $this->converter->convert( $desc );
