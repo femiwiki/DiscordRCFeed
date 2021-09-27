@@ -33,12 +33,13 @@ class HtmlToDiscordConverter {
 
 	/**
 	 * @param string $text
+	 * @param bool $omitTools
 	 * @return string
 	 */
-	public function convert( string $text ): string {
+	public function convert( string $text, bool $omitTools = false ): string {
 		$text = $this->removeUserTools( $text );
 		$text = $this->convertUserName( $text );
-		$text = $this->convertTitleLinks( $text );
+		$text = $this->convertTitleLinks( $text, $omitTools );
 		$text = $this->convertLinks( $text );
 
 		$text = Sanitizer::stripAllTags( $text );
@@ -74,9 +75,10 @@ class HtmlToDiscordConverter {
 
 	/**
 	 * @param string $text
+	 * @param bool $omitTools
 	 * @return string
 	 */
-	private function convertTitleLinks( string $text ): string {
+	private function convertTitleLinks( string $text, bool $omitTools = false ): string {
 		if ( preg_match_all( self::REGEX_FOR_TITLE_LINK, $text, $matches ) ) {
 			foreach ( $matches[0] as $i => $fullMatch ) {
 				$url = $matches[1][$i];
@@ -86,7 +88,7 @@ class HtmlToDiscordConverter {
 				if ( !$title ) {
 					continue;
 				}
-				if ( self::shouldIncludeTitleLinks( $title ) ) {
+				if ( !$omitTools && self::shouldIncludeTitleLinks( $title ) ) {
 					$replace = $this->linker->makePageTextWithTools( $title );
 				} else {
 					$replace = DiscordLinker::makeLink( $title->getFullURL(), $label );
@@ -98,12 +100,12 @@ class HtmlToDiscordConverter {
 	}
 
 	/**
-	 * @param Title|null $title
+	 * @param Title $title
 	 * @return bool
 	 */
 	private static function shouldIncludeTitleLinks( $title ): bool {
-		if ( !$title ) {
-			return true;
+		if ( $title->hasFragment() ) {
+			return false;
 		}
 		if ( ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
 			if ( $title->getContentModel() == CONTENT_MODEL_FLOW_BOARD ) {
