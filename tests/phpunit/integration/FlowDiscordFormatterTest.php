@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\DiscordRCFeed\Tests\Unit;
+namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
 use MediaWiki\Extension\DiscordRCFeed\FlowDiscordFormatter;
 use MediaWikiIntegrationTestCase;
