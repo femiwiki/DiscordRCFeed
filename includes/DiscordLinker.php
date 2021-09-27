@@ -2,7 +2,6 @@
 namespace MediaWiki\Extension\DiscordRCFeed;
 
 use MediaWiki\MediaWikiServices;
-use RevisionStore;
 use SpecialPage;
 use Title;
 use User;
