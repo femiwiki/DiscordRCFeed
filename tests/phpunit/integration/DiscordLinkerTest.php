@@ -116,7 +116,6 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 				[ 'wgServer' => 'https://foo.bar' ],
 				[],
 				'Foo',
-				[],
 				'[Foo](https://foo.bar/index.php/Foo)',
 				'should be able to disable page tools'
 			],
@@ -124,7 +123,6 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 				[ 'wgServer' => 'https://foo.bar' ],
 				[],
 				'Foo&bar',
-				[],
 				'[Foo&bar](https://foo.bar/index.php/Foo%26bar)',
 				'should urlencode special characters'
 			],
@@ -132,18 +130,8 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 				[ 'wgServer' => 'https://foo.bar' ],
 				[ $editPageTool ],
 				'Foo',
-				[],
 				'[Foo](https://foo.bar/index.php/Foo) ([Edit](https://foo.bar/index.php?title=Foo&action=edit))',
 				'should render user tools'
-			],
-			[
-				[ 'wgServer' => 'https://foo.bar' ],
-				[ $editPageTool ],
-				'Foo',
-				[ 2, 1 ],
-				// phpcs:ignore Generic.Files.LineLength.TooLong
-				'[Foo](https://foo.bar/index.php/Foo) ([Edit](https://foo.bar/index.php?title=Foo&action=edit) | [diff](https://foo.bar/index.php?title=Foo&diff=2&oldid=1))',
-				'should render "Diff" if revision ids are given'
 			],
 		];
 	}
@@ -153,7 +141,7 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makePageTextWithTools
 	 */
 	public function testMakePageTextWithTools( array $globals, array $pageTools,
-		string $titleText, array $params, string $expected, $message = '' ) {
+		string $titleText, string $expected, $message = '' ) {
 		$this->setMwGlobals( $globals );
 		$linkRenderer = new DiscordLinker( null, $pageTools );
 		$page = $this->getExistingTestPage( $titleText );
@@ -161,7 +149,7 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 
 		$this->assertSame(
 			$expected,
-			$linkRenderer->makePageTextWithTools( $title, ...$params ),
+			$linkRenderer->makePageTextWithTools( $title ),
 			$message
 		);
 	}
