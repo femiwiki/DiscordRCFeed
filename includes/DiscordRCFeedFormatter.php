@@ -65,6 +65,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			return null;
 		}
 		if ( defined( 'MW_VERSION' ) && version_compare( MW_VERSION, '1.37', '>=' ) ) {
+			// @phan-suppress-next-line PhanUndeclaredMethod, PhanUndeclaredStaticMethod
 			$title = Title::castFromPageReference( $rc->getPage() );
 		} else {
 			$title = $rc->getTitle();
