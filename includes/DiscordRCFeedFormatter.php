@@ -186,7 +186,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			$szdiff = $attribs['rc_new_len'] - $attribs['rc_old_len'];
 			if ( $diffOnly ) {
 				$msg = ( new Message( 'nbytes' ) )->numParams( $szdiff );
-				return $msg->inContentLanguage()->text();
+				return ( $szdiff > 0 ? '+' : '' ) . $msg->inContentLanguage()->text();
 			} else {
 				$msg = ( new Message( 'nbytes' ) )->numParams( $attribs['rc_new_len'] );
 				$newLen = $msg->inContentLanguage()->text();
