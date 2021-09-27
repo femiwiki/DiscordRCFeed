@@ -81,8 +81,8 @@ class UtilTest extends MediaWikiIntegrationTestCase {
 		$mock = $this->createMock( MessageCache::class );
 		$mock->method( 'get' )
 			->will( $this->returnCallback(
-				static function ( $key, $_, $lang ) use ( $msgMap ) {
-					return $msgMap[$lang->getCode()][$key] ?? '';
+				static function ( $key, $useDB, $lang ) use ( $msgMap ) {
+					return $msgMap[$lang->getCode()][$key] ?? false;
 				}
 			)
 		);
@@ -90,10 +90,6 @@ class UtilTest extends MediaWikiIntegrationTestCase {
 			->will( $this->returnArgument( 0 ) );
 
 		$this->setService( 'MessageCache', $mock );
-		// $cache = \MediaWiki\MediaWikiServices::getInstance()->getMessageCache();
-		// fwrite( STDERR, $cache->get( 'test-prefix-block-block', null, null ) );
-		// fwrite( STDERR, get_class( $cache ) );
-		// $this->assertSame( '$1 blocked $2.', $cache->get( 'test-prefix-block-block', null, null ) );
 		$msg = Util::msgText( 'test-prefix-block-block' );
 		$this->assertNotEmpty( $msg, 'should return not empty value when valid key is given' );
 		$this->assertIsString( $msg, 'should return string value' );
