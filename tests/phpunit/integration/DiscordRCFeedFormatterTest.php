@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 use MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter;
 use MediaWiki\Extension\DiscordRCFeed\MediaWikiServices;
 use MediaWikiIntegrationTestCase;
+use MessageCache;
 use RecentChange;
 use User;
 use Wikimedia\TestingAccessWrapper;
@@ -197,5 +198,65 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 		}
 		$this->assertStringContainsString( 'GetDescriptionTestUser', $rt, $message );
 		$this->assertStringContainsString( 'Test page', $rt, $message );
+	}
+
+	public static function provideEmojiKeys(): array {
+		return [
+			[
+				'🔓',
+				'block',
+				'unblock',
+				'',
+				'should show if exact match exists'
+			],
+			[
+				'❌',
+				'block',
+				'reblock',
+				'',
+				'should show if exact match does not exist'
+			],
+			[
+				'🚀',
+				'random',
+				'random',
+				'test-emoji-rocket',
+				'should use the given fallback if no match is found'
+			],
+			[
+				'❓',
+				'random',
+				'random',
+				'',
+				'should only use prefix if no match is found and fallback is not given'
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider provideEmojiKeys
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter::getEmojiForKeys
+	 */
+	public function testGetEmojiForKeys( $expected, $mainKey, $subKey, $fallback, $message ) {
+		$msgMap = [
+			'test-emoji-block-unblock' => '🔓',
+			'test-emoji-block' => '❌',
+			'test-emoji-rocket' => '🚀',
+			'test-emoji' => '❓',
+		];
+		$mock = $this->createMock( MessageCache::class );
+		$mock->method( 'get' )
+			->will( $this->returnCallback(
+				static function ( $key, $useDB, $lang ) use ( $msgMap ) {
+					return $msgMap[$key] ?? false;
+				}
+			)
+		);
+		$mock->method( 'transform' )
+			->will( $this->returnArgument( 0 ) );
+		$this->setService( 'MessageCache', $mock );
+
+		$emoji = $this->wrapper->getEmojiForKeys( 'test-emoji', $mainKey, $subKey, $fallback );
+		$this->assertSame( $expected, $emoji, $message );
 	}
 }
