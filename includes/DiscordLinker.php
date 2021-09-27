@@ -1,6 +1,7 @@
 <?php
 namespace MediaWiki\Extension\DiscordRCFeed;
 
+use MediaWiki\MediaWikiServices;
 use SpecialPage;
 use Title;
 use User;
@@ -22,22 +23,78 @@ class DiscordLinker {
 	}
 
 	/**
-	 * @param User $user
+	 * @param array $tools
+	 * @param callable $makeLink
 	 * @param string|null $sep separator
 	 * @return string
 	 */
-	public function makeUserTools( User $user, $sep = null ): string {
-		$tools = [];
-		foreach ( $this->userTools as $tool ) {
-			if ( $tool['target'] == 'talk' ) {
-				$link = $user->getTalkPage()->getFullURL();
-			} else {
-				$link = SpecialPage::getTitleFor( $tool['special'], $user->getName() )->getFullURL();
+	private static function makeTools( array $tools, callable $makeLink, $sep = null ) {
+		$links = [];
+		foreach ( $tools as $tool ) {
+			$link = $makeLink( $tool );
+			if ( !$link ) {
+				continue;
 			}
-			$text = isset( $tool['msg'] ) ? Util::msgText( $tool['msg'] ) : $tool['text'];
-			$tools[] = self::makeLink( $link, $text );
+			$label = isset( $tool['msg'] ) ? Util::msgText( $tool['msg'] ) : $tool['text'];
+			$links[] = self::makeLink( $link, $label );
 		}
-		return implode( $sep ?: Util::msgText( 'pipe-separator' ), $tools );
+		return implode( $sep ?: Util::msgText( 'pipe-separator' ), $links );
+	}
+
+	/**
+	 * @param User $user
+	 * @param string|null $sep separator
+	 * @param bool $includeSelf
+	 * @return string
+	 */
+	public function makeUserTools( User $user, $sep = null, $includeSelf = false ): string {
+		return self::makeTools(
+			$this->userTools,
+			static function ( $tool ) use ( $user, $includeSelf ) {
+				if ( $tool['target'] == 'user_page' && !$includeSelf ) {
+					return null;
+				}
+				if ( $tool['target'] == 'talk' ) {
+					return $user->getTalkPage()->getFullURL();
+				}
+				return SpecialPage::getTitleFor( $tool['special'], $user->getName() )->getFullURL();
+			},
+			$sep
+		);
+	}
+
+	/**
+	 * @param Title $title
+	 * @param string|null $sep separator
+	 * @param bool $includeSelf
+	 * @return string
+	 */
+	public function makePageTools( Title $title, $sep = null, $includeSelf = false ): string {
+		return self::makeTools(
+			$this->pageTools,
+			static function ( $tool ) use ( $title, $includeSelf ) {
+				if ( isset( $tool['target'] ) ) {
+					if ( $tool['target'] == 'view' && !$includeSelf ) {
+						return null;
+					} elseif ( $tool['target'] == 'diff' ) {
+						$store = MediaWikiServices::getInstance()->getRevisionStore();
+						$revision = $store->getRevisionByTitle( $title );
+						if ( !$revision ) {
+							return null;
+						}
+						$parentId = $revision->getParentId();
+						if ( !$parentId ) {
+							// New page, skips diff
+							return null;
+						}
+						$revisionId = $revision->getId();
+						return $title->getFullURL( "oldid=$revisionId&diff=prev" );
+					}
+				}
+				return $title->getFullURL( $tool['query'] );
+			},
+			$sep
+		);
 	}
 
 	/**
@@ -57,37 +114,15 @@ class DiscordLinker {
 	}
 
 	/**
-	 * @param Title $title
-	 * @param int|null $thisOldId
-	 * @param int|null $lastOldId
-	 * @param string|null $sep separator
-	 * @return string
-	 */
-	public function makePageTools( Title $title, $thisOldId = null, $lastOldId = null, $sep = null ): string {
-		$tools = [];
-		foreach ( $this->pageTools as $tool ) {
-			$tools[] = self::makeLink( $title->getFullURL( $tool['query'] ),
-				Util::msgText( $tool['msg'] ) );
-		}
-		if ( $thisOldId && $lastOldId ) {
-			$tools[] = self::makeLink( $title->getFullURL( "diff=$thisOldId&oldid=$lastOldId" ),
-				Util::msgText( 'diff' ) );
-		}
-		return implode( $sep ?: Util::msgText( 'pipe-separator' ), $tools );
-	}
-
-	/**
 	 * Gets nice HTML text for article containing the link to article page
 	 * and also into edit, delete and article history pages.
 	 * @param Title $title
-	 * @param int|null $thisOldId
-	 * @param int|null $lastOldId
 	 * @return string
 	 */
-	public function makePageTextWithTools( Title $title, $thisOldId = null, $lastOldId = null ): string {
+	public function makePageTextWithTools( Title $title ): string {
 		$rt = self::makeLink( $title->getFullURL(), $title->getFullText() );
 		if ( $this->pageTools ) {
-			$tools = $this->makePageTools( $title, $thisOldId, $lastOldId );
+			$tools = $this->makePageTools( $title );
 			$tools = Util::msgText( 'parentheses', $tools );
 			$rt .= ' ' . $tools;
 		}
