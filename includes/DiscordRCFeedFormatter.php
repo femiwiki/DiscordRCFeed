@@ -285,15 +285,14 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				if ( $performer ) {
 					$post['embeds'][0]['fields'][] = [
 						'name' => $performer->getName(),
-						'value' => $this->linker->makeUserTools( $performer, PHP_EOL ),
+						'value' => $this->linker->makeUserTools( $performer, PHP_EOL, true ),
 						'inline' => true,
 					];
 				}
 				if ( $title ) {
 					$post['embeds'][0]['fields'][] = [
 						'name' => $title->getFullText(),
-						'value' => $this->linker->makePageTools( $title, $attribs['rc_this_oldid'],
-							$attribs['rc_last_oldid'] ?? null, PHP_EOL ),
+						'value' => $this->linker->makePageTools( $title, PHP_EOL, true ),
 						'inline' => true,
 					];
 				}

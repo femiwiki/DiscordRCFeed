@@ -8,13 +8,12 @@ final class Constants {
 		'style' => 'embed',
 		'user_tools' => [
 			[
-				'target' => 'talk',
-				'msg' => 'talkpagelinktext'
+				'target' => 'user_page',
+				'msg' => 'nstab-user'
 			],
 			[
-				'target' => 'special',
-				'special' => 'Block',
-				'msg' => 'blocklink'
+				'target' => 'talk',
+				'msg' => 'talkpagelinktext'
 			],
 			[
 				'target' => 'special',
@@ -24,8 +23,12 @@ final class Constants {
 		],
 		'page_tools' => [
 			[
-				'query' => 'action=edit',
-				'msg' => 'edit'
+				'target' => 'view',
+				'msg' => 'view'
+			],
+			[
+				'target' => 'diff',
+				'msg' => 'diff'
 			],
 			[
 				'query' => 'action=history',
