@@ -241,6 +241,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		} else {
 			$comment = $comment ? Util::msgText( 'parentheses', $comment ) : '';
 			$szdiff = self::getSizeDiff( $attribs, true );
+			$szdiff = $szdiff ? Util::msgText( 'parentheses', $szdiff ) : '';
 		}
 
 		$fullString = implode( ' ', array_filter( [
@@ -290,7 +291,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				if ( isset( $size ) && $size ) {
 					$post['embeds'][0]['fields'][] = [
 						'name' => Util::msgText( 'listfiles_size' ),
-						'value' => "$size " . Util::msgText( 'parentheses', $szdiff ),
+						'value' => "$size" . PHP_EOL . Util::msgText( 'parentheses', $szdiff ),
 						'inline' => true,
 					];
 				}
