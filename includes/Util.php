@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\DiscordRCFeed;
 
 use MediaWiki\Logger\LoggerFactory;
 use MediaWiki\MediaWikiServices;
+use Message;
 use MessageSpecifier;
 use Psr\Log\LoggerInterface;
 use RequestContext;
@@ -28,7 +29,12 @@ final class Util {
 	 * @return string
 	 */
 	public static function msgText( $key, ...$params ): string {
-		return wfMessage( $key, ...$params )->inContentLanguage()->text();
+		$message = new Message( $key );
+
+		if ( $params ) {
+			$message->params( ...$params );
+		}
+		return $message->inContentLanguage()->text();
 	}
 
 	/**

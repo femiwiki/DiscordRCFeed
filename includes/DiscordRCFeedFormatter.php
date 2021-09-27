@@ -7,6 +7,7 @@ use ExtensionRegistry;
 use Flow\Container;
 use LogFormatter;
 use MediaWiki\MediaWikiServices;
+use Message;
 use RCFeedFormatter;
 use RecentChange;
 use Sanitizer;
@@ -108,7 +109,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				//  discordrcfeed-emoji-edit-minor-bot
 				$desc = 'discordrcfeed-line-edit' . $flag;
 			}
-			$desc = wfMessage( $desc );
+			$desc = new Message( $desc );
 
 			$titleObj = $rc->getTitle();
 			if ( $includeTools ) {
@@ -184,9 +185,11 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		) {
 			$szdiff = $attribs['rc_new_len'] - $attribs['rc_old_len'];
 			if ( $diffOnly ) {
-				return wfMessage( 'nbytes' )->numParams( $szdiff )->inContentLanguage()->text();
+				$msg = ( new Message( 'nbytes' ) )->numParams( $szdiff );
+				return $msg->inContentLanguage()->text();
 			} else {
-				$newLen = wfMessage( 'nbytes' )->numParams( $attribs['rc_new_len'] )->inContentLanguage()->text();
+				$msg = ( new Message( 'nbytes' ) )->numParams( $attribs['rc_new_len'] );
+				$newLen = $msg->inContentLanguage()->text();
 				$szdiff = ( $szdiff > 0 ? '+' : '' ) . strval( $szdiff );
 				return [ $newLen, $szdiff ];
 			}
@@ -210,7 +213,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			$fallback ?: "$prefix",
 		] );
 		foreach ( $keys as $key ) {
-			$msg = wfMessage( $key );
+			$msg = new Message( $key );
 			if ( $msg->exists() ) {
 				return $msg->inContentLanguage()->text();
 			}
