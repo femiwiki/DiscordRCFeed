@@ -57,14 +57,26 @@ class DiscordRCFeedEngine extends FormattedRCFeed {
 		$attribs = $rc->mAttribs;
 		$logType = $attribs['rc_log_type'] ?? '';
 		$logAction = $attribs['rc_log_action'] ?? '';
+		$isTalk = MediaWikiServices::getInstance()->getNamespaceInfo()->
+			isTalk( $attribs['rc_namespace'] );
+		$title = Util::getTitleFromRC( $rc );
+		$contentModel = $title->getContentModel();
 		// unused now, for the future usage.
 		// $oldLen = $attribs['rc_old_len'] ?? '';
 		// $newLen = $attribs['rc_new_len'] ?? '';
 		if (
+			( $params['omit_talk'] && $isTalk ) ||
+			( $params['only_talk'] && !$isTalk ) ||
 			in_array( $attribs['rc_type'], $params['omit_types'] ) ||
 			in_array( $attribs['rc_namespace'], $params['omit_namespaces'] ) ||
 			in_array( $logType, $params['omit_log_types'] ) ||
-			in_array( "$logType/$logAction", $params['omit_log_actions'] )
+			in_array( "$logType/$logAction", $params['omit_log_actions'] ) ||
+			in_array( $attribs['rc_user_text'], $params['omit_usernames'] ) ||
+			( $params['only_usernames'] && !in_array( $attribs['rc_user_text'], $params['only_usernames'] ) ) ||
+			in_array( $title->getFullText(), $params['omit_pages'] ) ||
+			( $params['only_pages'] && !in_array( $title->getFullText(), $params['only_pages'] ) ) ||
+			in_array( $contentModel, $params['omit_content_models'] ) ||
+			( $params['only_content_models'] && !in_array( $contentModel, $params['only_content_models'] ) )
 		) {
 			return false;
 		}

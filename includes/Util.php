@@ -7,7 +7,10 @@ use MediaWiki\MediaWikiServices;
 use Message;
 use MessageSpecifier;
 use Psr\Log\LoggerInterface;
+use RecentChange;
 use RequestContext;
+use Title;
+use User;
 
 final class Util {
 	/** @var LoggerInterface */
@@ -69,5 +72,31 @@ final class Util {
 		$context = RequestContext::getMain();
 		$context->setLanguage( MediaWikiServices::getInstance()->getContentLanguage() );
 		return $context;
+	}
+
+	/**
+	 * @param RecentChange $rc
+	 * @return Title|null
+	 */
+	public static function getTitleFromRC( RecentChange $rc ) {
+		if ( defined( 'MW_VERSION' ) && version_compare( MW_VERSION, '1.37', '>=' ) ) {
+			// @phan-suppress-next-line PhanUndeclaredMethod, PhanUndeclaredStaticMethod
+			return Title::castFromPageReference( $rc->getPage() );
+		} else {
+			return $rc->getTitle();
+		}
+	}
+
+	/**
+	 * @param RecentChange $rc
+	 * @return User
+	 */
+	public static function getPerformerFromRC( RecentChange $rc ) {
+		if ( defined( 'MW_VERSION' ) && version_compare( MW_VERSION, '1.37', '>=' ) ) {
+			// @phan-suppress-next-line PhanUndeclaredMethod, PhanUndeclaredStaticMethod
+			return User::newFromIdentity( $rc->getPerformerIdentity() );
+		} else {
+			return $rc->getPerformer();
+		}
 	}
 }

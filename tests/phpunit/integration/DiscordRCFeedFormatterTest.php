@@ -3,11 +3,11 @@
 namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
 use MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter;
-use MediaWiki\Extension\DiscordRCFeed\MediaWikiServices;
+use MediaWiki\Extension\DiscordRCFeed\FeedSanitizer;
 use MediaWikiIntegrationTestCase;
 use MessageCache;
 use RecentChange;
-use User;
+use Title;
 use Wikimedia\TestingAccessWrapper;
 
 /**
@@ -67,7 +67,9 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 		$defaultParams = [
 			'style' => 'embed',
 		];
-		MediaWikiServices::initializeParameters( $feed, $defaultParams );
+		FeedSanitizer::initializeParameters( $feed, $defaultParams );
+		$user = $this->getTestSysop()->getUser();
+		$user->setName( 'Dummy' );
 		$this->assertJsonStringEqualsJsonString(
 			$expected,
 			$this->wrapper->makePostData(
@@ -75,7 +77,9 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 				$feed,
 				0x0000ff,
 				'message',
-				'comment'
+				'comment',
+				$user,
+				Title::newFromText( 'Dummy' )
 			)
 		);
 	}
@@ -113,9 +117,9 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testGetDescription( array $expected, array $feed, array $attribs, string $message = '' ) {
 		// Provide mandatory parameters if not given
-		$testUser = new User();
+		$testUser = $this->getTestSysop()->getUser();
 		$testUser->setName( 'GetDescriptionTestUser' );
-		$testUser->addToDatabase();
+		$title = Title::newFromText( 'Test page' );
 		$attribs = array_replace_recursive( [
 			'rc_minor' => false,
 			'rc_bot' => false,
@@ -123,11 +127,11 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 			'rc_namespace' => NS_MAIN,
 			'rc_title' => 'Test page',
 		], $attribs );
-		MediaWikiServices::initializeParameters( $feed, [], [] );
+		FeedSanitizer::initializeParameters( $feed );
 
 		$rc = self::makeRecentChange( $attribs );
 		$this->setContentLang( 'qqx' );
-		$rt = $this->wrapper->getDescription( $feed, $rc, '' );
+		$rt = $this->wrapper->getDescription( $feed, $rc, false, $testUser, $title );
 		foreach ( $expected as $key ) {
 			$this->assertStringContainsString( $key, $rt, $message );
 		}
