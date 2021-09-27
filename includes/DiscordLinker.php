@@ -73,21 +73,23 @@ class DiscordLinker {
 		return self::makeTools(
 			$this->pageTools,
 			static function ( $tool ) use ( $title, $includeSelf ) {
-				if ( $tool['target'] == 'view' && !$includeSelf ) {
-					return null;
-				} elseif ( isset( $tool['target'] ) && $tool['target'] == 'diff' ) {
-					$store = MediaWikiServices::getInstance()->getRevisionStore();
-					$revision = $store->getRevisionByTitle( $title );
-					if ( !$revision ) {
+				if ( isset( $tool['target'] ) ) {
+					if ( $tool['target'] == 'view' && !$includeSelf ) {
 						return null;
+					} elseif ( $tool['target'] == 'diff' ) {
+						$store = MediaWikiServices::getInstance()->getRevisionStore();
+						$revision = $store->getRevisionByTitle( $title );
+						if ( !$revision ) {
+							return null;
+						}
+						$parentId = $revision->getParentId();
+						if ( !$parentId ) {
+							// New page, skips diff
+							return null;
+						}
+						$revisionId = $revision->getId();
+						return $title->getFullURL( "oldid=$revisionId&diff=prev" );
 					}
-					$parentId = $revision->getParentId();
-					if ( !$parentId ) {
-						// New page, skips diff
-						return null;
-					}
-					$revisionId = $revision->getId();
-					return $title->getFullURL( "oldid=$revisionId&diff=prev" );
 				}
 				return $title->getFullURL( $tool['query'] );
 			},
