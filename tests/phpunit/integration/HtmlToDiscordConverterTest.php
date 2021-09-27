@@ -49,7 +49,14 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 				. 'Lorem</a> on <a href="/w/Talk:%EB%8C%80%EB%AC%B8" class="mw-title fw-link" title="Talk:Main Page">'
 				. 'Talk:Main Page</a>)',
 				'convert()',
+				'should convert user link'
 			],
+			[
+				'[→‎Section](http://f.oo/index.php/Main_Page#Section)',
+				'<span dir="auto"><span class="autocomment">'
+				. '<a href="/index.php/Main_Page#Section" title="Main Page">→‎Section</a></span></span>',
+				'should convert auto comment'
+			]
 		];
 	}
 
@@ -103,6 +110,11 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 				. ' and <a href="/w/Main_Page" title="Main Page">Main Page</a>',
 				'should replace two title links',
 			],
+			[
+				'[→‎Section](https://foo.bar/index.php/Main_Page#Section)',
+				'<a href="/index.php/Main_Page#Section" title="Main Page">→‎Section</a>',
+				'should convert auto comment'
+			]
 		];
 	}
 
@@ -155,10 +167,6 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 			[
 				true,
 				Title::newFromText( 'Foo' ),
-			],
-			[
-				true,
-				null,
 			],
 			[
 				false,

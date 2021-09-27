@@ -5,6 +5,7 @@ namespace MediaWiki\Extension\DiscordRCFeed;
 use ChangesList;
 use ExtensionRegistry;
 use Flow\Container;
+use Linker;
 use LogFormatter;
 use MediaWiki\MediaWikiServices;
 use Message;
@@ -28,6 +29,12 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	public function getLine( array $feed, RecentChange $rc, $actionComment ) {
 		$attribs = $rc->getAttributes();
 		$rcType = $attribs['rc_type'];
+		if ( defined( 'MW_VERSION' ) && version_compare( MW_VERSION, '1.37', '>=' ) ) {
+			// @phan-suppress-next-line PhanUndeclaredMethod, PhanUndeclaredStaticMethod
+			$title = Title::castFromPageReference( $rc->getPage() );
+		} else {
+			$title = $rc->getTitle();
+		}
 		if (
 			in_array( $rcType, $feed['omit_types'] )
 			|| in_array( $rc->getTitle()->getNamespace(), $feed['omit_namespaces'] )
@@ -35,11 +42,15 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			return null;
 		}
 
+		$this->linker = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
+		$this->converter = new HtmlToDiscordConverter( $this->linker );
 		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$color = Constants::COLOR_MAP_ACTION[$rcType] ?? Constants::COLOR_DEFAULT;
 
 			$store = MediaWikiServices::getInstance()->getCommentStore();
 			$comment = $store->getComment( 'rc_comment', $attribs )->text;
+			$comment = Linker::formatComment( $comment, $title );
+			$comment = $this->converter->convert( $comment, true );
 		} elseif ( $rcType == RC_LOG ) {
 			$logType = $attribs['rc_log_type'];
 			$logAction = $attribs['rc_log_action'];
@@ -51,6 +62,8 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 
 			$color = Constants::COLOR_MAP_LOG[$logType] ?? Constants::COLOR_MAP_ACTION[RC_LOG];
 			$comment = $attribs['rc_comment'];
+			$comment = Linker::formatComment( $comment, $title );
+			$comment = $this->converter->convert( $comment, true );
 		} elseif ( self::isFlowLoaded() && $rcType == RC_FLOW ) {
 			$color = Constants::COLOR_ACTION_FLOW;
 			$comment = '';
@@ -58,17 +71,9 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			return null;
 		}
 
-		$this->linker = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
-		$this->converter = new HtmlToDiscordConverter( $this->linker );
 		$desc = $this->getDescription( $feed, $rc, $feed['style'] != 'structure' );
 		if ( !$desc ) {
 			return null;
-		}
-		if ( defined( 'MW_VERSION' ) && version_compare( MW_VERSION, '1.37', '>=' ) ) {
-			// @phan-suppress-next-line PhanUndeclaredMethod, PhanUndeclaredStaticMethod
-			$title = Title::castFromPageReference( $rc->getPage() );
-		} else {
-			$title = $rc->getTitle();
 		}
 		return $this->makePostData( $attribs, $feed, $color, $desc, $comment,
 			User::newFromIdentity( $rc->getPerformerIdentity() ), $title );
