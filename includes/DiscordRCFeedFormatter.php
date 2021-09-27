@@ -2,10 +2,10 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed;
 
-use Linker;
 use ChangesList;
 use ExtensionRegistry;
 use Flow\Container;
+use Linker;
 use LogFormatter;
 use MediaWiki\MediaWikiServices;
 use Message;
