@@ -35,12 +35,6 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		} else {
 			$title = $rc->getTitle();
 		}
-		if (
-			in_array( $rcType, $feed['omit_types'] )
-			|| in_array( $rc->getTitle()->getNamespace(), $feed['omit_namespaces'] )
-		) {
-			return null;
-		}
 
 		$this->linker = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
 		$this->converter = new HtmlToDiscordConverter( $this->linker );
@@ -54,11 +48,6 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		} elseif ( $rcType == RC_LOG ) {
 			$logType = $attribs['rc_log_type'];
 			$logAction = $attribs['rc_log_action'];
-			if ( in_array( $logType, $feed['omit_log_types'] )
-				|| in_array( "$logType/$logAction", $feed['omit_log_actions'] )
-			) {
-				return null;
-			}
 
 			$color = Constants::COLOR_MAP_LOG[$logType] ?? Constants::COLOR_MAP_ACTION[RC_LOG];
 			$comment = $attribs['rc_comment'];
@@ -72,9 +61,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		}
 
 		$desc = $this->getDescription( $feed, $rc, $feed['style'] != 'structure' );
-		if ( !$desc ) {
-			return null;
-		}
+
 		return $this->makePostData( $attribs, $feed, $color, $desc, $comment,
 			User::newFromIdentity( $rc->getPerformerIdentity() ), $title );
 	}
@@ -171,8 +158,6 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			}
 
 			$color = Constants::COLOR_ACTION_FLOW;
-		} else {
-			return '';
 		}
 
 		return "$emoji $desc";

@@ -6,8 +6,11 @@ use Exception;
 use FormattedRCFeed;
 use MediaWiki\Http\HttpRequestFactory;
 use MediaWiki\MediaWikiServices;
+use RecentChange;
 
 class DiscordRCFeedEngine extends FormattedRCFeed {
+	/** @var array */
+	private $params;
 
 	/** @var HttpRequestFactory */
 	private $httpRequestFactory;
@@ -20,6 +23,7 @@ class DiscordRCFeedEngine extends FormattedRCFeed {
 			throw new Exception( "RCFeed for Discord must have a 'url' set." );
 		}
 		$this->httpRequestFactory = MediaWikiServices::getInstance()->getHttpRequestFactory();
+		$this->params = $params;
 		parent::__construct( $params );
 	}
 
@@ -43,5 +47,27 @@ class DiscordRCFeedEngine extends FormattedRCFeed {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function notify( RecentChange $rc, $actionComment = null ) {
+		$params = $this->params;
+		$attribs = $rc->mAttribs;
+		$logType = $attribs['rc_log_type'] ?? '';
+		$logAction = $attribs['rc_log_action'] ?? '';
+		// unused now, for the future usage.
+		// $oldLen = $attribs['rc_old_len'] ?? '';
+		// $newLen = $attribs['rc_new_len'] ?? '';
+		if (
+			in_array( $attribs['rc_type'], $params['omit_types'] ) ||
+			in_array( $attribs['rc_namespace'], $params['omit_namespaces'] ) ||
+			in_array( $logType, $params['omit_log_types'] ) ||
+			in_array( "$logType/$logAction", $params['omit_log_actions'] )
+		) {
+			return false;
+		}
+		return parent::notify( $rc, $actionComment );
 	}
 }
