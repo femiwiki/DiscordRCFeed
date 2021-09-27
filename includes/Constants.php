@@ -42,6 +42,7 @@ final class Constants {
 	private const COLOR_BLUE = 0x36a1e8;
 	private const COLOR_RED = 0xe83535;
 	private const COLOR_MAGENTA = 0xd635e8;
+	private const COLOR_CYAN = 0x00ffff;
 	private const COLOR_DARK_BLUE = 0x354fe8;
 
 	public const COLOR_DEFAULT = self::COLOR_GRAY;
@@ -63,5 +64,5 @@ final class Constants {
 		'import'   => self::COLOR_GREEN,
 	];
 
-	public const COLOR_ACTION_FLOW = self::COLOR_GREEN;
+	public const COLOR_ACTION_FLOW = self::COLOR_CYAN;
 }

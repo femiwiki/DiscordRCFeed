@@ -97,7 +97,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 
 			$color = Constants::COLOR_MAP_LOG[$logType] ?? Constants::COLOR_MAP_ACTION[RC_LOG];
 
-			$emoji = self::getEmojiForLog( $logType, $logAction );
+			$emoji = self::getEmojiForKeys( 'discordrcfeed-emoji-log', $logType, $logAction );
 
 			$formatter = LogFormatter::newFromRow( $attribs );
 			$formatter->setContext( Util::getContentLanguageContext() );
@@ -115,7 +115,8 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				$comment,
 			] ) );
 		} elseif ( ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) && $rcType == RC_FLOW ) {
-			$emoji = Util::msg( 'discordrcfeed-emoji-flow' );
+			$action = unserialize( $attribs['rc_params'] )['flow-workflow-change']['action'];
+			$emoji = self::getEmojiForKeys( 'discordrcfeed-emoji-flow', $action, '' );
 
 			$flowFormatter = FlowDiscordFormatter::getInstance();
 			$query = Container::get( 'query.changeslist' );
@@ -151,15 +152,20 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	}
 
 	/**
-	 * @param string $LogType
-	 * @param string $LogAction
+	 * @param string $prefix
+	 * @param string $mainKey
+	 * @param string $subKey
+	 * @param string $fallback
 	 * @return string
 	 */
-	private static function getEmojiForLog( string $LogType, string $LogAction ): string {
-		$keys = [
-			"discordrcfeed-emoji-log-$LogType-$LogAction",
-			"discordrcfeed-emoji-log-$LogType",
-		];
+	private static function getEmojiForKeys( string $prefix, string $mainKey,
+		string $subKey = '', string $fallback = ''
+	): string {
+		$keys = array_filter( [
+			$subKey ? "$prefix-$mainKey-$subKey" : '',
+			$mainKey ? "$prefix-$mainKey" : '',
+			$fallback ?: "$prefix",
+		] );
 		foreach ( $keys as $key ) {
 			$msg = wfMessage( $key );
 			if ( $msg->exists() ) {
