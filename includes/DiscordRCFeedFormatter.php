@@ -4,6 +4,7 @@ namespace MediaWiki\Extension\DiscordRCFeed;
 
 use ChangesList;
 use ExtensionRegistry;
+use FatalError;
 use Flow\Container;
 use Linker;
 use LogFormatter;
@@ -17,20 +18,27 @@ use User;
 
 class DiscordRCFeedFormatter implements RCFeedFormatter {
 
+	public const STYLE_INLINE = 'inline';
+	public const STYLE_EMBED = 'embed';
+	public const STYLE_STRUCTURE = 'structure';
+
 	/** @var DiscordLinker */
 	private $linker;
 
 	/** @var HtmlToDiscordConverter */
 	private $converter;
 
-	/** @var array */
+	/** @var array|null */
 	private $feed;
 
-	/** @var User */
+	/** @var User|null */
 	private $performer;
 
-	/** @var Title */
+	/** @var Title|null */
 	private $title;
+
+	/** @var string */
+	private $style;
 
 	/**
 	 * @param array|null $feed
@@ -38,9 +46,18 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	 * @param Title|null $title
 	 */
 	public function __construct( $feed = null, $performer = null, $title = null ) {
+		if ( $feed === null || $performer === null || $title === null ) {
+			return;
+		}
+		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
+			throw new FatalError( 'Data must be passed to getLine() method only.' );
+		}
 		$this->feed = $feed;
 		$this->performer = $performer;
 		$this->title = $title;
+		$this->linker = new DiscordLinker( $feed['user_tools'] ?? null, $feed['page_tools'] ?? null );
+		$this->converter = new HtmlToDiscordConverter( $this->linker );
+		$this->style = $feed['style'] ?? self::STYLE_EMBED;
 	}
 
 	/**
@@ -48,13 +65,16 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	 */
 	public function getLine( array $feed, RecentChange $rc, $actionComment ) {
 		$this->feed = $feed;
-		$attribs = $rc->getAttributes();
-		$rcType = $attribs['rc_type'];
 		$this->title = Util::getTitleFromRC( $rc );
 		$this->performer = Util::getPerformerFromRC( $rc );
 		$this->linker = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
 		$this->converter = new HtmlToDiscordConverter( $this->linker );
+		$this->style = $feed['style'] ?? self::STYLE_EMBED;
 
+		$desc = $this->getDescription( $rc, $feed['style'] != 'structure' );
+
+		$attribs = $rc->getAttributes();
+		$rcType = $attribs['rc_type'];
 		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$color = Constants::COLOR_MAP_ACTION[$rcType] ?? Constants::COLOR_DEFAULT;
 			$store = MediaWikiServices::getInstance()->getCommentStore();
@@ -68,8 +88,6 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		} else {
 			return null;
 		}
-
-		$desc = $this->getDescription( $rc, $feed['style'] != 'structure' );
 		if ( $comment ) {
 			$comment = Linker::formatComment( $comment, $this->title );
 			$comment = $this->converter->convert( $comment, true );
@@ -79,129 +97,132 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	}
 
 	/**
+	 * Returns description that includes an emoji and a text message.
 	 * @param RecentChange $rc
 	 * @param bool $includeTools
 	 * @return string
 	 */
-	private function getDescription(
-		RecentChange $rc,
-		bool $includeTools = true
-	): string {
+	private function getDescription( RecentChange $rc, bool $includeTools = true ): string {
 		$feed = $this->feed;
 		$attribs = $rc->getAttributes();
 		$rcType = $attribs['rc_type'];
-		$performer = $this->performer;
-		$title = $this->title;
 		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
-			$flag = '';
-			if ( $attribs['rc_minor'] ) {
-				$flag .= '-minor';
-			}
-			if ( $attribs['rc_bot'] ) {
-				$flag .= '-bot';
-			}
-
-			if ( $rcType == RC_NEW ) {
-				$emoji = Util::msgText( 'discordrcfeed-emoji-log-create-create' );
-				$desc = 'logentry-create-create';
-			} else {
-				// i18n messages:
-				//  discordrcfeed-emoji-edit
-				//  discordrcfeed-emoji-edit-minor
-				//  discordrcfeed-emoji-edit-bot
-				//  discordrcfeed-emoji-edit-minor-bot
-				$emoji = Util::msgText( 'discordrcfeed-emoji-edit' . $flag );
-				// i18n messages:
-				//  discordrcfeed-emoji-edit
-				//  discordrcfeed-emoji-edit-minor
-				//  discordrcfeed-emoji-edit-bot
-				//  discordrcfeed-emoji-edit-minor-bot
-				$desc = 'discordrcfeed-line-edit' . $flag;
-			}
-			$desc = new Message( $desc );
-
-			if ( $includeTools ) {
-				$params = [
-					// $1: username
-					$this->linker->makeUserTextWithTools( $performer ),
-					// $2: username for GENDER
-					$performer->getName(),
-					// $3
-					$this->linker->makePageTextWithTools( $title ),
-				];
-			} else {
-				$params = [
-					// $1: username
-					$performer->getName(),
-					// $2: username for GENDER
-					$performer->getName(),
-					// $3
-					$title->getFullText(),
-				];
-			}
-			$desc = $desc->params( ...$params )->inContentLanguage()->text();
+			$desc = $this->getEditDescription( $attribs );
 		} elseif ( $rcType == RC_LOG ) {
-			$logType = $attribs['rc_log_type'];
-			$logAction = $attribs['rc_log_action'];
-
-			$emoji = self::getEmojiForKeys( 'discordrcfeed-emoji-log', $logType, $logAction );
-
-			$formatter = LogFormatter::newFromRow( $attribs );
-			$formatter->setContext( Util::getContentLanguageContext() );
-			if ( $includeTools ) {
-				$desc = $formatter->getActionText();
-				$desc = $this->converter->convert( $desc );
-			} else {
-				$desc = $formatter->getPlainActionText();
-				$desc = preg_replace( '/\[\[|\]\]/', '"', $desc );
-			}
-			$comment = $attribs['rc_comment'];
+			$desc = $this->getLogDescription( $attribs );
 		} elseif ( self::isFlowLoaded() && $rcType == RC_FLOW ) {
-			$action = unserialize( $attribs['rc_params'] )['flow-workflow-change']['action'];
-			$emoji = self::getEmojiForKeys( 'discordrcfeed-emoji-flow', $action, '' );
-
-			$formatter = FlowDiscordFormatter::getInstance();
-			$formatter->plaintext = !$includeTools;
-			$query = Container::get( 'query.changeslist' );
-			$changesList = new ChangesList( Util::getContentLanguageContext() );
-			$row = $query->getResult( $changesList, $rc );
-			$desc = $formatter->format( $row, $changesList );
-			if ( $includeTools ) {
-				$desc = $this->converter->convert( $desc );
-			} else {
-				$desc = Sanitizer::stripAllTags( $desc );
-			}
-
-			$color = Constants::COLOR_ACTION_FLOW;
+			$desc = $this->getFlowDescription( $rc );
 		} else {
 			return '';
 		}
 
+		return "$desc";
+	}
+
+	/**
+	 * @param array $attribs
+	 * @return string
+	 */
+	private function getEditDescription( array $attribs ): string {
+		$performer = $this->performer;
+		$title = $this->title;
+
+		$flag = '';
+		if ( $attribs['rc_minor'] ) {
+			$flag .= '-minor';
+		}
+		if ( $attribs['rc_bot'] ) {
+			$flag .= '-bot';
+		}
+
+		if ( $attribs['rc_type'] == RC_NEW ) {
+			$emoji = Util::msgText( 'discordrcfeed-emoji-log-create-create' );
+			$desc = 'logentry-create-create';
+		} else {
+			// i18n messages:
+			//  discordrcfeed-emoji-edit
+			//  discordrcfeed-emoji-edit-minor
+			//  discordrcfeed-emoji-edit-bot
+			//  discordrcfeed-emoji-edit-minor-bot
+			$emoji = Util::msgText( 'discordrcfeed-emoji-edit' . $flag );
+			// i18n messages:
+			//  discordrcfeed-emoji-edit
+			//  discordrcfeed-emoji-edit-minor
+			//  discordrcfeed-emoji-edit-bot
+			//  discordrcfeed-emoji-edit-minor-bot
+			$desc = 'discordrcfeed-line-edit' . $flag;
+		}
+		$desc = new Message( $desc );
+
+		if ( $this->style == self::STYLE_STRUCTURE ) {
+			// description for structure style is plaintext and does not contain links.
+			$params = [
+				// $1: username
+				$performer->getName(),
+				// $2: username for GENDER
+				$performer->getName(),
+				// $3
+				Util::msgText( 'quotation-marks', $title->getFullText() ),
+			];
+		} else {
+			$params = [
+				// $1: username
+				$this->linker->makeUserTextWithTools( $performer ),
+				// $2: username for GENDER
+				$performer->getName(),
+				// $3
+				$this->linker->makePageTextWithTools( $title ),
+			];
+		}
+		$desc = $desc->params( ...$params )->inContentLanguage()->text();
 		return "$emoji $desc";
 	}
 
 	/**
-	 * @param mixed $attribs
-	 * @param bool $diffOnly
-	 * @return string|array
+	 * @param array $attribs
+	 * @return string
 	 */
-	private static function getSizeDiff( $attribs, $diffOnly ) {
-		if (
-			isset( $attribs['rc_old_len'] ) && isset( $attribs['rc_new_len'] )
-			&& $attribs['rc_old_len'] !== null && $attribs['rc_new_len'] !== null
-		) {
-			$szdiff = $attribs['rc_new_len'] - $attribs['rc_old_len'];
-			if ( $diffOnly ) {
-				$msg = ( new Message( 'nbytes' ) )->numParams( $szdiff );
-				return ( $szdiff > 0 ? '+' : '' ) . $msg->inContentLanguage()->text();
-			} else {
-				$msg = ( new Message( 'nbytes' ) )->numParams( $attribs['rc_new_len'] );
-				$newLen = $msg->inContentLanguage()->text();
-				$szdiff = ( $szdiff > 0 ? '+' : '' ) . strval( $szdiff );
-				return [ $newLen, $szdiff ];
-			}
+	private function getLogDescription( array $attribs ): string {
+		$logType = $attribs['rc_log_type'];
+		$logAction = $attribs['rc_log_action'];
+
+		$emoji = self::getEmojiForKeys( 'discordrcfeed-emoji-log', $logType, $logAction );
+
+		$formatter = LogFormatter::newFromRow( $attribs );
+		$formatter->setContext( Util::getContentLanguageContext() );
+		if ( $this->style == self::STYLE_STRUCTURE ) {
+			// description for structure style is plaintext and does not contain links.
+			$desc = $formatter->getPlainActionText();
+			// Replace square brackets that even the plain action text includes.
+			$desc = str_replace( [ '[[', ']]' ], '"', $desc );
+		} else {
+			$desc = $formatter->getActionText();
+			$desc = $this->converter->convert( $desc );
 		}
-		return $diffOnly ? '' : [ '', '' ];
+		return "$emoji $desc";
+	}
+
+	/**
+	 * @param RecentChange $rc
+	 * @return string
+	 */
+	private function getFlowDescription( RecentChange $rc ): string {
+		$attribs = $rc->getAttributes();
+		$action = unserialize( $attribs['rc_params'] )['flow-workflow-change']['action'];
+		$emoji = self::getEmojiForKeys( 'discordrcfeed-emoji-flow', $action, '' );
+
+		$formatter = FlowDiscordFormatter::getInstance();
+		$formatter->plaintext = $this->style == self::STYLE_STRUCTURE;
+		$query = Container::get( 'query.changeslist' );
+		$changesList = new ChangesList( Util::getContentLanguageContext() );
+		$row = $query->getResult( $changesList, $rc );
+		$desc = $formatter->format( $row, $changesList );
+		if ( $this->style == self::STYLE_STRUCTURE ) {
+			$desc = Sanitizer::stripAllTags( $desc );
+		} else {
+			$desc = $this->converter->convert( $desc );
+		}
+		return "$emoji $desc";
 	}
 
 	/**
@@ -229,6 +250,43 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	}
 
 	/**
+	 * @param mixed $attribs
+	 * @return string|null
+	 */
+	private function getSizeDiff( $attribs ) {
+		if ( !isset( $attribs['rc_new_len'] ) || $attribs['rc_new_len'] === null ) {
+			return null;
+		}
+		if ( $attribs['rc_type'] == RC_NEW ||
+			!isset( $attribs['rc_old_len'] ) || $attribs['rc_old_len'] === null ) {
+			// old length is missing. just return the formatted new length
+			$msg = ( new Message( 'nbytes' ) )->numParams( $attribs['rc_new_len'] );
+			$len = $msg->inContentLanguage()->text();
+			if ( $this->style != self::STYLE_STRUCTURE ) {
+				$len = Util::msgText( 'parentheses', $len );
+			}
+			return $len;
+		}
+
+		// diff is calculable
+		$szdiff = $attribs['rc_new_len'] - $attribs['rc_old_len'];
+		if ( $this->style == self::STYLE_STRUCTURE ) {
+			$newLen = $attribs['rc_new_len'];
+			$newLen = ( new Message( 'nbytes' ) )->numParams( $newLen );
+			$newLen = $newLen->inContentLanguage()->text();
+			$szdiff = ( $szdiff > 0 ? '+' : '' ) . $szdiff;
+			$szdiff = Util::msgText( 'parentheses', $szdiff );
+			return $newLen . PHP_EOL . $szdiff;
+		} else {
+			$msg = ( new Message( 'nbytes' ) )->numParams( $szdiff );
+			$msg = $msg->inContentLanguage()->text();
+			$msg = ( $szdiff > 0 ? '+' : '' ) . $msg;
+			$msg = Util::msgText( 'parentheses', $msg );
+			return $msg;
+		}
+	}
+
+	/**
 	 * https://discord.com/developers/docs/resources/webhook#execute-webhook
 	 * @param array $attribs
 	 * @param int $color
@@ -243,17 +301,13 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		$comment = null
 	): string {
 		global $wgSitename;
-		$feed = $this->feed;
 		$performer = $this->performer;
 		$title = $this->title;
-		$style = $feed['style'];
+		$style = $this->style;
 
-		if ( $style == 'structure' ) {
-			list( $size, $szdiff ) = self::getSizeDiff( $attribs, false );
-		} else {
+		$szdiff = $this->getSizeDiff( $attribs );
+		if ( $style != self::STYLE_STRUCTURE ) {
 			$comment = $comment ? Util::msgText( 'parentheses', $comment ) : '';
-			$szdiff = self::getSizeDiff( $attribs, true );
-			$szdiff = $szdiff ? Util::msgText( 'parentheses', $szdiff ) : '';
 		}
 
 		$fullString = implode( ' ', array_filter( [
@@ -265,7 +319,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		$post = [
 			'username' => $wgSitename,
 		];
-		switch ( $feed['style'] ) {
+		switch ( $style ) {
 			case 'embed':
 				$post['embeds'] = [
 					[
@@ -278,6 +332,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				$post['content'] = $fullString;
 				break;
 			case 'structure':
+				$szdiff = self::getSizeDiff( $attribs );
 				$post['embeds'] = [
 					[
 						'color' => $color,
@@ -292,17 +347,23 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 						'inline' => true,
 					];
 				}
-				if ( $title ) {
-					$post['embeds'][0]['fields'][] = [
-						'name' => $title->getFullText(),
-						'value' => $this->linker->makePageTools( $title, PHP_EOL, true ),
-						'inline' => true,
-					];
+				if ( $attribs['rc_type'] !== RC_FLOW ) {
+					if ( $title ) {
+						$post['embeds'][0]['fields'][] = [
+							'name' => $title->getFullText(),
+							'value' => $this->linker->makePageTools( $title, PHP_EOL, true ),
+							'inline' => true,
+						];
+					}
+				} else {
+					$fields = $this->getFlowPageToolFields();
+					$post['embeds'][0]['fields'] = array_merge(
+						$post['embeds'][0]['fields'], $fields );
 				}
-				if ( isset( $size ) && $size ) {
+				if ( $szdiff ) {
 					$post['embeds'][0]['fields'][] = [
 						'name' => Util::msgText( 'listfiles_size' ),
-						'value' => "$size" . PHP_EOL . Util::msgText( 'parentheses', $szdiff ),
+						'value' => $szdiff,
 						'inline' => true,
 					];
 				}
@@ -310,15 +371,28 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 					$post['embeds'][0]['fields'][] = [
 						'name' => Util::msgText( 'summary' ),
 						'value' => $comment,
-						'inline' => true,
 					];
 				}
 				break;
 		}
-		if ( isset( $feed['request_replace'] ) ) {
-			$post = array_replace_recursive( $post, $feed['request_replace'] );
+		if ( isset( $this->feed['request_replace'] ) ) {
+			$post = array_replace_recursive( $post, $this->feed['request_replace'] );
 		}
 		return json_encode( $post );
+	}
+
+	/**
+	 * @return array
+	 */
+	private function getFlowPageToolFields() {
+		$title = $this->title;
+		return [
+			[
+				'name' => $title->getFullText(),
+				'value' => $this->linker->makePageTools( $title, PHP_EOL ),
+				'inline' => true,
+			],
+		];
 	}
 
 	/**

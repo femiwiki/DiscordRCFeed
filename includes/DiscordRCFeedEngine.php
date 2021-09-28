@@ -43,7 +43,8 @@ class DiscordRCFeedEngine extends FormattedRCFeed {
 
 		$status = $req->execute();
 		if ( !$status->isOK() ) {
-			Util::getLogger()->warning( $status->getMessage()->text() );
+			Util::getLogger()->warning( $status->getMessage()->text() . ': '
+				. print_r( json_decode( $line ), true ) );
 			return false;
 		}
 		return true;
