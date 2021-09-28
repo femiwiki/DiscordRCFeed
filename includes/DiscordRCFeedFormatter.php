@@ -3,7 +3,6 @@
 namespace MediaWiki\Extension\DiscordRCFeed;
 
 use ChangesList;
-use ExtensionRegistry;
 use FatalError;
 use Flow\Container;
 use Linker;
@@ -52,24 +51,35 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		if ( !defined( 'MW_PHPUNIT_TEST' ) ) {
 			throw new FatalError( 'Data must be passed to getLine() method only.' );
 		}
+		$this->initialize( $feed, $performer, $title );
+	}
+
+	/**
+	 * @param array|null $feed
+	 * @param User|null $performer
+	 * @param Title|null $title
+	 */
+	public function initialize( $feed = null, $performer = null, $title = null ) {
+		$feed += [
+			'user_tools' => null,
+			'page_tools' => null,
+		];
+
 		$this->feed = $feed;
 		$this->performer = $performer;
 		$this->title = $title;
-		$this->linker = new DiscordLinker( $feed['user_tools'] ?? null, $feed['page_tools'] ?? null );
+		$this->linker = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
 		$this->converter = new HtmlToDiscordConverter( $this->linker );
-		$this->style = $feed['style'] ?? self::STYLE_EMBED;
+		if ( isset( $feed['style'] ) ) {
+			$this->style = $feed['style'];
+		}
 	}
 
 	/**
 	 * @inheritDoc
 	 */
 	public function getLine( array $feed, RecentChange $rc, $actionComment ) {
-		$this->feed = $feed;
-		$this->title = Util::getTitleFromRC( $rc );
-		$this->performer = Util::getPerformerFromRC( $rc );
-		$this->linker = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
-		$this->converter = new HtmlToDiscordConverter( $this->linker );
-		$this->style = $feed['style'] ?? self::STYLE_EMBED;
+		$this->initialize( $feed, Util::getPerformerFromRC( $rc ), Util::getTitleFromRC( $rc ) );
 
 		$desc = $this->getDescription( $rc, $feed['style'] != 'structure' );
 
@@ -399,6 +409,6 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	 * @return bool
 	 */
 	private static function isFlowLoaded(): bool {
-		return ExtensionRegistry::getInstance()->isLoaded( 'Flow' );
+		return \ExtensionRegistry::getInstance()->isLoaded( 'Flow' );
 	}
 }

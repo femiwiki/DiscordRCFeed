@@ -85,8 +85,8 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function providerGetDescription() {
-		return [
-			[
+		$cases = [
+			'should describe new page' => [
 				[
 					'discordrcfeed-emoji-log-create-create',
 					'logentry-create-create',
@@ -95,9 +95,8 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 				[
 					'rc_type' => RC_NEW,
 				],
-				'should describe new page'
 			],
-			[
+			'should describe edit' => [
 				[
 					'discordrcfeed-emoji-edit',
 					'discordrcfeed-line-edit',
@@ -106,16 +105,91 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 				[
 					'rc_type' => RC_EDIT,
 				],
-				'should describe edit'
 			],
+			'should describe edit with the structure style' => [
+				[
+					'discordrcfeed-emoji-edit',
+					'discordrcfeed-line-edit',
+				],
+				[
+					'style' => DiscordRCFeedFormatter::STYLE_STRUCTURE,
+				],
+				[
+					'rc_type' => RC_EDIT,
+				],
+			],
+			'should describe minor edit' => [
+				[
+					'discordrcfeed-emoji-edit-minor',
+					'discordrcfeed-line-edit-minor',
+				],
+				[],
+				[
+					'rc_type' => RC_EDIT,
+					'rc_minor' => true,
+				],
+			],
+			'should describe bot edit' => [
+				[
+					'discordrcfeed-emoji-edit-bot',
+					'discordrcfeed-line-edit-bot',
+				],
+				[],
+				[
+					'rc_type' => RC_EDIT,
+					'rc_bot' => true,
+				],
+			],
+			'should describe minor bot edit' => [
+				[
+					'discordrcfeed-emoji-edit-minor-bot',
+					'discordrcfeed-line-edit-minor-bot',
+				],
+				[],
+				[
+					'rc_type' => RC_EDIT,
+					'rc_minor' => true,
+					'rc_bot' => true,
+				],
+			],
+			// Todo create mock for DatabaseLogEntry
+			// 'should describe move' => [
+			// 	[
+			// 		'discordrcfeed-emoji-move',
+			// 		'logentry-move-move',
+			// 	],
+			// 	[],
+			// 	[
+			// 		'rc_type' => RC_LOG,
+			// 		'rc_log_type' => 'move',
+			// 		'rc_log_action' => 'move',
+			// 	],
+			// ],
 		];
+
+		// TODO
+		// if ( \ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
+		// 	$cases['should describe edit'] = [
+		// 		[
+		// 			'discordrcfeed-emoji-flow-reply',
+		// 			'flow-rev-message-reply',
+		// 		],
+		// 		[],
+		// 		[
+		// 			'rc_type' => RC_FLOW,
+		// 			'rc_params' => serialize( [
+		// 			] ),
+		// 		],
+		// 	];
+		// }
+		return $cases;
 	}
 
 	/**
 	 * @dataProvider providerGetDescription
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter::getDescription
 	 */
-	public function testGetDescription( array $expected, array $feed, array $attribs, string $message = '' ) {
+	public function testGetDescription( array $expected, array $feed, array $attribs ) {
 		// Provide mandatory parameters if not given
 		$user = $this->getTestSysop()->getUser();
 		$user->setName( 'GetDescriptionTestUser' );
@@ -127,7 +201,9 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 			'rc_namespace' => NS_MAIN,
 			'rc_title' => 'Test page',
 		], $attribs );
-		FeedSanitizer::initializeParameters( $feed );
+		FeedSanitizer::initializeParameters( $feed, [
+			'style' => 'embed',
+		] );
 
 		$rc = self::makeRecentChange( $attribs );
 		$this->setContentLang( 'qqx' );
@@ -135,10 +211,10 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 		$wrapper = TestingAccessWrapper::newFromObject( $formatter );
 		$desc = $wrapper->getDescription( $rc, false );
 		foreach ( $expected as $key ) {
-			$this->assertStringContainsString( $key, $desc, $message );
+			$this->assertStringContainsString( $key, $desc );
 		}
-		$this->assertStringContainsString( 'GetDescriptionTestUser', $desc, $message );
-		$this->assertStringContainsString( 'Test page', $desc, $message );
+		$this->assertStringContainsString( 'GetDescriptionTestUser', $desc );
+		$this->assertStringContainsString( 'Test page', $desc );
 	}
 
 	public static function provideEmojiKeys(): array {
@@ -199,5 +275,44 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 
 		$emoji = $this->wrapper->getEmojiForKeys( 'test-emoji', $mainKey, $subKey, $fallback );
 		$this->assertSame( $expected, $emoji, $message );
+	}
+
+	public static function providerSizes() {
+		$embed = DiscordRCFeedFormatter::STYLE_EMBED;
+		$structure = DiscordRCFeedFormatter::STYLE_STRUCTURE;
+		return [
+			'should return size if the old length is not provided' => [
+				'(30 bytes)',
+				$embed,
+				[ RC_NEW, 30 ],
+			],
+			'should return size and diff if the old length is provided' => [
+				"30 bytes\n(+10)",
+				$structure,
+				[ RC_EDIT, 30, 20 ],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider providerSizes
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter::getSizeDiff
+	 */
+	public function testGetSizeDiff( $expected, $style, $params ) {
+		$user = $this->getTestSysop()->getUser();
+		$user->setName( 'Dummy' );
+		$title = Title::newFromText( 'Dummy' );
+
+		$feed = [
+			'style' => $style,
+		];
+		$formatter = new DiscordRCFeedFormatter( $feed, $user, $title );
+		$wrapper = TestingAccessWrapper::newFromObject( $formatter );
+		$actual = $wrapper->getSizeDiff( [
+			'rc_type' => $params[0],
+			'rc_new_len' => $params[1],
+			'rc_old_len' => $params[2] ?? null,
+		] );
+		$this->assertSame( $expected, $actual );
 	}
 }
