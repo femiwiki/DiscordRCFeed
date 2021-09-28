@@ -34,13 +34,17 @@ class DiscordLinkerTest extends MediaWikiUnitTestCase {
 
 	public static function providerLink(): array {
 		return [
-			[
+			'should render link' => [
 				'[Foo](Foo)',
 				[ 'Foo', 'Foo' ]
 			],
-			[
+			'address should be parsed' => [
 				'[Foo](Foo%20Bar)',
 				[ 'Foo Bar', 'Foo' ]
+			],
+			'should return string if target is missing' => [
+				'Foo Bar',
+				[ '', 'Foo Bar' ]
 			],
 		];
 	}
@@ -49,10 +53,8 @@ class DiscordLinkerTest extends MediaWikiUnitTestCase {
 	 * @dataProvider providerLink
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makeLink
 	 */
-	public function testMakeLink( $expected, $params ) {
-		$this->assertSame(
-			$expected,
-			DiscordLinker::makeLink( ...$params )
-		);
+	public function testMakeLink( string $expected, array $params ) {
+		$actual = $this->wrapper->makeLink( ...$params );
+		$this->assertSame( $expected, $actual );
 	}
 }

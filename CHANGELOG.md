@@ -18,10 +18,14 @@ Others:
 - Fixed bug that the array type default parameters are ignored.
 - A new parameter for `'style'`, `'structure'` is added.
 - The next parameters are added:
-  - `omit_usernames` and `only_usernames`
   - `omit_talk` and `only_talk`
-  - `omit_content_models` and `only_content_models`
+  - `only_namespaces`
+  - `only_types`
+  - `only_log_types`
+  - `only_log_actions`
+  - `omit_usernames` and `only_usernames`
   - `omit_pages` and `only_pages`
+  - `omit_content_models` and `only_content_models`
 
 ## v0.1.2
 

@@ -44,9 +44,13 @@ final class Constants {
 
 	public const RC_FEED_MUST_BE_ARRAY_PARAMS = [
 		'omit_namespaces',
+		'only_namespaces',
 		'omit_types',
+		'only_types',
 		'omit_log_types',
+		'only_log_types',
 		'omit_log_actions',
+		'only_log_actions',
 		'omit_usernames',
 		'only_usernames',
 		'omit_pages',
