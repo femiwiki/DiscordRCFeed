@@ -110,6 +110,9 @@ class DiscordLinker {
 		$rt = self::makeLink( $user->getUserPage()->getFullURL(), $user->getName() );
 		if ( $this->userTools ) {
 			$tools = $this->makeUserTools( $user );
+			if ( !$tools ) {
+				return $rt;
+			}
 			$tools = Util::msgText( 'parentheses', $tools );
 			$rt .= " $tools";
 		}
@@ -126,6 +129,9 @@ class DiscordLinker {
 		$rt = self::makeLink( $title->getFullURL(), $title->getFullText() );
 		if ( $this->pageTools ) {
 			$tools = $this->makePageTools( $title );
+			if ( !$tools ) {
+				return $rt;
+			}
 			$tools = Util::msgText( 'parentheses', $tools );
 			$rt .= " $tools";
 		}

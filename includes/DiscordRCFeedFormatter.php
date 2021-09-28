@@ -232,15 +232,15 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	 * https://discord.com/developers/docs/resources/webhook#execute-webhook
 	 * @param array $attribs
 	 * @param int $color
-	 * @param string $desc
-	 * @param string $comment
+	 * @param string|null $desc
+	 * @param string|null $comment
 	 * @return string
 	 */
 	private function makePostData(
 		array $attribs,
 		int $color = Constants::COLOR_DEFAULT,
-		string $desc = '',
-		string $comment = ''
+		$desc = null,
+		$comment = null
 	): string {
 		global $wgSitename;
 		$feed = $this->feed;

@@ -88,8 +88,8 @@ class UtilTest extends MediaWikiIntegrationTestCase {
 		);
 		$mock->method( 'transform' )
 			->will( $this->returnArgument( 0 ) );
-
 		$this->setService( 'MessageCache', $mock );
+
 		$msg = Util::msgText( 'test-prefix-block-block' );
 		$this->assertNotEmpty( $msg, 'should return not empty value when valid key is given' );
 		$this->assertIsString( $msg, 'should return string value' );
