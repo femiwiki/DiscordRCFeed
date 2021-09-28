@@ -70,16 +70,16 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 		FeedSanitizer::initializeParameters( $feed, $defaultParams );
 		$user = $this->getTestSysop()->getUser();
 		$user->setName( 'Dummy' );
+
+		$formatter = new DiscordRCFeedFormatter( $feed, $user, Title::newFromText( 'Dummy' ) );
+		$wrapper = TestingAccessWrapper::newFromObject( $formatter );
 		$this->assertJsonStringEqualsJsonString(
 			$expected,
-			$this->wrapper->makePostData(
+			$wrapper->makePostData(
 				[],
-				$feed,
 				0x0000ff,
 				'message',
-				'comment',
-				$user,
-				Title::newFromText( 'Dummy' )
+				'comment'
 			)
 		);
 	}
@@ -117,13 +117,13 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testGetDescription( array $expected, array $feed, array $attribs, string $message = '' ) {
 		// Provide mandatory parameters if not given
-		$testUser = $this->getTestSysop()->getUser();
-		$testUser->setName( 'GetDescriptionTestUser' );
+		$user = $this->getTestSysop()->getUser();
+		$user->setName( 'GetDescriptionTestUser' );
 		$title = Title::newFromText( 'Test page' );
 		$attribs = array_replace_recursive( [
 			'rc_minor' => false,
 			'rc_bot' => false,
-			'rc_user' => $testUser->getId(),
+			'rc_user' => $user->getId(),
 			'rc_namespace' => NS_MAIN,
 			'rc_title' => 'Test page',
 		], $attribs );
@@ -131,12 +131,14 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 
 		$rc = self::makeRecentChange( $attribs );
 		$this->setContentLang( 'qqx' );
-		$rt = $this->wrapper->getDescription( $feed, $rc, false, $testUser, $title );
+		$formatter = new DiscordRCFeedFormatter( $feed, $user, $title );
+		$wrapper = TestingAccessWrapper::newFromObject( $formatter );
+		$desc = $wrapper->getDescription( $rc, false );
 		foreach ( $expected as $key ) {
-			$this->assertStringContainsString( $key, $rt, $message );
+			$this->assertStringContainsString( $key, $desc, $message );
 		}
-		$this->assertStringContainsString( 'GetDescriptionTestUser', $rt, $message );
-		$this->assertStringContainsString( 'Test page', $rt, $message );
+		$this->assertStringContainsString( 'GetDescriptionTestUser', $desc, $message );
+		$this->assertStringContainsString( 'Test page', $desc, $message );
 	}
 
 	public static function provideEmojiKeys(): array {

@@ -23,32 +23,45 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	/** @var HtmlToDiscordConverter */
 	private $converter;
 
+	/** @var array */
+	private $feed;
+
+	/** @var User */
+	private $performer;
+
+	/** @var Title */
+	private $title;
+
+	/**
+	 * @param array|null $feed
+	 * @param User|null $performer
+	 * @param Title|null $title
+	 */
+	public function __construct( $feed = null, $performer = null, $title = null ) {
+		$this->feed = $feed;
+		$this->performer = $performer;
+		$this->title = $title;
+	}
+
 	/**
 	 * @inheritDoc
 	 */
 	public function getLine( array $feed, RecentChange $rc, $actionComment ) {
+		$this->feed = $feed;
 		$attribs = $rc->getAttributes();
 		$rcType = $attribs['rc_type'];
-		$title = Util::getTitleFromRC( $rc );
-		$performer = Util::getPerformerFromRC( $rc );
-
+		$this->title = Util::getTitleFromRC( $rc );
+		$this->performer = Util::getPerformerFromRC( $rc );
 		$this->linker = new DiscordLinker( $feed['user_tools'], $feed['page_tools'] );
 		$this->converter = new HtmlToDiscordConverter( $this->linker );
+
 		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$color = Constants::COLOR_MAP_ACTION[$rcType] ?? Constants::COLOR_DEFAULT;
-
 			$store = MediaWikiServices::getInstance()->getCommentStore();
 			$comment = $store->getComment( 'rc_comment', $attribs )->text;
-			$comment = Linker::formatComment( $comment, $title );
-			$comment = $this->converter->convert( $comment, true );
 		} elseif ( $rcType == RC_LOG ) {
-			$logType = $attribs['rc_log_type'];
-			$logAction = $attribs['rc_log_action'];
-
-			$color = Constants::COLOR_MAP_LOG[$logType] ?? Constants::COLOR_MAP_ACTION[RC_LOG];
+			$color = Constants::COLOR_MAP_LOG[$attribs['rc_log_type']] ?? Constants::COLOR_MAP_ACTION[RC_LOG];
 			$comment = $attribs['rc_comment'];
-			$comment = Linker::formatComment( $comment, $title );
-			$comment = $this->converter->convert( $comment, true );
 		} elseif ( self::isFlowLoaded() && $rcType == RC_FLOW ) {
 			$color = Constants::COLOR_ACTION_FLOW;
 			$comment = '';
@@ -56,27 +69,29 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			return null;
 		}
 
-		$desc = $this->getDescription( $feed, $rc, $feed['style'] != 'structure', $performer, $title );
-		return $this->makePostData( $attribs, $feed, $color, $desc, $comment, $performer, $title );
+		$desc = $this->getDescription( $rc, $feed['style'] != 'structure' );
+		if ( $comment ) {
+			$comment = Linker::formatComment( $comment, $this->title );
+			$comment = $this->converter->convert( $comment, true );
+		}
+
+		return $this->makePostData( $attribs, $color, $desc, $comment );
 	}
 
 	/**
-	 * @param array $feed
 	 * @param RecentChange $rc
 	 * @param bool $includeTools
-	 * @param User|null $performer
-	 * @param Title|null $title
 	 * @return string
 	 */
 	private function getDescription(
-		array $feed,
 		RecentChange $rc,
-		bool $includeTools = true,
-		User $performer = null,
-		Title $title = null
+		bool $includeTools = true
 	): string {
+		$feed = $this->feed;
 		$attribs = $rc->getAttributes();
 		$rcType = $attribs['rc_type'];
+		$performer = $this->performer;
+		$title = $this->title;
 		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$flag = '';
 			if ( $attribs['rc_minor'] ) {
@@ -216,24 +231,21 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	/**
 	 * https://discord.com/developers/docs/resources/webhook#execute-webhook
 	 * @param array $attribs
-	 * @param array $feed
 	 * @param int $color
 	 * @param string $desc
 	 * @param string $comment
-	 * @param User|null $performer
-	 * @param Title|null $title
 	 * @return string
 	 */
 	private function makePostData(
 		array $attribs,
-		array $feed,
 		int $color = Constants::COLOR_DEFAULT,
 		string $desc = '',
-		string $comment = '',
-		User $performer = null,
-		Title $title = null
+		string $comment = ''
 	): string {
 		global $wgSitename;
+		$feed = $this->feed;
+		$performer = $this->performer;
+		$title = $this->title;
 		$style = $feed['style'];
 
 		if ( $style == 'structure' ) {

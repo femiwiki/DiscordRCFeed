@@ -23,9 +23,10 @@ class DiscordLinker {
 	}
 
 	/**
-	 * @param array $tools
+	 * @param array $tools given tool definitions via $wgRCFeeds.
 	 * @param callable $makeLink
-	 * @param string|null $sep separator
+	 * @param string|null $sep A separator string used as a glue when imploding the tools. If not given,
+	 *     the pipe character(|) is used
 	 * @return string
 	 */
 	private static function makeTools( array $tools, callable $makeLink, $sep = null ) {
@@ -43,8 +44,9 @@ class DiscordLinker {
 
 	/**
 	 * @param User $user
-	 * @param string|null $sep separator
-	 * @param bool $includeSelf
+	 * @param string|null $sep A separator string used as a glue when imploding the tools. If not given,
+	 *     the pipe character(|) is used
+	 * @param bool $includeSelf Whether to include a link to the given user's user page.
 	 * @return string
 	 */
 	public function makeUserTools( User $user, $sep = null, $includeSelf = false ): string {
@@ -65,8 +67,9 @@ class DiscordLinker {
 
 	/**
 	 * @param Title $title
-	 * @param string|null $sep separator
-	 * @param bool $includeSelf
+	 * @param string|null $sep A separator string used as a glue when imploding the tools. If not given,
+	 *     the pipe character(|) is used
+	 * @param bool $includeSelf Whether to include a link to the given title page.
 	 * @return string
 	 */
 	public function makePageTools( Title $title, $sep = null, $includeSelf = false ): string {
@@ -108,7 +111,7 @@ class DiscordLinker {
 		if ( $this->userTools ) {
 			$tools = $this->makeUserTools( $user );
 			$tools = Util::msgText( 'parentheses', $tools );
-			$rt .= ' ' . $tools;
+			$rt .= " $tools";
 		}
 		return $rt;
 	}
@@ -124,7 +127,7 @@ class DiscordLinker {
 		if ( $this->pageTools ) {
 			$tools = $this->makePageTools( $title );
 			$tools = Util::msgText( 'parentheses', $tools );
-			$rt .= ' ' . $tools;
+			$rt .= " $tools";
 		}
 		return $rt;
 	}
@@ -149,13 +152,18 @@ class DiscordLinker {
 	 * @return string
 	 */
 	private static function parseUrl( string $url ): string {
-		foreach ( [
-			' ' => '%20',
-			'(' => '%28',
-			')' => '%29',
-		] as $search => $replace ) {
-			$url = str_replace( $search, $replace, $url );
-		}
-		return $url;
+		return str_replace(
+			[
+				' ',
+				'(',
+				')',
+			],
+			[
+				'%20',
+				'%28',
+				'%29',
+			],
+			$url
+		);
 	}
 }
