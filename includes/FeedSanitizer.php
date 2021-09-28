@@ -67,7 +67,12 @@ class FeedSanitizer implements \MediaWiki\Hook\MediaWikiServicesHook {
 		}
 
 		if ( $defaultParameters ) {
-			$feed = array_replace_recursive( $defaultParameters, $feed );
+			// array_replace_recursive but to the second level.
+			foreach ( $defaultParameters as $k => $v ) {
+				if ( !isset( $feed[$k] ) || !$feed[$k] ) {
+					$feed[$k] = $v;
+				}
+			}
 		}
 		if ( $mergeParameters ) {
 			$feed = array_merge_recursive( $feed, $mergeParameters );

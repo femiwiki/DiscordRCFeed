@@ -118,27 +118,27 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 			'query' => 'action=edit',
 			'msg' => 'edit'
 		];
+		$deletePageTool = [
+			'query' => 'action=delete',
+			'msg' => 'delete'
+		];
 		return [
 			'should be able to disable page tools' => [
-				[ 'wgServer' => 'https://foo.bar' ],
 				[],
 				'Foo',
 				'[Foo](https://foo.bar/index.php/Foo)',
 			],
 			'should urlencode special characters' => [
-				[ 'wgServer' => 'https://foo.bar' ],
 				[],
 				'Foo&bar',
 				'[Foo&bar](https://foo.bar/index.php/Foo%26bar)',
 			],
 			'should render user tools' => [
-				[ 'wgServer' => 'https://foo.bar' ],
 				[ $editPageTool ],
 				'Foo',
 				'[Foo](https://foo.bar/index.php/Foo) ([Edit](https://foo.bar/index.php?title=Foo&action=edit))',
 			],
 			'"view" should be omitted in the block style' => [
-				[ 'wgServer' => 'https://foo.bar' ],
 				[
 					[
 						'target' => 'view',
@@ -155,9 +155,9 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider providerDiscordPageText
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makePageTextWithTools
 	 */
-	public function testMakePageTextWithTools( array $globals, array $pageTools,
+	public function testMakePageTextWithTools( array $pageTools,
 		string $titleText, string $expected ) {
-		$this->setMwGlobals( $globals );
+		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
 		$linkRenderer = new DiscordLinker( null, $pageTools );
 		$page = $this->getExistingTestPage( $titleText );
 		$title = $page->getTitle();
@@ -165,6 +165,62 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 		$this->assertSame(
 			$expected,
 			$linkRenderer->makePageTextWithTools( $title )
+		);
+	}
+
+	public static function providerPageTools(): array {
+		$tools = [
+			[
+				'query' => 'action=edit',
+				'text' => 'edit'
+			],
+			[
+				'query' => 'action=delete',
+				'text' => 'delete'
+			],
+			[
+				'query' => 'action=history',
+				'text' => 'hist'
+			],
+		];
+		return [
+			'all tools should be shown in the structured style' => [
+				'[edit](https://foo.bar/index.php?title=Foo&action=edit)' . PHP_EOL
+				. '[delete](https://foo.bar/index.php?title=Foo&action=delete)' . PHP_EOL
+				. '[hist](https://foo.bar/index.php?title=Foo&action=history)',
+				$tools,
+				'Foo',
+				[ PHP_EOL, true ],
+			],
+			'all tools should be shown in the embed style' => [
+				'[edit](https://foo.bar/index.php?title=Foo&action=edit) | '
+				. '[delete](https://foo.bar/index.php?title=Foo&action=delete) | '
+				. '[hist](https://foo.bar/index.php?title=Foo&action=history)',
+				$tools,
+				'Foo',
+				[],
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider providerPageTools
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makePageTools
+	 */
+	public function testMakePageTools(
+		string $expected,
+		array $pageTools,
+		string $titleText,
+		array $params
+	) {
+		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
+		$linkRenderer = new DiscordLinker( null, $pageTools );
+		$page = $this->getExistingTestPage( $titleText );
+		$title = $page->getTitle();
+
+		$this->assertSame(
+			$expected,
+			$linkRenderer->makePageTools( $title, ...$params )
 		);
 	}
 

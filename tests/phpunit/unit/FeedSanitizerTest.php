@@ -12,7 +12,7 @@ use MediaWikiUnitTestCase;
  */
 class FeedSanitizerTest extends MediaWikiUnitTestCase {
 
-	public static function providerUserName(): array {
+	public static function providerConfigs(): array {
 		return [
 			'should provide must-be-array parameters' => [
 				[
@@ -127,14 +127,71 @@ class FeedSanitizerTest extends MediaWikiUnitTestCase {
 					],
 				],
 			],
+			// https://github.com/femiwiki/DiscordRCFeed/issues/32
+			'should not mix the default array and the given array' => [
+				[
+					'omit_types' => [ RC_CATEGORIZE ],
+					'page_tools' => [
+						[
+							'query' => 'action=edit',
+							'msg' => 'edit'
+						],
+						[
+							'query' => 'action=delete',
+							'msg' => 'delete'
+						],
+						[
+							'query' => 'action=history',
+							'msg' => 'hist'
+						],
+					],
+				],
+				[
+					[
+						'page_tools' => [
+							[
+								'query' => 'action=edit',
+								'msg' => 'edit'
+							],
+							[
+								'query' => 'action=delete',
+								'msg' => 'delete'
+							],
+							[
+								'query' => 'action=history',
+								'msg' => 'hist'
+							],
+						],
+					],
+					[
+						'page_tools' => [
+							[
+								'target' => 'view',
+								'msg' => 'view'
+							],
+							[
+								'target' => 'diff',
+								'msg' => 'diff'
+							],
+							[
+								'query' => 'action=history',
+								'msg' => 'hist'
+							],
+						],
+					],
+					[
+						'omit_types' => [ RC_CATEGORIZE ],
+					],
+				]
+			]
 		];
 	}
 
 	/**
-	 * @dataProvider providerUserName
-	 * @covers \MediaWiki\Extension\DiscordRCFeed\FeedSanitizer::onMediaWikiServices
+	 * @dataProvider providerConfigs
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\FeedSanitizer::initializeParameters
 	 */
-	public function testConvertUserName( $expected, $params ) {
+	public function testInitializeParameters( $expected, $params ) {
 		FeedSanitizer::initializeParameters( ...$params );
 		ksort( $expected );
 		ksort( $params[0] );

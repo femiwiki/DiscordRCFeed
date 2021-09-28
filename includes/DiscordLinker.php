@@ -79,7 +79,8 @@ class DiscordLinker {
 				if ( isset( $tool['target'] ) ) {
 					if ( $tool['target'] == 'view' && !$includeSelf ) {
 						return null;
-					} elseif ( $tool['target'] == 'diff' ) {
+					}
+					if ( $tool['target'] == 'diff' ) {
 						$store = MediaWikiServices::getInstance()->getRevisionStore();
 						$revision = $store->getRevisionByTitle( $title );
 						if ( !$revision ) {
