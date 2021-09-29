@@ -225,9 +225,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	private function getFlowDescription( RecentChange $rc ): string {
 		$attribs = $rc->getAttributes();
 		$action = unserialize( $attribs['rc_params'] )['flow-workflow-change']['action'];
-		$emoji = self::getEmojiForKeys( 'discordrcfeed-emoji-flow', $action, '' );
-
-		$plaintext = $this->style == self::STYLE_STRUCTURE;
+		$emoji = self::getEmojiForKeys( 'discordrcfeed-emoji-flow', $action );
 		$desc = $this->flowFormatter->getDiscordDescription();
 
 		return "$emoji $desc";

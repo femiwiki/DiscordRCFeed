@@ -48,9 +48,9 @@ class FlowDiscordFormatter extends \Flow\Formatter\ChangesListFormatter {
 
 		// Additional $rc specific initializing
 		$query = Container::get( 'query.changeslist' );
-		$changesList = new ChangesList( Util::getContentLanguageContext() );
-		$row = $query->getResult( $changesList, $rc );
 		$this->context = Util::getContentLanguageContext();
+		$changesList = new ChangesList( $this->context );
+		$row = $query->getResult( $changesList, $rc );
 
 		// Get data for formatting
 		$this->serializer->setIncludeHistoryProperties( true );
@@ -151,8 +151,6 @@ class FlowDiscordFormatter extends \Flow\Formatter\ChangesListFormatter {
 
 		// Remove empty parentheses which wrapped the removed summary.
 		$desc = str_replace( '()', '', $desc );
-
-		// $desc .= '```' . print_r( $this->i18nProperties, true ) . '```';
 
 		return $desc;
 	}
