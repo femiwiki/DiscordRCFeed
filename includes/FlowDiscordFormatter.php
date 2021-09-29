@@ -2,13 +2,30 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed;
 
+use ChangesList;
 use Flow\Container;
-use Flow\FlowActions;
-use Flow\Formatter\RecentChangesRow;
 use IContextSource;
 use MediaWiki\MediaWikiServices;
+use RecentChange;
+use Sanitizer;
 
 class FlowDiscordFormatter extends \Flow\Formatter\ChangesListFormatter {
+
+	/** @var bool */
+	private $plaintext = false;
+
+	/** @var IContextSource */
+	private $context;
+
+	/** @var array */
+	private $data;
+
+	/** @var HtmlToDiscordConverter */
+	private $converter;
+
+	/** @var string[] */
+	private $i18nProperties;
+
 	/**
 	 * @inheritDoc
 	 */
@@ -16,58 +33,125 @@ class FlowDiscordFormatter extends \Flow\Formatter\ChangesListFormatter {
 		return '';
 	}
 
-	/** @var bool */
-	public $plaintext = false;
-
 	/**
-	 * @inheritDoc
+	 * @param RecentChange $rc
+	 * @param HtmlToDiscordConverter $converter
+	 * @param bool $plaintext
 	 */
-	public function format( RecentChangesRow $row, IContextSource $ctx, $linkOnly = false ) {
-		$this->serializer->setIncludeHistoryProperties( true );
-		$this->serializer->setIncludeContent( true );
-
-		$data = $this->serializer->formatApi( $row, $ctx, 'recentchanges' );
-		if ( !$data ) {
-			return false;
-		}
-		$text = $this->getDescription( $data, $ctx )->parse();
-		$titleLink = $this->getTitleLink( $data, $row, $ctx );
-		if ( $titleLink ) {
-			$titleLink = $ctx->msg( 'parentheses' )->rawParams( $titleLink )->text();
-			$text .= " $titleLink";
-		}
-		return $text;
-	}
-
-	/**
-	 * @return self
-	 */
-	public static function getInstance() {
+	public function __construct( RecentChange $rc, HtmlToDiscordConverter $converter, $plaintext = true ) {
 		$permissions = MediaWikiServices::getInstance()->getService( 'FlowPermissions' );
 		$revisionFormatter = Container::get( 'formatter.revision.factory' )->create();
-		return new self( $permissions, $revisionFormatter );
+		parent::__construct( $permissions, $revisionFormatter );
+
+		$this->plaintext = $plaintext;
+		$this->converter = $converter;
+
+		// Additional $rc specific initializing
+		$query = Container::get( 'query.changeslist' );
+		$this->context = Util::getContentLanguageContext();
+		$changesList = new ChangesList( $this->context );
+		$row = $query->getResult( $changesList, $rc );
+
+		// Get data for formatting
+		$this->serializer->setIncludeHistoryProperties( true );
+		$this->serializer->setIncludeContent( true );
+		$data = $this->serializer->formatApi( $row, $this->context, 'recentchanges' );
+		if ( $data && is_array( $data ) ) {
+			$this->storeI18Properties( $data['properties'] );
+			$this->data = $this->modifyData( $data );
+		}
 	}
 
 	/**
-	 * @inheritDoc
+	 * @param array $properties
 	 */
-	protected function getDescriptionParams( array $data, FlowActions $actions, $changeType ) {
-		if ( !$this->plaintext ) {
-			return parent::getDescriptionParams( $data,  $actions, $changeType );
-		}
-		$source = $actions->getValue( $changeType, 'history', 'i18n-params' );
-		$params = [];
-		foreach ( $source as $param ) {
-			if ( isset( $data['properties'][$param] ) ) {
-				$params[] = $param == 'user-links' ?
-					$data['properties']['user-text'] : $data['properties'][$param];
-			} else {
-				wfDebugLog( 'Flow', __METHOD__ .
-					": Missing expected parameter $param for change type $changeType" );
-				$params[] = '';
+	private function storeI18Properties( $properties ) {
+		$keyMap = [
+			'summary' => [
+				'moderated-reason',
+			],
+			'post-of-summary' => [
+				'topic-of-post-text-from-html',
+			],
+		];
+		foreach ( $keyMap as $target => $sources ) {
+			if ( isset( $properties[$target] ) ) {
+				$this->i18nProperties[$target] = $properties[$target]['plaintext'] ?? $properties[$target];
+				unset( $properties[$target] );
+			}
+			foreach ( $sources as $src ) {
+				if ( isset( $properties[$src] ) ) {
+					$this->i18nProperties[$target] = $properties[$src]['plaintext'] ?? $properties[$src];
+					unset( $properties[$src] );
+				}
 			}
 		}
 
-		return $params;
+		foreach ( $properties as $k => $v ) {
+			$this->i18nProperties[$k] = $v['plaintext'] ?? $v;
+		}
+	}
+
+	/**
+	 * @param array $data
+	 * @return array
+	 */
+	private function modifyData( $data ): array {
+		// The summary should not be included in the main line, because it should be accessed by
+		// self::getI18nProperty( 'summary' ).
+		foreach ( [
+			'summary',
+			'moderated-reason',
+		] as $key ) {
+			if ( isset( $data['properties'][$key] ) && isset( $data['properties'][$key]['plaintext'] ) ) {
+				$data['properties'][$key]['plaintext'] = '';
+			}
+		}
+
+		// Replace user links(user text + links) with user text. We add our own user links.
+		if ( $this->plaintext ) {
+			$data['properties']['user-links'] = $data['properties']['user-text'];
+		}
+
+		return $data;
+	}
+
+	/**
+	 * @param string $key
+	 * @return string
+	 */
+	public function getI18nProperty( string $key ): string {
+		return $this->i18nProperties[$key] ?? '';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDiscordDescription(): string {
+		$data = $this->data;
+		if ( !$data ) {
+			return '';
+		}
+
+		$changeType = $data['changeType'];
+		$actions = $this->permissions->getActions();
+
+		$key = $actions->getValue( $changeType, 'history', 'i18n-message' );
+		$msg = $this->context->msg( $key );
+
+		// Fetch message
+		$desc = $msg->params( $this->getDescriptionParams( $data, $actions, $changeType ) )->parse();
+
+		// Remove tags
+		if ( $this->plaintext ) {
+			$desc = Sanitizer::stripAllTags( $desc );
+		} else {
+			$desc = $this->converter->convert( $desc );
+		}
+
+		// Remove empty parentheses which wrapped the removed summary.
+		$desc = str_replace( '()', '', $desc );
+
+		return $desc;
 	}
 }
