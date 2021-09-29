@@ -2,16 +2,13 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed;
 
-use ChangesList;
 use FatalError;
-use Flow\Container;
 use Linker;
 use LogFormatter;
 use MediaWiki\MediaWikiServices;
 use Message;
 use RCFeedFormatter;
 use RecentChange;
-use Sanitizer;
 use Title;
 use User;
 
@@ -26,6 +23,9 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 
 	/** @var HtmlToDiscordConverter */
 	private $converter;
+
+	/** @var FlowDiscordFormatter */
+	private $flowFormatter;
 
 	/** @var array|null */
 	private $feed;
@@ -43,6 +43,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	 * @param array|null $feed
 	 * @param User|null $performer
 	 * @param Title|null $title
+	 * @throws FatalError
 	 */
 	public function __construct( $feed = null, $performer = null, $title = null ) {
 		if ( $feed === null || $performer === null || $title === null ) {
@@ -80,11 +81,16 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	 */
 	public function getLine( array $feed, RecentChange $rc, $actionComment ) {
 		$this->initialize( $feed, Util::getPerformerFromRC( $rc ), Util::getTitleFromRC( $rc ) );
+		$attribs = $rc->getAttributes();
+		$rcType = $attribs['rc_type'];
+
+		if ( self::isFlowLoaded() && $rcType == RC_FLOW ) {
+			$plaintext = $this->style == self::STYLE_STRUCTURE;
+			$this->flowFormatter = new FlowDiscordFormatter( $rc, $this->converter, $plaintext );
+		}
 
 		$desc = $this->getDescription( $rc, $feed['style'] != 'structure' );
 
-		$attribs = $rc->getAttributes();
-		$rcType = $attribs['rc_type'];
 		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$color = Constants::COLOR_MAP_ACTION[$rcType] ?? Constants::COLOR_DEFAULT;
 			$store = MediaWikiServices::getInstance()->getCommentStore();
@@ -94,7 +100,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			$comment = $attribs['rc_comment'];
 		} elseif ( self::isFlowLoaded() && $rcType == RC_FLOW ) {
 			$color = Constants::COLOR_ACTION_FLOW;
-			$comment = '';
+			$comment = $this->flowFormatter->getI18nProperty( 'summary' );
 		} else {
 			return null;
 		}
@@ -221,17 +227,9 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		$action = unserialize( $attribs['rc_params'] )['flow-workflow-change']['action'];
 		$emoji = self::getEmojiForKeys( 'discordrcfeed-emoji-flow', $action, '' );
 
-		$formatter = FlowDiscordFormatter::getInstance();
-		$formatter->plaintext = $this->style == self::STYLE_STRUCTURE;
-		$query = Container::get( 'query.changeslist' );
-		$changesList = new ChangesList( Util::getContentLanguageContext() );
-		$row = $query->getResult( $changesList, $rc );
-		$desc = $formatter->format( $row, $changesList );
-		if ( $this->style == self::STYLE_STRUCTURE ) {
-			$desc = Sanitizer::stripAllTags( $desc );
-		} else {
-			$desc = $this->converter->convert( $desc );
-		}
+		$plaintext = $this->style == self::STYLE_STRUCTURE;
+		$desc = $this->flowFormatter->getDiscordDescription();
+
 		return "$emoji $desc";
 	}
 
@@ -396,13 +394,39 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	 */
 	private function getFlowPageToolFields() {
 		$title = $this->title;
-		return [
-			[
-				'name' => $title->getFullText(),
-				'value' => $this->linker->makePageTools( $title, PHP_EOL ),
+		$flowFormatter = $this->flowFormatter;
+		$linker = $this->linker;
+
+		$fields = [];
+
+		// Add topic field
+		$tools = [];
+		$topicText = $flowFormatter->getI18nProperty( 'post-of-summary' )
+			?: $title->getFullText();
+
+		// Add view tool
+		$viewUrl = $flowFormatter->getI18nProperty( 'workflow-url' );
+		if ( $viewUrl ) {
+			$tools[] = DiscordLinker::makeLink( $viewUrl, Util::msgText( 'view' ) );
+		}
+
+		// Add diff tool
+		$diffUrl = $flowFormatter->getI18nProperty( 'post-url' );
+		if ( $diffUrl ) {
+			$tools[] = DiscordLinker::makeLink( $diffUrl, Util::msgText( 'diff' ) );
+		}
+
+		$toolsText = implode( PHP_EOL, $tools );
+		$toolsText .= PHP_EOL . $linker->makePageTools( $title, PHP_EOL );
+		if ( $topicText ) {
+			$fields[] = [
+				'name' => $topicText,
+				'value' => $toolsText,
 				'inline' => true,
-			],
-		];
+			];
+		}
+
+		return $fields;
 	}
 
 	/**
