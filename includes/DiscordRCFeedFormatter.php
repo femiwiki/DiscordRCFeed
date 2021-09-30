@@ -89,7 +89,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			$this->flowFormatter = new FlowDiscordFormatter( $rc, $this->converter, $plaintext );
 		}
 
-		$desc = $this->getDescription( $rc, $feed['style'] != 'structure' );
+		$desc = $this->getDescription( $rc, $feed['style'] != self::STYLE_STRUCTURE );
 
 		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$color = Constants::COLOR_MAP_ACTION[$rcType] ?? Constants::COLOR_DEFAULT;
@@ -326,7 +326,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			'username' => $wgSitename,
 		];
 		switch ( $style ) {
-			case 'embed':
+			case self::STYLE_EMBED:
 				$post['embeds'] = [
 					[
 						'color' => $color,
@@ -334,10 +334,10 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 					],
 				];
 				break;
-			case 'inline':
+			case self::STYLE_INLINE:
 				$post['content'] = $fullString;
 				break;
-			case 'structure':
+			case self::STYLE_STRUCTURE:
 				$szdiff = self::getSizeDiff( $attribs );
 				$post['embeds'] = [
 					[
