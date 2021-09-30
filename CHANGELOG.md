@@ -12,6 +12,7 @@ Changes about the default parameters of the RCFeed:
 
 - Patrol events are now omitted by default.
 - The default values of the page/user tools are changed as same as Special:RecentChanges.
+- The default value of 'style' is changed from `'embed'` to `'structure'`.
 
 Others:
 
