@@ -67,9 +67,11 @@ class DiscordRCFeedEngine extends FormattedRCFeed {
 		// $oldLen = $attribs['rc_old_len'] ?? '';
 		// $newLen = $attribs['rc_new_len'] ?? '';
 		if (
+			// Talk
 			( $params['omit_talk'] && $isTalk ) ||
 			( $params['only_talk'] && !$isTalk ) ||
 
+			// RC type
 			in_array( $attribs['rc_type'], $params['omit_types'] ) ||
 			( $params['only_types'] && !in_array( $attribs['rc_type'], $params['only_types'] ) ) ||
 
