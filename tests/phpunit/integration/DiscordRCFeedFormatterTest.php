@@ -65,7 +65,7 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 			$this->setMwGlobals( 'wgSitename', $sitename );
 		}
 		$defaultParams = [
-			'style' => 'embed',
+			'style' => DiscordRCFeedFormatter::STYLE_EMBED,
 		];
 		FeedSanitizer::initializeParameters( $feed, $defaultParams );
 		$user = $this->getTestSysop()->getUser();
@@ -202,7 +202,7 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 			'rc_title' => 'Test page',
 		], $attribs );
 		FeedSanitizer::initializeParameters( $feed, [
-			'style' => 'embed',
+			'style' => DiscordRCFeedFormatter::STYLE_EMBED,
 		] );
 
 		$rc = self::makeRecentChange( $attribs );
