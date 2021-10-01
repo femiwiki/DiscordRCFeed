@@ -1,7 +1,7 @@
 {
   "name": "DiscordRCFeed",
-  "version": "0.1.2",
-  "author": "Aleksi Postari",
+  "version": "0.2.0",
+  "author": ["Aleksi Postari", "[https://femiwiki.com/ FemiWiki Team]", "..."],
   "url": "https://github.com/femiwiki/DiscordRCFeed",
   "descriptionmsg": "discordnotifications-desc",
   "type": "other",

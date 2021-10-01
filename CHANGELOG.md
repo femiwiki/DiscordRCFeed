@@ -2,13 +2,13 @@
 
 Versions and bullets are arranged chronologically from latest to oldest.
 
-## Unreleased
+## v0.2.0
 
 Breaking changes:
 
-- `'line_style'` parameter is renamed to `'style'`.
+- the `'line_style'` parameter for $wgRCFeeds is renamed to `'style'`.
 
-Changes about the default parameters of the RCFeed:
+The default parameters of $wgRCFeeds changes:
 
 - Patrol events are now omitted by default.
 - The default values of the page/user tools are changed as same as Special:RecentChanges.
@@ -17,7 +17,7 @@ Changes about the default parameters of the RCFeed:
 Others:
 
 - Fixed bug that the array type default parameters are ignored.
-- A new parameter for `'style'`, `'structure'` is added.
+- `'structure'` which is a new parameter for `'style'` is added.
 - The next parameters are added:
   - `omit_talk` and `only_talk`
   - `only_namespaces`
