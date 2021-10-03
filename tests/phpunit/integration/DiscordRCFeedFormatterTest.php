@@ -287,7 +287,7 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 				[ RC_NEW, 30 ],
 			],
 			'should return size and diff if the old length is provided' => [
-				"30 bytes\n(+10)",
+				"30 bytes (+10)",
 				$structure,
 				[ RC_EDIT, 30, 20 ],
 			],
