@@ -27,7 +27,7 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 		$this->wrapper = TestingAccessWrapper::newFromObject( $renderer );
 	}
 
-	public static function providerDiscordUserText() {
+	public static function providerUserText() {
 		return [
 			'should disable user tools' => [
 				'[Foo](https://foo.bar/index.php/User:Foo)',
@@ -94,7 +94,7 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	/**
-	 * @dataProvider providerDiscordUserText
+	 * @dataProvider providerUserText
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makeUserTextWithTools
 	 */
 	public function testMakeUserTextWithTools(
@@ -110,6 +110,39 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 		$user->setName( $name );
 		$user->addToDatabase();
 		$actual = $linkRenderer->makeUserTextWithTools( $user );
+		$this->assertSame( $expected, $actual );
+	}
+
+	public static function providerUserTools() {
+		return [
+			'should render link to user page' => [
+				'[User page](https://foo.bar/index.php/User:Foo)',
+				[
+					[
+						'target' => 'user_page',
+						'text' => 'User page'
+					]
+				],
+				'Foo',
+			],
+		];
+	}
+
+	/**
+	 * @dataProvider providerUserTools
+	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makeUserTools
+	 */
+	public function testMakeUserTools(
+		string $expected,
+		array $userTools,
+		string $name
+	) {
+		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
+		$linkRenderer = new DiscordLinker( $userTools );
+		$user = new User();
+		$user->setName( $name );
+		$user->addToDatabase();
+		$actual = $linkRenderer->makeUserTools( $user, ' ', true );
 		$this->assertSame( $expected, $actual );
 	}
 
