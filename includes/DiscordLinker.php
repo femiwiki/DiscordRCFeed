@@ -53,8 +53,12 @@ class DiscordLinker {
 		return self::makeTools(
 			$this->userTools,
 			static function ( $tool ) use ( $user, $includeSelf ) {
-				if ( $tool['target'] == 'user_page' && !$includeSelf ) {
-					return null;
+				if ( $tool['target'] == 'user_page' ) {
+					if ( $includeSelf ) {
+						return $user->getUserPage()->getFullURL();
+					} else {
+						return null;
+					}
 				}
 				if ( $tool['target'] == 'talk' ) {
 					return $user->getTalkPage()->getFullURL();

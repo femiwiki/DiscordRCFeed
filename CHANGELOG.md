@@ -2,6 +2,10 @@
 
 Versions and bullets are arranged chronologically from latest to oldest.
 
+## Unreleased
+
+- Fixed the broken link to the user page.
+
 ## v0.2.0
 
 Breaking changes:
