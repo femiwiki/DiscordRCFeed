@@ -282,7 +282,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			$newLen = $newLen->inContentLanguage()->text();
 			$szdiff = ( $szdiff > 0 ? '+' : '' ) . $szdiff;
 			$szdiff = Util::msgText( 'parentheses', $szdiff );
-			return $newLen . PHP_EOL . $szdiff;
+			return "$newLen $szdiff";
 		} else {
 			$msg = ( new Message( 'nbytes' ) )->numParams( $szdiff );
 			$msg = $msg->inContentLanguage()->text();
@@ -349,7 +349,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				if ( $performer ) {
 					$post['embeds'][0]['fields'][] = [
 						'name' => $performer->getName(),
-						'value' => $this->linker->makeUserTools( $performer, PHP_EOL, true ),
+						'value' => $this->linker->makeUserTools( $performer, null, true ),
 						'inline' => true,
 					];
 				}
@@ -357,7 +357,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 					if ( $title ) {
 						$post['embeds'][0]['fields'][] = [
 							'name' => $title->getFullText(),
-							'value' => $this->linker->makePageTools( $title, PHP_EOL, true ),
+							'value' => $this->linker->makePageTools( $title, null, true ),
 							'inline' => true,
 						];
 					}
@@ -414,8 +414,9 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			$tools[] = DiscordLinker::makeLink( $diffUrl, Util::msgText( 'diff' ) );
 		}
 
-		$toolsText = implode( PHP_EOL, $tools );
-		$toolsText .= PHP_EOL . $linker->makePageTools( $title, PHP_EOL );
+		$sep = Util::msgText( 'pipe-separator' );
+		$toolsText = implode( $sep, $tools );
+		$toolsText .= $sep . $linker->makePageTools( $title );
 		if ( $topicText ) {
 			$fields[] = [
 				'name' => $topicText,
