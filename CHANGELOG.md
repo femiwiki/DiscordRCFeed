@@ -2,7 +2,7 @@
 
 Versions and bullets are arranged chronologically from latest to oldest.
 
-## Unreleased
+## v0.2.1
 
 - Fixed the broken link to the user page.
 - The separator for tool links of the structured style is changed from newline to bar(|).
