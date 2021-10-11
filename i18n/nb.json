@@ -1,9 +1,0 @@
-{
-	"@metadata": {
-		"authors": [
-			"Jon Harald Søby"
-		]
-	},
-	"discordrcfeed-line-edit-minor": "$1 har gjort en mindre redigering i artikkelen $3",
-	"discordrcfeed-line-edit": "$1 har redigert artikkelen $3"
-}

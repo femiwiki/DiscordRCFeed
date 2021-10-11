@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mehtab ahmed"
+		]
+	},
+	"discordrcfeed-line-edit-minor": "$1 مضمون $3 ۾ معمولي سنوار {{GENDER:$2|ڪئي}}",
+	"discordrcfeed-line-edit": "$1 پاران مضمون $3 {{GENDER:$2|سنواريو ويو}}"
+}

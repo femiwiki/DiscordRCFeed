@@ -4,6 +4,7 @@
 			"Bjankuloski06"
 		]
 	},
-	"discordrcfeed-line-edit-minor": "$1 ја направи ситно уредување на статијата $3",
-	"discordrcfeed-line-edit": "$1 ја уреди статијата $3"
+	"discordrcfeed-desc": "Овозможува RCFeedEngine и RCFeedFormatter за Discord.",
+	"discordrcfeed-line-edit-minor": "$1 {{GENDER:$2|направи}} ситно уредување на статијата $3",
+	"discordrcfeed-line-edit": "$1 ја {{GENDER:$2|уреди}} статијата $3"
 }

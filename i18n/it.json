@@ -4,5 +4,5 @@
 			"Beta16"
 		]
 	},
-	"discordrcfeed-line-edit": "$1 ha modificato la voce $3"
+	"discordrcfeed-line-edit": "$1 {{GENDER:$2|ha modificato}} la voce $3"
 }

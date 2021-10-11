@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Jeeputer"
+		]
+	},
+	"discordrcfeed-line-edit-minor": "$1  در مقالهٔ $3 یک ویرایش جزئی {{GENDER:$2|انجام داد}}",
+	"discordrcfeed-line-edit": "$1 مقالهٔ $3 را {{GENDER:$2|ویرایش کرد}}"
+}
