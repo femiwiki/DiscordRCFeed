@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Akoonaba"
+		]
+	},
+	"discordrcfeed-line-edit-minor": "$1{{GENDER:$2|eŋɛ}} atikeli demese-pika $3",
+	"discordrcfeed-line-edit": "$1 {{GENDER:$2|demese}} Atikeli $3"
+}

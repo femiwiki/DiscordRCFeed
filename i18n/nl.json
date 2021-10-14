@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Mainframe98"
+		]
+	},
+	"discordrcfeed-line-edit-minor": "$1 heeft een kleine bewerking aan pagina $3 {{GENDER:$2|gemaakt}}",
+	"discordrcfeed-line-edit": "$1 heeft pagina $3 {{GENDER:$2|bewerkt}}"
+}
