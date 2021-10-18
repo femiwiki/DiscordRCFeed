@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"আফতাবুজ্জামান"
+		]
+	},
+	"discordrcfeed-line-edit-minor": "$1 $3 নিবন্ধে একটি অনুল্লেখ্য সম্পাদনা {{GENDER:$2|করেছেন}}",
+	"discordrcfeed-line-edit": "$1 $3 নিবন্ধে একটি সম্পাদনা {{GENDER:$2|করেছেন}}"
+}
