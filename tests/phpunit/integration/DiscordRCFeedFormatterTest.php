@@ -39,11 +39,6 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	public static function providerEmbed(): array {
 		return [
 			[
-				'{"embeds": [ { "color" : 255 ,"description" : "message (comment)"} ], "username": "TestWiki"}',
-				'',
-				[],
-			],
-			[
 				'{"embeds": [ { "color" : 255 ,"description" : "message (comment)"} ], "username": "FooWiki"}',
 				'FooWiki',
 				[],

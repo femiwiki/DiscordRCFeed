@@ -103,7 +103,10 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 		array $userTools,
 		string $name
 	) {
-		$globals += [ 'wgServer' => 'https://foo.bar' ];
+		$globals += [
+			'wgServer' => 'https://foo.bar',
+			'wgArticlePath' => '/index.php/$1',
+		];
 		$this->setMwGlobals( $globals );
 		$linkRenderer = new DiscordLinker( $userTools );
 		$user = new User();
@@ -137,7 +140,10 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 		array $userTools,
 		string $name
 	) {
-		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
+		$this->setMwGlobals( [
+			'wgServer' => 'https://foo.bar',
+			'wgArticlePath' => '/index.php/$1',
+		] );
 		$linkRenderer = new DiscordLinker( $userTools );
 		$user = new User();
 		$user->setName( $name );
@@ -190,7 +196,11 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 	 */
 	public function testMakePageTextWithTools( array $pageTools,
 		string $titleText, string $expected ) {
-		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
+		$this->setMwGlobals( [
+			'wgServer' => 'https://foo.bar',
+			'wgArticlePath' => '/index.php/$1',
+			'wgScript' => '/index.php'
+		] );
 		$linkRenderer = new DiscordLinker( null, $pageTools );
 		$page = $this->getExistingTestPage( $titleText );
 		$title = $page->getTitle();
@@ -246,7 +256,11 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 		string $titleText,
 		array $params
 	) {
-		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
+		$this->setMwGlobals( [
+			'wgServer' => 'https://foo.bar',
+			'wgArticlePath' => '/index.php/$1',
+			'wgScript' => '/index.php'
+		] );
 		$linkRenderer = new DiscordLinker( null, $pageTools );
 		$page = $this->getExistingTestPage( $titleText );
 		$title = $page->getTitle();
@@ -260,12 +274,12 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 	public static function diffProvider() {
 		return [
 			'should render diff if the title is not root' => [
-				'[Dummy page](http://127.0.0.1:9412/index.php/Dummy_page) '
-				. '([diff](http://127.0.0.1:9412/index.php?title=Dummy_page&oldid=11&diff=prev))',
+				'[Dummy page](https://foo.bar/index.php/Dummy_page) '
+				. '([diff](https://foo.bar/index.php?title=Dummy_page&oldid=11&diff=prev))',
 				false,
 			],
 			'should not render diff if the title is root' => [
-				'[Dummy page](http://127.0.0.1:9412/index.php/Dummy_page)',
+				'[Dummy page](https://foo.bar/index.php/Dummy_page)',
 				true,
 			],
 		];
@@ -276,6 +290,11 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makePageTextWithTools
 	 */
 	public function testDiffPageTool( $expected, $titleIsRoot ) {
+		$this->setMwGlobals( [
+			'wgServer' => 'https://foo.bar',
+			'wgArticlePath' => '/index.php/$1',
+			'wgScript' => '/index.php'
+		] );
 		$diffTool = [
 			'target' => 'diff',
 			'text' => 'diff',
