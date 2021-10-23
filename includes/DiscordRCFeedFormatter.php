@@ -356,7 +356,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 						];
 					}
 				}
-				if ( $attribs['rc_type'] !== RC_FLOW ) {
+				if ( !self::isFlowLoaded() || $attribs['rc_type'] !== RC_FLOW ) {
 					if ( $title ) {
 						$tools = $this->linker->makePageTools( $title, null, true );
 						if ( $tools ) {
