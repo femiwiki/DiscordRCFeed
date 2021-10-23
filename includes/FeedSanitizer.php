@@ -44,6 +44,8 @@ class FeedSanitizer implements \MediaWiki\Hook\MediaWikiServicesHook {
 	}
 
 	/**
+	 * $feed has some requirements, default parameters and type matching. This function makes sure
+	 * the requirements match for the given &$feed.
 	 * @param array &$feed
 	 * @param array|null $defaultParameters
 	 * @param array|null $mergeParameters

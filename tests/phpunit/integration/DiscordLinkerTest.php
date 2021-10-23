@@ -153,31 +153,37 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function providerDiscordPageText(): array {
-		$editPageTool = [
+		$view = [
+			'target' => 'view',
+			'msg' => 'view'
+		];
+		$edit = [
 			'query' => 'action=edit',
 			'msg' => 'edit'
 		];
-		$deletePageTool = [
-			'query' => 'action=delete',
-			'msg' => 'delete'
-		];
 		return [
 			'should be able to disable page tools' => [
+				'[Foo](https://foo.bar/index.php/Foo)',
 				[],
 				'Foo',
-				'[Foo](https://foo.bar/index.php/Foo)',
 			],
 			'should urlencode special characters' => [
+				'[Foo&bar](https://foo.bar/index.php/Foo%26bar)',
 				[],
 				'Foo&bar',
-				'[Foo&bar](https://foo.bar/index.php/Foo%26bar)',
 			],
-			'should render user tools' => [
-				[ $editPageTool ],
+			'should render the view tool' => [
+				'[Foo](https://foo.bar/index.php/Foo)',
+				[ $view ],
 				'Foo',
+			],
+			'should render a tool with query' => [
 				'[Foo](https://foo.bar/index.php/Foo) ([Edit](https://foo.bar/index.php?title=Foo&action=edit))',
+				[ $edit ],
+				'Foo',
 			],
 			'"view" should be omitted in the block style' => [
+				'[Foo](https://foo.bar/index.php/Foo)',
 				[
 					[
 						'target' => 'view',
@@ -185,7 +191,6 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 					]
 				],
 				'Foo',
-				'[Foo](https://foo.bar/index.php/Foo)',
 			],
 		];
 	}
@@ -194,8 +199,11 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider providerDiscordPageText
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordLinker::makePageTextWithTools
 	 */
-	public function testMakePageTextWithTools( array $pageTools,
-		string $titleText, string $expected ) {
+	public function testMakePageTextWithTools(
+		string $expected,
+		array $pageTools,
+		string $titleText
+	) {
 		$this->setMwGlobals( [
 			'wgServer' => 'https://foo.bar',
 			'wgArticlePath' => '/index.php/$1',
@@ -204,44 +212,56 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 		$linkRenderer = new DiscordLinker( null, $pageTools );
 		$page = $this->getExistingTestPage( $titleText );
 		$title = $page->getTitle();
-
-		$this->assertSame(
-			$expected,
-			$linkRenderer->makePageTextWithTools( $title )
-		);
+		$actual = $linkRenderer->makePageTextWithTools( $title );
+		$this->assertSame( $expected, $actual );
 	}
 
 	public static function providerPageTools(): array {
-		$tools = [
-			[
-				'query' => 'action=edit',
-				'text' => 'edit'
-			],
-			[
-				'query' => 'action=delete',
-				'text' => 'delete'
-			],
-			[
-				'query' => 'action=history',
-				'text' => 'hist'
-			],
+		$tools = [];
+		foreach ( [ 'edit', 'delete', 'history', 'diff' ] as $tool ) {
+			$tools[$tool] = [
+				'query' => "action=$tool",
+				'text' => $tool,
+			];
+		}
+		$view = [
+			'target' => 'view',
+			'text' => 'view'
 		];
 		return [
 			'all tools should be shown in the structured style' => [
 				'[edit](https://foo.bar/index.php?title=Foo&action=edit)' . PHP_EOL
 				. '[delete](https://foo.bar/index.php?title=Foo&action=delete)' . PHP_EOL
-				. '[hist](https://foo.bar/index.php?title=Foo&action=history)',
-				$tools,
+				. '[history](https://foo.bar/index.php?title=Foo&action=history)',
+				[ $tools['edit'], $tools['delete'], $tools['history'] ],
 				'Foo',
 				[ PHP_EOL, true ],
 			],
 			'all tools should be shown in the embed style' => [
 				'[edit](https://foo.bar/index.php?title=Foo&action=edit) | '
 				. '[delete](https://foo.bar/index.php?title=Foo&action=delete) | '
-				. '[hist](https://foo.bar/index.php?title=Foo&action=history)',
-				$tools,
+				. '[history](https://foo.bar/index.php?title=Foo&action=history)',
+				[ $tools['edit'], $tools['delete'], $tools['history'] ],
 				'Foo',
-				[],
+				[ null, false ],
+			],
+			'should include the self link if the includeSelf is true' => [
+				'[view](https://foo.bar/index.php/Foo)',
+				[ $view ],
+				'Foo',
+				[ null, true ],
+			],
+			'should not include the self link if the includeSelf is false' => [
+				'',
+				[ $view ],
+				'Foo',
+				[ null, false ],
+			],
+			'should not include tools other then the view for a special page' => [
+				'[view](https://foo.bar/index.php/Special:Version)',
+				[ $view, $tools['edit'], $tools['diff'] ],
+				'Special:Version',
+				[ null, true ],
 			],
 		];
 	}
@@ -262,8 +282,9 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 			'wgScript' => '/index.php'
 		] );
 		$linkRenderer = new DiscordLinker( null, $pageTools );
-		$page = $this->getExistingTestPage( $titleText );
-		$title = $page->getTitle();
+		// $page = $this->getExistingTestPage( $titleText );
+		// $title = $page->getTitle();
+		$title = Title::newFromText( $titleText );
 
 		$this->assertSame(
 			$expected,

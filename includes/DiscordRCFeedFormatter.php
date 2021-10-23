@@ -338,7 +338,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				$post['content'] = $fullString;
 				break;
 			case self::STYLE_STRUCTURE:
-				$szdiff = self::getSizeDiff( $attribs );
+				$szdiff = $this->getSizeDiff( $attribs );
 				$post['embeds'] = [
 					[
 						'color' => $color,
