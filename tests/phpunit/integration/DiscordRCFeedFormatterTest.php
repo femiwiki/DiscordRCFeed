@@ -38,20 +38,89 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 
 	public static function providerEmbed(): array {
 		return [
-			[
-				'{"embeds": [ { "color" : 255 ,"description" : "message (comment)"} ], "username": "TestWiki"}',
-				'',
-				[],
-			],
-			[
-				'{"embeds": [ { "color" : 255 ,"description" : "message (comment)"} ], "username": "FooWiki"}',
+			'should make plain post data' => [
+				[
+					'embeds' => [
+						[
+							'color' => 255,
+							'description' => 'message (comment)'
+						]
+					],
+					'username' => 'FooWiki',
+				],
 				'FooWiki',
 				[],
 			],
-			[
-				'{"embeds": [ { "color" : 255 ,"description" : "message (comment)"} ], "username": "DummyBot"}',
+			'should replace the username' => [
+				[
+					'embeds' => [
+						[
+							'color' => 255,
+							'description' => 'message (comment)'
+						]
+					],
+					'username' => 'DummyBot',
+				],
 				'',
 				[ 'request_replace' => [ 'username' => 'DummyBot' ] ],
+			],
+			'should make post data in the structure style when tools are empy' => [
+				[
+					'embeds' => [
+						[
+							'color' => 255,
+							'description' => 'message',
+							'fields' => [
+								[
+									'name' => 'Summary:',
+									'value' => 'comment',
+								]
+							],
+						]
+					],
+					'username' => 'DummyBot',
+				],
+				'',
+				[
+					'style' => DiscordRCFeedFormatter::STYLE_STRUCTURE,
+					'request_replace' => [ 'username' => 'DummyBot' ],
+					'user_tools' => [],
+					'page_tools' => [],
+				],
+			],
+			'should make post data when user tools are given' => [
+				[
+					'embeds' => [
+						[
+							'color' => 255,
+							'description' => 'message',
+							'fields' => [
+								[
+									'name' => 'Dummy',
+									'value' => '[User page](https://foo.bar/index.php/User:Dummy)',
+									'inline' => true
+								],
+								[
+									'name' => 'Summary:',
+									'value' => 'comment',
+								],
+							],
+						]
+					],
+					'username' => 'DummyBot',
+				],
+				'',
+				[
+					'style' => DiscordRCFeedFormatter::STYLE_STRUCTURE,
+					'request_replace' => [ 'username' => 'DummyBot' ],
+					'user_tools' => [
+						[
+							'target' => 'user_page',
+							'msg' => 'nstab-user'
+						],
+					],
+					'page_tools' => [],
+				],
 			],
 		];
 	}
@@ -60,10 +129,19 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\DiscordRCFeedFormatter::makePostData
 	 * @dataProvider providerEmbed
 	 */
-	public function testMakePostData( string $expected, string $sitename, array $feed ) {
+	public function testMakePostData(
+		array $expected,
+		string $sitename,
+		array $feed
+	) {
 		if ( $sitename ) {
 			$this->setMwGlobals( 'wgSitename', $sitename );
 		}
+		$this->setMwGlobals( [
+			'wgServer' => 'https://foo.bar',
+			'wgArticlePath' => '/index.php/$1',
+			'wgScript' => '/index.php'
+		] );
 		$defaultParams = [
 			'style' => DiscordRCFeedFormatter::STYLE_EMBED,
 		];
@@ -73,15 +151,13 @@ class DiscordRCFeedFormatterTest extends MediaWikiIntegrationTestCase {
 
 		$formatter = new DiscordRCFeedFormatter( $feed, $user, Title::newFromText( 'Dummy' ) );
 		$wrapper = TestingAccessWrapper::newFromObject( $formatter );
-		$this->assertJsonStringEqualsJsonString(
-			$expected,
-			$wrapper->makePostData(
-				[],
-				0x0000ff,
-				'message',
-				'comment'
-			)
+		$actual = $wrapper->makePostData(
+			[ 'rc_type' => RC_EDIT ],
+			0x0000ff,
+			'message',
+			'comment'
 		);
+		$this->assertEquals( $expected, (array)json_decode( $actual, true ) );
 	}
 
 	public static function providerGetDescription() {

@@ -338,7 +338,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 				$post['content'] = $fullString;
 				break;
 			case self::STYLE_STRUCTURE:
-				$szdiff = self::getSizeDiff( $attribs );
+				$szdiff = $this->getSizeDiff( $attribs );
 				$post['embeds'] = [
 					[
 						'color' => $color,
@@ -347,19 +347,25 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 					],
 				];
 				if ( $performer ) {
-					$post['embeds'][0]['fields'][] = [
-						'name' => $performer->getName(),
-						'value' => $this->linker->makeUserTools( $performer, null, true ),
-						'inline' => true,
-					];
+					$tools = $this->linker->makeUserTools( $performer, null, true );
+					if ( $tools ) {
+						$post['embeds'][0]['fields'][] = [
+							'name' => $performer->getName(),
+							'value' => $tools,
+							'inline' => true,
+						];
+					}
 				}
 				if ( $attribs['rc_type'] !== RC_FLOW ) {
 					if ( $title ) {
-						$post['embeds'][0]['fields'][] = [
-							'name' => $title->getFullText(),
-							'value' => $this->linker->makePageTools( $title, null, true ),
-							'inline' => true,
-						];
+						$tools = $this->linker->makePageTools( $title, null, true );
+						if ( $tools ) {
+							$post['embeds'][0]['fields'][] = [
+								'name' => $title->getFullText(),
+								'value' => $tools,
+								'inline' => true,
+							];
+						}
 					}
 				} else {
 					$fields = $this->getFlowPageToolFields();

@@ -9,6 +9,7 @@ use Wikimedia\TestingAccessWrapper;
 
 /**
  * @group DiscordRCFeed
+ * @group Database
  *
  * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter
  */
@@ -65,7 +66,11 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::convert
 	 */
 	public function testConvert( $expected, $html, $message = '' ) {
-		$this->setMwGlobals( 'wgServer', 'http://f.oo' );
+		$this->setMwGlobals( [
+			'wgServer' => 'http://f.oo',
+			'wgArticlePath' => '/index.php/$1',
+			'wgScript' => '/index.php'
+		] );
 		$this->assertSame(
 			$expected,
 			$this->converter->convert( $html ),
@@ -89,7 +94,11 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::convertUserName
 	 */
 	public function testConvertUserName( $expected, $params, $message = '' ) {
-		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
+		$this->setMwGlobals( [
+			'wgServer' => 'https://foo.bar',
+			'wgArticlePath' => '/index.php/$1',
+			'wgScript' => '/index.php'
+		] );
 		$this->assertSame(
 			$expected,
 			$this->wrapper->convertUserName( $params ),
@@ -123,7 +132,11 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::convertTitleLinks
 	 */
 	public function testConvertTitleLinks( $expected, $params, $message = '' ) {
-		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
+		$this->setMwGlobals( [
+			'wgServer' => 'https://foo.bar',
+			'wgArticlePath' => '/index.php/$1',
+			'wgScript' => '/index.php'
+		] );
 		$this->assertSame(
 			$expected,
 			$this->wrapper->convertTitleLinks( $params ),
@@ -154,7 +167,11 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::convertLinks
 	 */
 	public function testConvertLinks( $expected, $params, $message = '' ) {
-		$this->setMwGlobals( 'wgServer', 'https://foo.bar' );
+		$this->setMwGlobals( [
+			'wgServer' => 'https://foo.bar',
+			'wgArticlePath' => '/index.php/$1',
+			'wgScript' => '/index.php'
+		] );
 		$this->assertSame(
 			$expected,
 			$this->wrapper->convertLinks( $params ),
