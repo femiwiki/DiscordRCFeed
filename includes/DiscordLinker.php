@@ -81,9 +81,12 @@ class DiscordLinker {
 			$this->pageTools,
 			static function ( $tool ) use ( $title, $includeSelf ) {
 				if ( isset( $tool['target'] ) ) {
+					$store = MediaWikiServices::getInstance()->getRevisionStore();
+					$revision = $store->getRevisionByTitle( $title );
+					$revisionId = $revision ? $revision->getId() : null;
 					if ( $tool['target'] == 'view' ) {
 						if ( $includeSelf ) {
-							return $title->getFullURL();
+							return $title->getFullURL( $revisionId ? "oldid=$revisionId" : '' );
 						} else {
 							return null;
 						}
@@ -92,8 +95,6 @@ class DiscordLinker {
 						if ( $title->isSpecialPage() ) {
 							return;
 						}
-						$store = MediaWikiServices::getInstance()->getRevisionStore();
-						$revision = $store->getRevisionByTitle( $title );
 						if ( !$revision ) {
 							return null;
 						}
@@ -102,7 +103,6 @@ class DiscordLinker {
 							// New page, skips diff
 							return null;
 						}
-						$revisionId = $revision->getId();
 						return $title->getFullURL( "oldid=$revisionId&diff=prev" );
 					}
 				}

@@ -246,7 +246,7 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 				[ null, false ],
 			],
 			'should include the self link if the includeSelf is true' => [
-				'[view](https://foo.bar/index.php/Foo)',
+				'[view](https://foo.bar/index.php?title=Foo&oldid=2)',
 				[ $view ],
 				'Foo',
 				[ null, true ],
@@ -282,8 +282,6 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 			'wgScript' => '/index.php'
 		] );
 		$linkRenderer = new DiscordLinker( null, $pageTools );
-		// $page = $this->getExistingTestPage( $titleText );
-		// $title = $page->getTitle();
 		$title = Title::newFromText( $titleText );
 
 		$this->assertSame(
