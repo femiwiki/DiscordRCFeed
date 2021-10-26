@@ -93,8 +93,9 @@ final class Util {
 	 */
 	public static function getPerformerFromRC( RecentChange $rc ) {
 		if ( defined( 'MW_VERSION' ) && version_compare( MW_VERSION, '1.37', '>=' ) ) {
+			$userFactory = MediaWikiServices::getInstance()->getUserFactory();
 			// @phan-suppress-next-line PhanUndeclaredMethod, PhanUndeclaredStaticMethod
-			return User::newFromIdentity( $rc->getPerformerIdentity() );
+			return $userFactory->newFromUserIdentity( $rc->getPerformerIdentity() );
 		} else {
 			return $rc->getPerformer();
 		}

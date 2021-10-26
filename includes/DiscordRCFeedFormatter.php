@@ -353,7 +353,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 						'inline' => true,
 					];
 				}
-				if ( $attribs['rc_type'] !== RC_FLOW ) {
+				if ( !self::isFlowLoaded() || $attribs['rc_type'] !== RC_FLOW ) {
 					if ( $title ) {
 						$post['embeds'][0]['fields'][] = [
 							'name' => $title->getFullText(),
