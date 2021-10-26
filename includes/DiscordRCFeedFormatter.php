@@ -409,21 +409,19 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			?: $title->getFullText();
 
 		// Add view tool
-		$viewUrl = $flowFormatter->getI18nProperty( 'workflow-url' );
-		if ( $viewUrl ) {
-			$tools[] = DiscordLinker::makeLink( $viewUrl, Util::msgText( 'view' ) );
-		}
-
-		// Add diff tool
-		$diffUrl = $flowFormatter->getI18nProperty( 'post-url' );
-		if ( $diffUrl ) {
-			$tools[] = DiscordLinker::makeLink( $diffUrl, Util::msgText( 'diff' ) );
+		$viewLink = $flowFormatter->getI18nProperty( 'post-url' );
+		$viewLink = $viewLink ?: $flowFormatter->getI18nProperty( 'workflow-url' );
+		if ( $viewLink ) {
+			$tools[] = DiscordLinker::makeLink( $viewLink, Util::msgText( 'view' ) );
 		}
 
 		$sep = Util::msgText( 'pipe-separator' );
 		$toolsText = implode( $sep, $tools );
-		$toolsText .= $sep . $linker->makePageTools( $title );
-		if ( $topicText ) {
+		if ( $toolsText ) {
+			$toolsText .= $sep;
+		}
+		$toolsText .= $linker->makePageTools( $title );
+		if ( $toolsText ) {
 			$fields[] = [
 				'name' => $topicText,
 				'value' => $toolsText,
