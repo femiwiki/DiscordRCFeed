@@ -2,6 +2,17 @@
 
 Versions and bullets are arranged chronologically from latest to oldest.
 
+## Unreleased
+
+Enhancements:
+
+- The View tool for a page change now links to the permalink. (https://github.com/femiwiki/DiscordRCFeed/issues/45)
+
+Bug fixes:
+
+- Fixed that changes on special pages ignored. (https://github.com/femiwiki/DiscordRCFeed/issues/48)
+- Fixed fatal error happened if the wiki didn't install StructuredDisscussions
+
 ## v0.2.1
 
 - Fixed the broken link to the user page.
