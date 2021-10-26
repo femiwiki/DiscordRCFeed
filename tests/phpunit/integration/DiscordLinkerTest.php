@@ -246,7 +246,7 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 				[ null, false ],
 			],
 			'should include the self link if the includeSelf is true' => [
-				'[view](https://foo.bar/index.php/Foo)',
+				'[view](https://foo.bar/index.php?title=Foo&oldid=22)',
 				[ $view ],
 				'Foo',
 				[ null, true ],
@@ -281,10 +281,21 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 			'wgArticlePath' => '/index.php/$1',
 			'wgScript' => '/index.php'
 		] );
-		$linkRenderer = new DiscordLinker( null, $pageTools );
-		// $page = $this->getExistingTestPage( $titleText );
-		// $title = $page->getTitle();
 		$title = Title::newFromText( $titleText );
+
+		$revMock = $this->createMock( RevisionRecord::class );
+		$revMock->method( 'getId' )
+			->willReturn( 22 );
+		$mock = $this->createMock( RevisionStore::class );
+		$mock->method( 'getRevisionByTitle' )
+			->willReturnCallback( static function () use ( $title, $revMock )
+			{
+				return $title->isSpecialPage() ? null : $revMock;
+			}
+		);
+		$this->setService( 'RevisionStore', $mock );
+
+		$linkRenderer = new DiscordLinker( null, $pageTools );
 
 		$this->assertSame(
 			$expected,
@@ -331,16 +342,13 @@ class DiscordLinkerTest extends MediaWikiIntegrationTestCase {
 		$title = $this->getExistingTestPage( 'Dummy page' )->getTitle();
 
 		$revision = $this->createMock( RevisionRecord::class );
-		$revision->expects( $this->any() )
-			->method( 'getParentId' )
+		$revision->method( 'getParentId' )
 			->will( $this->returnValue( $isRoot ? null : 10 ) );
-		$revision->expects( $this->any() )
-			->method( 'getId' )
+		$revision->method( 'getId' )
 			->will( $this->returnValue( 11 ) );
 
 		$store = $this->createMock( RevisionStore::class );
-		$store->expects( $this->any() )
-			->method( 'getRevisionByTitle' )
+		$store->method( 'getRevisionByTitle' )
 			->will( $this->returnValue( $revision ) );
 		$this->setService( 'RevisionStore', $store );
 

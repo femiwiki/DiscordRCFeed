@@ -29,7 +29,7 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 
 	public static function providerHtml(): array {
 		return [
-			[
+			'should convert user link' => [
 				'[Admin](http://f.oo/index.php/User:Admin) '
 				. '[commented](http://f.oo/index.php?title='
 				. 'Topic:Wh925tqnitcssmp8&topic_showPostId=wh925tqnixav0qng#flow-post-wh925tqnixav0qng) '
@@ -49,14 +49,12 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 				. 'commented</a> on "Lorem" (<em>Ipsum</em>) (<a href="/w/Topic:Wh925tqnitcssmp8" title="Lorem">'
 				. 'Lorem</a> on <a href="/w/Talk:%EB%8C%80%EB%AC%B8" class="mw-title fw-link" title="Talk:Main Page">'
 				. 'Talk:Main Page</a>)',
-				'convert()',
-				'should convert user link'
+				'convert()'
 			],
-			[
+			'should convert auto comment' => [
 				'[→‎Section](http://f.oo/index.php/Main_Page#Section)',
 				'<span dir="auto"><span class="autocomment">'
-				. '<a href="/index.php/Main_Page#Section" title="Main Page">→‎Section</a></span></span>',
-				'should convert auto comment'
+				. '<a href="/index.php/Main_Page#Section" title="Main Page">→‎Section</a></span></span>'
 			]
 		];
 	}
@@ -65,7 +63,7 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider providerHtml
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::convert
 	 */
-	public function testConvert( $expected, $html, $message = '' ) {
+	public function testConvert( $expected, $html ) {
 		$this->setMwGlobals( [
 			'wgServer' => 'http://f.oo',
 			'wgArticlePath' => '/index.php/$1',
@@ -73,8 +71,7 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 		] );
 		$this->assertSame(
 			$expected,
-			$this->converter->convert( $html ),
-			$message
+			$this->converter->convert( $html )
 		);
 	}
 
@@ -183,15 +180,15 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 		return [
 			[
 				true,
-				Title::newFromText( 'Foo' ),
+				 'Foo',
 			],
 			[
 				false,
-				Title::newFromText( 'Talk:Foo' ),
+				 'Talk:Foo',
 			],
 			[
 				false,
-				Title::newFromText( 'Topic:Wh92jykmy8scu7l8' ),
+				 'Topic:Wh92jykmy8scu7l8',
 			],
 		];
 	}
@@ -200,7 +197,7 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider providerTitle
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::shouldIncludeTitleLinks
 	 */
-	public function testShouldIncludeTitleLinks( $expected, $params, $message = '' ) {
+	public function testShouldIncludeTitleLinks( $expected, $titleText, $message = '' ) {
 		$this->mergeMwGlobalArrayValue(
 			'wgNamespaceContentModels',
 			[
@@ -209,7 +206,7 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 		);
 		$this->assertSame(
 			$expected,
-			$this->wrapper->shouldIncludeTitleLinks( $params ),
+			$this->wrapper->shouldIncludeTitleLinks( Title::newFromText( $titleText ) ),
 			$message
 		);
 	}
