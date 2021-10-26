@@ -23,12 +23,12 @@ final class Constants {
 		],
 		'page_tools' => [
 			[
-				'target' => 'view',
-				'msg' => 'view'
-			],
-			[
 				'target' => 'diff',
 				'msg' => 'diff'
+			],
+			[
+				'target' => 'view',
+				'msg' => 'view'
 			],
 			[
 				'query' => 'action=history',
