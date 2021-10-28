@@ -2,7 +2,11 @@
 
 Versions and bullets are arranged chronologically from latest to oldest.
 
-## Unreleased
+## v0.2.2
+
+The default parameters of $wgRCFeeds changes:
+
+- The 'diff' tool now shown as the first tool of the page tools.
 
 Enhancements:
 
@@ -12,6 +16,7 @@ Bug fixes:
 
 - Fixed that changes on special pages ignored. (https://github.com/femiwiki/DiscordRCFeed/issues/48)
 - Fixed fatal error happened if the wiki didn't install StructuredDisscussions
+- Fixed the empty tool on StructuredDiscussions changes.
 
 ## v0.2.1
 
