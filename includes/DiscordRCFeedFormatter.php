@@ -204,6 +204,18 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 
 		$emoji = self::getEmojiForKeys( 'discordrcfeed-emoji-log', $logType, $logAction );
 
+		// Prevent an unknown user to be displayed because of bug: https://phabricator.wikimedia.org/T286979
+		if ( !isset( $attribs['rc_actor'] ) ) {
+			$actorStore = MediaWikiServices::getInstance()->getActorStore();
+			$userFactory = MediaWikiServices::getInstance()->getUserFactory();
+			$db = wfGetDB( DB_REPLICA );
+			if ( isset( $attribs['rc_user'] ) && $attribs['rc_user'] !== 0 ) {
+				$user = $userFactory->newFromId( $attribs['rc_user'] )->getUser();
+				$attribs['rc_actor'] = $actorStore->findActorId( $user, $db );
+			} elseif ( isset( $attribs['rc_user_text'] ) ) {
+				$attribs['rc_actor'] = $actorStore->findActorIdByName( $attribs['rc_user_text'], $db );
+			}
+		}
 		$formatter = LogFormatter::newFromRow( $attribs );
 		$formatter->setContext( Util::getContentLanguageContext() );
 		if ( $this->style == self::STYLE_STRUCTURE ) {
