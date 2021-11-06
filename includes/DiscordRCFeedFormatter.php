@@ -89,7 +89,7 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 			$this->flowFormatter = new FlowDiscordFormatter( $rc, $this->converter, $plaintext );
 		}
 
-		$desc = $this->getDescription( $rc, $feed['style'] != self::STYLE_STRUCTURE );
+		$desc = $this->getDescription( $rc );
 
 		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
 			$color = Constants::COLOR_MAP_ACTION[$rcType] ?? Constants::COLOR_DEFAULT;
@@ -115,11 +115,9 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 	/**
 	 * Returns description that includes an emoji and a text message.
 	 * @param RecentChange $rc
-	 * @param bool $includeTools
 	 * @return string
 	 */
-	private function getDescription( RecentChange $rc, bool $includeTools = true ): string {
-		$feed = $this->feed;
+	private function getDescription( RecentChange $rc ): string {
 		$attribs = $rc->getAttributes();
 		$rcType = $attribs['rc_type'];
 		if ( in_array( $rcType, [ RC_EDIT, RC_NEW ] ) ) {
