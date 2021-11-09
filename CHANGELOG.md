@@ -2,6 +2,10 @@
 
 Versions and bullets are arranged chronologically from latest to oldest.
 
+## v1.0.0
+
+Intentionally has no significant changes.
+
 ## v0.2.2
 
 The default parameters of $wgRCFeeds changes:
