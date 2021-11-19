@@ -2,6 +2,10 @@
 
 Versions and bullets are arranged chronologically from latest to oldest.
 
+## v1.0.1
+
+- Fixed unknown actors. (https://github.com/femiwiki/DiscordRCFeed/issues/46)
+
 ## v1.0.0
 
 Intentionally has no significant changes.
