@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"DDPAT"
+		]
+	},
+	"discordrcfeed-line-edit-minor": "$1 hizo una edición menor en el artículo $3",
+	"discordrcfeed-line-edit": "$1 {{GENDER:$2|editó}} el artículo $3"
+}
