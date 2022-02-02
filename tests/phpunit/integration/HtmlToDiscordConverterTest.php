@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\DiscordRCFeed\Tests\Integration;
 
+use ExtensionRegistry;
 use MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter;
 use MediaWikiIntegrationTestCase;
 use Title;
@@ -28,35 +29,41 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function providerHtml(): array {
-		return [
-			'should convert user link' => [
-				'[Admin](http://f.oo/index.php/User:Admin) '
-				. '[commented](http://f.oo/index.php?title='
-				. 'Topic:Wh925tqnitcssmp8&topic_showPostId=wh925tqnixav0qng#flow-post-wh925tqnixav0qng) '
-				. 'on "Lorem" (Ipsum) ([Lorem](http://f.oo/index.php/Topic:Wh925tqnitcssmp8) on '
-				. '[Talk:Main Page](http://f.oo/w/Talk:%EB%8C%80%EB%AC%B8))',
-
-				'<a href="/index.php?title=User:Admin&amp;action=edit&amp;redlink=1" class="new '
-				. 'mw-userlink fw-link" title="User:Admin (page does not exist)"><bdi>Admin</bdi>'
-				. '</a> <span class="mw-usertoollinks">(<a href="/index.php?title=User_talk:Admin&amp;'
-				. 'action=edit&amp;redlink=1" class="new mw-usertoollinks-talk fw-link" title="User '
-				. 'talk:Admin (page does not exist)">talk</a> | <a href="/w/Special:Contributions/Admin"'
-				. ' class="mw-usertoollinks-contribs fw-link" title="Special:Contributions/Admin">contribs</a>'
-				. ' | <a href="/w/Special:Block/Admin" class="mw-usertoollinks-block fw-link" '
-				. 'title="Special:Block/Admin">block</a>)</span> <a target="_blank" rel="nofollow '
-				. 'noreferrer noopener" class="external text" href="http://f.oo/index.php?'
-				. 'title=Topic:Wh925tqnitcssmp8&amp;topic_showPostId=wh925tqnixav0qng#flow-post-wh925tqnixav0qng">'
-				. 'commented</a> on "Lorem" (<em>Ipsum</em>) (<a href="/w/Topic:Wh925tqnitcssmp8" title="Lorem">'
-				. 'Lorem</a> on <a href="/w/Talk:%EB%8C%80%EB%AC%B8" class="mw-title fw-link" title="Talk:Main Page">'
-				. 'Talk:Main Page</a>)',
-				'convert()'
-			],
+		$data = [
 			'should convert auto comment' => [
 				'[→‎Section](http://f.oo/index.php/Main_Page#Section)',
 				'<span dir="auto"><span class="autocomment">'
 				. '<a href="/index.php/Main_Page#Section" title="Main Page">→‎Section</a></span></span>'
 			]
 		];
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
+			$data += [
+				'should convert user link' => [
+					'[Admin](http://f.oo/index.php/User:Admin) '
+					. '[commented](http://f.oo/index.php?title='
+					. 'Topic:Wh925tqnitcssmp8&topic_showPostId=wh925tqnixav0qng#flow-post-wh925tqnixav0qng) '
+					. 'on "Lorem" (Ipsum) ([Lorem](http://f.oo/index.php/Topic:Wh925tqnitcssmp8) on '
+					. '[Talk:Main Page](http://f.oo/w/Talk:%EB%8C%80%EB%AC%B8))',
+
+					'<a href="/index.php?title=User:Admin&amp;action=edit&amp;redlink=1" class="new '
+					. 'mw-userlink fw-link" title="User:Admin (page does not exist)"><bdi>Admin</bdi>'
+					. '</a> <span class="mw-usertoollinks">(<a href="/index.php?title=User_talk:Admin&amp;'
+					. 'action=edit&amp;redlink=1" class="new mw-usertoollinks-talk fw-link" title="User '
+					. 'talk:Admin (page does not exist)">talk</a> | <a href="/w/Special:Contributions/Admin"'
+					. ' class="mw-usertoollinks-contribs fw-link" title="Special:Contributions/Admin">contribs</a>'
+					. ' | <a href="/w/Special:Block/Admin" class="mw-usertoollinks-block fw-link" '
+					. 'title="Special:Block/Admin">block</a>)</span> <a target="_blank" rel="nofollow '
+					. 'noreferrer noopener" class="external text" href="http://f.oo/index.php?'
+					. 'title=Topic:Wh925tqnitcssmp8&amp;topic_showPostId=wh925tqnixav0qng#flow-post-wh925tqnixav0qng">'
+					. 'commented</a> on "Lorem" (<em>Ipsum</em>) (<a href="/w/Topic:Wh925tqnitcssmp8" title="Lorem">'
+					. 'Lorem</a> on <a href="/w/Talk:%EB%8C%80%EB%AC%B8" class="mw-title fw-link" '
+					. 'title="Talk:Main Page">'
+					. 'Talk:Main Page</a>)',
+					'convert()'
+				],
+			];
+		}
+		return $data;
 	}
 
 	/**
@@ -177,37 +184,44 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 	}
 
 	public static function providerTitle(): array {
-		return [
-			[
+		$data = [
+			'should include links for title' => [
 				true,
-				 'Foo',
-			],
-			[
-				false,
-				 'Talk:Foo',
-			],
-			[
-				false,
-				 'Topic:Wh92jykmy8scu7l8',
+				'Foo',
 			],
 		];
+
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
+			$data += [
+				'should not include links for discussion board page' => [
+					false,
+					'Talk:Foo',
+				],
+				'should not include links for topic page' => [
+					false,
+					'Topic:Wh92jykmy8scu7l8',
+				],
+			];
+		}
+		return $data;
 	}
 
 	/**
 	 * @dataProvider providerTitle
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::shouldIncludeTitleLinks
 	 */
-	public function testShouldIncludeTitleLinks( $expected, $titleText, $message = '' ) {
-		$this->mergeMwGlobalArrayValue(
-			'wgNamespaceContentModels',
-			[
-				NS_TALK => CONTENT_MODEL_FLOW_BOARD,
-			]
-		);
+	public function testShouldIncludeTitleLinks( $expected, $titleText ) {
+		if ( ExtensionRegistry::getInstance()->isLoaded( 'Flow' ) ) {
+			$this->mergeMwGlobalArrayValue(
+				'wgNamespaceContentModels',
+				[
+					NS_TALK => CONTENT_MODEL_FLOW_BOARD,
+				]
+			);
+		}
 		$this->assertSame(
 			$expected,
-			$this->wrapper->shouldIncludeTitleLinks( Title::newFromText( $titleText ) ),
-			$message
+			$this->wrapper->shouldIncludeTitleLinks( Title::newFromText( $titleText ) )
 		);
 	}
 }
