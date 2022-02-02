@@ -114,20 +114,41 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 		return [
 			[
 				'[Main Page](https://foo.bar/index.php/Main_Page)',
+				'<a href="/index.php/Main_Page" title="Main Page">Main Page</a>',
+				'/index.php/$1',
+				'should replace a title link when the article path is "/index.php/$1"',
+			],
+			[
+				'[Main Page](https://foo.bar/wiki/Main_Page)',
+				'<a href="/wiki/Main_Page" title="Main Page">Main Page</a>',
+				'/wiki/$1',
+				'should replace a title link when the article path is "/wiki/$1"',
+			],
+			[
+				'[Main Page](https://foo.bar/w/Main_Page)',
 				'<a href="/w/Main_Page" title="Main Page">Main Page</a>',
-				'should replace a title link',
+				'/w/$1',
+				'should replace a title link when the article path is "/w/$1"',
 			],
 			[
 				'[Main Page](https://foo.bar/index.php/Main_Page) and [Main Page](https://foo.bar/index.php/Main_Page)',
 				'<a href="/w/Main_Page" title="Main Page">Main Page</a>'
 				. ' and <a href="/w/Main_Page" title="Main Page">Main Page</a>',
-				'should replace two title links',
+				'/index.php/$1',
+				'should replace multiple title links',
+			],
+			[
+				'[User:Admin/Test123](https://foo.bar/wiki/User:Admin/Test123)',
+				'<a href="/wiki/User:Admin/Test123" title="User:Admin/Test123">User:Admin/Test123</a>',
+				'/wiki/$1',
+				'should convert a title link with subpage when $wgArticlePath is "/wiki/$1"',
 			],
 			[
 				'[→‎Section](https://foo.bar/index.php/Main_Page#Section)',
 				'<a href="/index.php/Main_Page#Section" title="Main Page">→‎Section</a>',
-				'should convert auto comment'
-			]
+				'/index.php/$1',
+				'should convert auto comment',
+			],
 		];
 	}
 
@@ -135,10 +156,10 @@ class HtmlToDiscordConverterTest extends MediaWikiIntegrationTestCase {
 	 * @dataProvider providerTitleHtml
 	 * @covers \MediaWiki\Extension\DiscordRCFeed\HtmlToDiscordConverter::convertTitleLinks
 	 */
-	public function testConvertTitleLinks( $expected, $params, $message = '' ) {
+	public function testConvertTitleLinks( $expected, $params, $articlePath, $message = '' ) {
 		$this->setMwGlobals( [
 			'wgServer' => 'https://foo.bar',
-			'wgArticlePath' => '/index.php/$1',
+			'wgArticlePath' => $articlePath,
 			'wgScript' => '/index.php'
 		] );
 		$this->assertSame(
