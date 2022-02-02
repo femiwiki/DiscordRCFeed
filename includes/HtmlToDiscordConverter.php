@@ -15,7 +15,7 @@ class HtmlToDiscordConverter {
 	private const REGEX_FOR_USER_TOOLS = '#<span[^>]+class=[\'"][^\'"]*mw-usertoollinks[^\'"]*[\'"][^>]*>.+</span>#';
 
 	/** @var string */
-	private const REGEX_FOR_TITLE_LINK = '#<a[^>]+href=[\'"][^\'"=]*[/=]([^\'"]+)[\'"][^>]*title=[^>]*>([^<+]+)</a>#';
+	private const REGEX_FOR_TITLE_LINK = '#<a[^>]+href=[\'"][^\'"=]*(?:wiki/|w/|index.php/)([^\'"]+)[\'"][^>]*title=[^>]*>([^<+]+)</a>#';
 
 	/** @var string */
 	private const REGEX_FOR_GENERAL_LINK = '#<a[^>]+href=[\'"]([^\'"]+)[\'"][^>]*>([^<+]+)</a>#';
