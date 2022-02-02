@@ -2,6 +2,10 @@
 
 Versions and bullets are arranged chronologically from latest to oldest.
 
+## v1.0.2
+
+- Modified the title capturing regex to fix the bug on wikis using `wiki/` as the article path. (https://github.com/femiwiki/DiscordRCFeed/issues/63)
+
 ## v1.0.1
 
 - Fixed unknown actors. (https://github.com/femiwiki/DiscordRCFeed/issues/46)
