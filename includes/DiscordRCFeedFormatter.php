@@ -322,8 +322,10 @@ class DiscordRCFeedFormatter implements RCFeedFormatter {
 		$style = $this->style;
 
 		$szdiff = $this->getSizeDiff( $attribs );
-		if ( $style != self::STYLE_STRUCTURE ) {
-			$comment = $comment ? Util::msgText( 'parentheses', $comment ) : '';
+		if ( $style != self::STYLE_STRUCTURE && $comment ) {
+			$msg = new Message( 'parentheses' );
+			$msg->plaintextParams( $comment );
+			$comment = $msg->inContentLanguage()->text();
 		}
 
 		$fullString = implode( ' ', array_filter( [
