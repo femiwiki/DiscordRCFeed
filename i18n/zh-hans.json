@@ -1,0 +1,10 @@
+{
+	"@metadata": {
+		"authors": [
+			"StarrySky"
+		]
+	},
+	"discordrcfeed-desc": "为 Discord 提供 RCFeedEngine 和 RCFeedFormatter。",
+	"discordrcfeed-line-edit-minor": "$1 {{GENDER:$2|made}} 对文章 $3 的小修改",
+	"discordrcfeed-line-edit": "$1{{GENDER:$2|编辑}}了回复$3"
+}
