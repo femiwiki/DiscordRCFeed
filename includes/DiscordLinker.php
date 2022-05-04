@@ -63,7 +63,8 @@ class DiscordLinker {
 				if ( $tool['target'] == 'talk' ) {
 					return $user->getTalkPage()->getFullURL( '', false, PROTO_CURRENT );
 				}
-				return SpecialPage::getTitleFor( $tool['special'], $user->getName() )->getFullURL( '', false, PROTO_CURRENT );
+				return SpecialPage::getTitleFor( $tool['special'], $user->getName() )
+					->getFullURL( '', false, PROTO_CURRENT );
 			},
 			$sep
 		);
@@ -109,7 +110,7 @@ class DiscordLinker {
 				if ( $title->isSpecialPage() ) {
 					return null;
 				}
-				return $title->getFullURL( $tool['query'] ?? '', null, PROTO_CURRENT );
+				return $title->getFullURL( $tool['query'] ?? '', false, PROTO_CURRENT );
 			},
 			$sep
 		);
