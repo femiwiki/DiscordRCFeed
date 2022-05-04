@@ -2,6 +2,11 @@
 
 Versions and bullets are arranged chronologically from latest to oldest.
 
+## v1.0.3
+
+- Fixed not working links if `$wgServer` is a protocol-relative URL. (https://github.com/femiwiki/DiscordRCFeed/issues/94)
+- Fixed expanded templates in edit summaries. (https://github.com/femiwiki/DiscordRCFeed/issues/66)
+
 ## v1.0.2
 
 - Modified the title capturing regex to fix the bug on wikis using `wiki/` as the article path. (https://github.com/femiwiki/DiscordRCFeed/issues/63)
