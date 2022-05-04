@@ -91,7 +91,7 @@ class HtmlToDiscordConverter {
 				if ( !$omitTools && self::shouldIncludeTitleLinks( $title ) ) {
 					$replace = $this->linker->makePageTextWithTools( $title );
 				} else {
-					$replace = DiscordLinker::makeLink( $title->getFullURL(), $label );
+					$replace = DiscordLinker::makeLink( $title->getFullURL( '', false, PROTO_CURRENT ), $label );
 				}
 				$text = str_replace( $fullMatch, $replace, $text );
 			}

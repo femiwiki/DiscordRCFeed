@@ -55,15 +55,16 @@ class DiscordLinker {
 			static function ( $tool ) use ( $user, $includeSelf ) {
 				if ( $tool['target'] == 'user_page' ) {
 					if ( $includeSelf ) {
-						return $user->getUserPage()->getFullURL();
+						return $user->getUserPage()->getFullURL( '', false, PROTO_CURRENT );
 					} else {
 						return null;
 					}
 				}
 				if ( $tool['target'] == 'talk' ) {
-					return $user->getTalkPage()->getFullURL();
+					return $user->getTalkPage()->getFullURL( '', false, PROTO_CURRENT );
 				}
-				return SpecialPage::getTitleFor( $tool['special'], $user->getName() )->getFullURL();
+				return SpecialPage::getTitleFor( $tool['special'], $user->getName() )
+					->getFullURL( '', false, PROTO_CURRENT );
 			},
 			$sep
 		);
@@ -86,7 +87,7 @@ class DiscordLinker {
 					$revisionId = $revision ? $revision->getId() : null;
 					if ( $tool['target'] == 'view' ) {
 						if ( $includeSelf ) {
-							return $title->getFullURL( $revisionId ? "oldid=$revisionId" : '' );
+							return $title->getFullURL( $revisionId ? "oldid=$revisionId" : '', false, PROTO_CURRENT );
 						} else {
 							return null;
 						}
@@ -103,13 +104,13 @@ class DiscordLinker {
 							// New page, skips diff
 							return null;
 						}
-						return $title->getFullURL( "oldid=$revisionId&diff=prev" );
+						return $title->getFullURL( "oldid=$revisionId&diff=prev", false, PROTO_CURRENT );
 					}
 				}
 				if ( $title->isSpecialPage() ) {
 					return null;
 				}
-				return $title->getFullURL( $tool['query'] ?? null );
+				return $title->getFullURL( $tool['query'] ?? '', false, PROTO_CURRENT );
 			},
 			$sep
 		);
@@ -122,7 +123,7 @@ class DiscordLinker {
 	 * @return string
 	 */
 	public function makeUserTextWithTools( User $user ): string {
-		$rt = self::makeLink( $user->getUserPage()->getFullURL(), $user->getName() );
+		$rt = self::makeLink( $user->getUserPage()->getFullURL( '', false, PROTO_CURRENT ), $user->getName() );
 		if ( $this->userTools ) {
 			$tools = $this->makeUserTools( $user );
 			if ( !$tools ) {
@@ -141,7 +142,7 @@ class DiscordLinker {
 	 * @return string
 	 */
 	public function makePageTextWithTools( Title $title ): string {
-		$rt = self::makeLink( $title->getFullURL(), $title->getFullText() );
+		$rt = self::makeLink( $title->getFullURL( '', false, PROTO_CURRENT ), $title->getFullText() );
 		if ( $this->pageTools ) {
 			$tools = $this->makePageTools( $title );
 			if ( !$tools ) {
