@@ -10,9 +10,9 @@
 			"Wladek92"
 		]
 	},
-	"discordrcfeed-desc": "Fournit RCFeedEngine et RCFeedFormatter pour Discord.",
-	"discordrcfeed-line-edit-minor": "$1 {{GENDER:$2|a fait}} une modification mineure à l'article $3.",
-	"discordrcfeed-line-edit": "$1 {{GENDER:$2|a modifié}} l’article $3.",
+	"discordrcfeed-desc": "Fournit « RCFeedEngine » et « RCFeedFormatter » pour ''Discord''.",
+	"discordrcfeed-line-edit-minor": "$1{{GENDER:$2|}} a effectué une modification mineure de l’article $3",
+	"discordrcfeed-line-edit": "$1{{GENDER:$2|}} a modifié l’article $3",
 	"discordrcfeed-emoji-edit": "📝",
 	"discordrcfeed-emoji-edit-minor": "✏️",
 	"discordrcfeed-emoji-edit-bot": "🤖",
