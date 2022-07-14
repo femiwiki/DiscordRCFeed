@@ -4,5 +4,7 @@
 			"Sou0012"
 		]
 	},
-	"discordrcfeed-line-edit": "$1 {{GENDER:$2|編集}}記事 $3"
+	"discordrcfeed-desc": "Discord用のRCFeedEngineとRCFeedFormatterを提供します。",
+	"discordrcfeed-line-edit-minor": "$1{{GENDER:$2|}}が記事$3に細部の編集を行いました。",
+	"discordrcfeed-line-edit": "$1{{GENDER:$2|}}が記事$3に編集を行いました。"
 }
