@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Milicevic01"
+		]
+	},
+	"discordrcfeed-line-edit-minor": "$1 је {{GENDER:$2|направио|направила}} мању измену чланка $3",
+	"discordrcfeed-line-edit": "$1 је {{GENDER:$2|направио|направила}} измену чланка $3"
+}
