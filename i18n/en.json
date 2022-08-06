@@ -7,6 +7,8 @@
     "discordrcfeed-desc": "Provides RCFeedEngine and RCFeedFormatter for Discord.",
     "discordrcfeed-line-edit-minor": "$1 {{GENDER:$2|made}} minor edit to article $3",
     "discordrcfeed-line-edit": "$1 {{GENDER:$2|edited}} article $3",
+    "discordrcfeed-line-edit-minor-bot": "$1 {{GENDER:$2|made}} minor edit to article $3",
+    "discordrcfeed-line-edit-bot": "$1 {{GENDER:$2|made}} minor edit to article $3",
 
     "discordrcfeed-emoji-edit": "📝",
     "discordrcfeed-emoji-edit-minor": "✏️",
@@ -21,6 +23,7 @@
     "discordrcfeed-emoji-log-protect": "🔒",
     "discordrcfeed-emoji-log-protect-unprotect": "🔓",
     "discordrcfeed-emoji-log-delete": "❌",
+    "discordrcfeed-emoji-log-delete-restore": "🔙",
     "discordrcfeed-emoji-log-block": "🚫",
     "discordrcfeed-emoji-log-block-unblock": "🟢",
     "discordrcfeed-emoji-log-rights": "👥",
