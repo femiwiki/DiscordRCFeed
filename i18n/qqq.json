@@ -5,6 +5,9 @@
 	"discordrcfeed-desc": "{{desc|name=DiscordRCFeed|url=https://www.mediawiki.org/wiki/Extension:DiscordRCFeed}}",
 	"discordrcfeed-line-edit-minor": "A notification text for when a user minor-edits a page\n\nParameters:\n* $1 - user's name (not suitable for GENDER).\n* $2 - user's name for use in GENDER.\n* $3 - article",
 	"discordrcfeed-line-edit": "A notification text for when a user edits a page\n\nParameters:\n* $1 - user's name (not suitable for GENDER).\n* $2 - user's name for use in GENDER.\n* $3 - article",
+  "discordrcfeed-line-edit-minor-bot": "A notification text for when a bot minor-edits a page\n\nParameters:\n* $1 - user's name (not suitable for GENDER).\n* $2 - user's name for use in GENDER.\n* $3 - article",
+  "discordrcfeed-line-edit-bot": "A notification text for when a bot edits a page\n\nParameters:\n* $1 - user's name (not suitable for GENDER).\n* $2 - user's name for use in GENDER.\n* $3 - article",
+
 	"discordrcfeed-emoji-edit": "{{optional}}",
 	"discordrcfeed-emoji-edit-minor": "{{optional}}",
 	"discordrcfeed-emoji-edit-bot": "{{optional}}",
@@ -17,6 +20,7 @@
 	"discordrcfeed-emoji-log-protect": "{{optional}}",
 	"discordrcfeed-emoji-log-protect-unprotect": "{{optional}}",
 	"discordrcfeed-emoji-log-delete": "{{optional}}",
+	"discordrcfeed-emoji-log-delete-restore": "{{optional}}",
 	"discordrcfeed-emoji-log-block": "{{optional}}",
 	"discordrcfeed-emoji-log-block-unblock": "{{optional}}",
 	"discordrcfeed-emoji-log-rights": "{{optional}}",
