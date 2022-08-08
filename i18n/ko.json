@@ -8,5 +8,7 @@
 	},
 	"discordrcfeed-desc": "디스코드를 위한 RCFeedEngine과 RCFeedFormatter를 제공합니다.",
 	"discordrcfeed-line-edit-minor": "$1님이 $3 문서를 사소하게 {{GENDER:$2|편집했습니다}}",
-	"discordrcfeed-line-edit": "$1님이 $3 문서를 {{GENDER:$2|편집했습니다}}"
+	"discordrcfeed-line-edit": "$1님이 $3 문서를 {{GENDER:$2|편집했습니다}}",
+	"discordrcfeed-line-edit-minor-bot": "$1님이 $3 문서를 사소하게 {{GENDER:$2|편집했습니다}}",
+	"discordrcfeed-line-edit-bot": "$1님이 $3 문서를 사소하게 {{GENDER:$2|편집했습니다}}"
 }
