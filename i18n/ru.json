@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Vlad5250"
+		]
+	},
+	"discordrcfeed-line-edit-minor-bot": "$1 {{GENDER:$2|сделал|сделала}} малую правку в статье $3",
+	"discordrcfeed-line-edit-bot": "$1 {{GENDER:$2|сделал|сделала}} малую правку в статье $3"
+}
