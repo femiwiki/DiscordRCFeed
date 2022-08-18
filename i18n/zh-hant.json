@@ -6,5 +6,7 @@
 	},
 	"discordrcfeed-desc": "提供適用於 Discord 的 RCFeedEngine 與 RCFeedFormatter。",
 	"discordrcfeed-line-edit-minor": "$1{{GENDER:$2|已對}}條目$3做了小修改",
-	"discordrcfeed-line-edit": "$1{{GENDER:$2|已編輯}}條目$3"
+	"discordrcfeed-line-edit": "$1{{GENDER:$2|已編輯}}條目$3",
+	"discordrcfeed-line-edit-minor-bot": "$1{{GENDER:$2|已對}}條目$3做了小修改",
+	"discordrcfeed-line-edit-bot": "$1{{GENDER:$2|已對}}條目$3做了小修改"
 }

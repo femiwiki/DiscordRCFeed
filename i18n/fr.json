@@ -27,6 +27,7 @@
 	"discordrcfeed-emoji-log-protect": "🔒",
 	"discordrcfeed-emoji-log-protect-unprotect": "🔓",
 	"discordrcfeed-emoji-log-delete": "❌",
+	"discordrcfeed-emoji-log-delete-restore": "🔙",
 	"discordrcfeed-emoji-log-block": "🚫",
 	"discordrcfeed-emoji-log-block-unblock": "🟢",
 	"discordrcfeed-emoji-log-rights": "👥",
