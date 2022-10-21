@@ -9,7 +9,27 @@ use MediaWiki\MediaWikiServices;
 use RecentChange;
 
 class DiscordRCFeedEngine extends FormattedRCFeed {
-	/** @var array */
+	/**
+	 * @var array{
+	 * 	url?: string,
+	 * 	omit_talk: bool,
+	 * 	only_talk: bool,
+	 * 	omit_types: string[],
+	 * 	only_types: string[],
+	 * 	omit_namespaces: int[],
+	 * 	only_namespaces: int[],
+	 * 	omit_log_types: string[],
+	 * 	only_log_types: string[],
+	 * 	omit_log_actions: string[],
+	 * 	only_log_actions: string[],
+	 * 	omit_usernames: string[],
+	 * 	only_usernames: string[],
+	 * 	omit_pages: string[],
+	 * 	only_pages: string[],
+	 * 	omit_content_models: string[],
+	 * 	only_content_models: string[],
+	 * }
+	 */
 	private $params;
 
 	/** @var HttpRequestFactory */
