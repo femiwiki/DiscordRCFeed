@@ -1,13 +1,17 @@
 {
-  "private": true,
-  "scripts": {
-    "test": "npm -s run lint",
-    "lint": "npm -s run lint:prettier",
-    "lint:prettier": "prettier . --check",
-    "fix": "prettier . --write"
-  },
-  "devDependencies": {
-    "@prettier/plugin-xml": "^2.2.0",
-    "prettier": "2.8.7"
-  }
+	"private": true,
+	"scripts": {
+		"test": "grunt test"
+	},
+	"devDependencies": {
+		"eslint-config-wikimedia": "0.24.0",
+		"grunt": "1.6.1",
+		"grunt-banana-checker": "0.10.0",
+		"grunt-eslint": "24.0.0",
+		"grunt-stylelint": "0.18.0",
+		"stylelint-config-wikimedia": "0.14.0"
+	},
+	"eslintIgnore": [
+		"vendor/**"
+	]
 }
