@@ -2,7 +2,7 @@
 	"name": "DiscordRCFeed",
 	"version": "1.0.3",
 	"author": [ "Aleksi Postari", "[https://femiwiki.com/ FemiWiki Team]", "..." ],
-	"url": "https://github.com/femiwiki/DiscordRCFeed",
+	"url": "https://www.mediawiki.org/wiki/Extension:DiscordRCFeed",
 	"descriptionmsg": "discordrcfeed-desc",
 	"type": "other",
 	"requires": {
