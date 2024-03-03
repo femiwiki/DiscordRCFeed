@@ -1,3 +1,7 @@
+# DiscordRCFeed is now hosted on Wikimedia Gerrit.
+
+https://gerrit.wikimedia.org/g/mediawiki/extensions/DiscordRCFeed
+
 # DiscordRCFeed [![Github checks status]][github checks link] [![codecov.io status]][codecov.io link]
 
 This is a fork of [kulttuuri/DiscordNotifications] which is an extension for [MediaWiki](https://www.mediawiki.org/wiki/MediaWiki) that sends notifications of actions in your wiki like editing, deleting or moving a page into [Discord](https://discordapp.com/) channel.
